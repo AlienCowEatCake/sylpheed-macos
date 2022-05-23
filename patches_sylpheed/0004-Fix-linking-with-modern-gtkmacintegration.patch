@@ -1,0 +1,25 @@
+From d233f89714e0a8d3dcf23edb551aeed6b8865b9d Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 5 Jan 2021 07:04:57 +0700
+Subject: [PATCH 4/5] Fix linking with modern gtkmacintegration
+
+---
+ src/Makefile.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 277935e..57e529b 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -641,7 +641,7 @@ sylpheed_LDADD = \
+ 	$(LDAP_LIBS) \
+ 	$(LIBICONV) \
+ 	$(SYLPHEED_LIBS) \
+-	-lgtkmacintegration \
++	-lgtkmacintegration-gtk2 \
+ 	libsylpheed-plugin-0.la \
+ 	../libsylph/libsylph-0.la \
+ 	$(SYLPHEED_RES)
+-- 
+2.30.0
+

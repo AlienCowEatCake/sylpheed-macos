@@ -1,0 +1,2627 @@
+From 78e18589673e5160d2459f4c0e8b4d0be81062c9 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 4 Jan 2021 22:15:56 +0700
+Subject: [PATCH 3/5] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
+
+---
+ po/ja.po          | 729 +++++++++++++++++++++++-----------------------
+ po/sylpheed.pot   |   4 +
+ src/Makefile.in   |   1 +
+ src/addressbook.c |  43 ++-
+ src/compose.c     |  58 ++--
+ src/mainwindow.c  | 130 ++++++---
+ src/messageview.c |  19 ++
+ src/rpop3.c       |  24 +-
+ 8 files changed, 575 insertions(+), 433 deletions(-)
+
+diff --git a/po/ja.po b/po/ja.po
+index b482f61..c3626ee 100644
+--- a/po/ja.po
++++ b/po/ja.po
+@@ -715,7 +715,7 @@ msgstr "編集"
+ 
+ #: src/account_dialog.c:450
+ msgid " _Set as default account "
+-msgstr " 通常使用するアカウントに指定(_S) "
++msgstr " 通常使用するアカウントに指定 "
+ 
+ #: src/account_dialog.c:530
+ #, c-format
+@@ -851,23 +851,23 @@ msgstr "自動登録アドレス"
+ #: src/addressbook.c:413 src/compose.c:583 src/mainwindow.c:558
+ #: src/messageview.c:166
+ msgid "/_File"
+-msgstr "/ファイル(_F)"
++msgstr "/ファイル"
+ 
+ #: src/addressbook.c:414
+ msgid "/_File/New _Book"
+-msgstr "/ファイル(_F)/新規アドレス帳(_B)"
++msgstr "/ファイル/新規アドレス帳"
+ 
+ #: src/addressbook.c:415
+ msgid "/_File/New _vCard"
+-msgstr "/ファイル(_F)/新規_vCard"
++msgstr "/ファイル/新規_vCard"
+ 
+ #: src/addressbook.c:417
+ msgid "/_File/New _JPilot"
+-msgstr "/ファイル(_F)/新規_JPilot"
++msgstr "/ファイル/新規_JPilot"
+ 
+ #: src/addressbook.c:420
+ msgid "/_File/New _LDAP Server"
+-msgstr "/ファイル(_F)/新規LDAPサーバ(_L)"
++msgstr "/ファイル/新規LDAPサーバ"
+ 
+ #: src/addressbook.c:422 src/addressbook.c:425 src/compose.c:588
+ #: src/compose.c:593 src/compose.c:596 src/compose.c:599 src/mainwindow.c:576
+@@ -875,90 +875,90 @@ msgstr "/ファイル(_F)/新規LDAPサーバ(_L)"
+ #: src/mainwindow.c:588 src/mainwindow.c:590 src/messageview.c:168
+ #: src/messageview.c:173
+ msgid "/_File/---"
+-msgstr "/ファイル(_F)/---"
++msgstr "/ファイル/---"
+ 
+ #: src/addressbook.c:423
+ msgid "/_File/_Edit"
+-msgstr "/ファイル(_F)/編集(_E)"
++msgstr "/ファイル/編集"
+ 
+ #: src/addressbook.c:424
+ msgid "/_File/_Delete"
+-msgstr "/ファイル(_F)/削除(_D)"
++msgstr "/ファイル/削除"
+ 
+ #: src/addressbook.c:426
+ msgid "/_File/_Save"
+-msgstr "/ファイル(_F)/保存(_S)"
++msgstr "/ファイル/保存"
+ 
+ #: src/addressbook.c:427 src/compose.c:600 src/messageview.c:174
+ msgid "/_File/_Close"
+-msgstr "/ファイル(_F)/閉じる(_C)"
++msgstr "/ファイル/閉じる"
+ 
+ #: src/addressbook.c:429 src/addressbook.c:475 src/addressbook.c:492
+ #: src/compose.c:602 src/mainwindow.c:594 src/messageview.c:176
+ msgid "/_Edit"
+-msgstr "/編集(_E)"
++msgstr "/編集"
+ 
+ #: src/addressbook.c:430 src/compose.c:607 src/mainwindow.c:595
+ #: src/messageview.c:177
+ msgid "/_Edit/_Copy"
+-msgstr "/編集(_E)/コピー(_C)"
++msgstr "/編集/コピー"
+ 
+ #: src/addressbook.c:431 src/compose.c:608
+ msgid "/_Edit/_Paste"
+-msgstr "/編集(_E)/ペースト(_P)"
++msgstr "/編集/ペースト"
+ 
+ #: src/addressbook.c:433
+ msgid "/_Address"
+-msgstr "/アドレス(_A)"
++msgstr "/アドレス"
+ 
+ #: src/addressbook.c:434
+ msgid "/_Address/New _Address"
+-msgstr "/アドレス(_A)/新規アドレス(_A)"
++msgstr "/アドレス/新規アドレス"
+ 
+ #: src/addressbook.c:435
+ msgid "/_Address/New _Group"
+-msgstr "/アドレス(_A)/新規グループ(_G)"
++msgstr "/アドレス/新規グループ"
+ 
+ #: src/addressbook.c:436
+ msgid "/_Address/New _Folder"
+-msgstr "/アドレス(_A)/新規フォルダ(_F)"
++msgstr "/アドレス/新規フォルダ"
+ 
+ #: src/addressbook.c:437 src/addressbook.c:444
+ msgid "/_Address/---"
+-msgstr "/アドレス(_A)/---"
++msgstr "/アドレス/---"
+ 
+ #: src/addressbook.c:438
+ msgid "/_Address/Add _to recipient"
+-msgstr "/アドレス(_A)/宛先に追加(_T)"
++msgstr "/アドレス/宛先に追加"
+ 
+ #: src/addressbook.c:440
+ msgid "/_Address/Add to _Cc"
+-msgstr "/アドレス(_A)/_Ccに追加"
++msgstr "/アドレス/_Ccに追加"
+ 
+ #: src/addressbook.c:442
+ msgid "/_Address/Add to _Bcc"
+-msgstr "/アドレス(_A)/_Bccに追加"
++msgstr "/アドレス/_Bccに追加"
+ 
+ #: src/addressbook.c:445
+ msgid "/_Address/_Edit"
+-msgstr "/アドレス(_A)/編集(_E)"
++msgstr "/アドレス/編集"
+ 
+ #: src/addressbook.c:446
+ msgid "/_Address/_Delete"
+-msgstr "/アドレス(_A)/削除(_D)"
++msgstr "/アドレス/削除"
+ 
+ #: src/addressbook.c:448 src/compose.c:718 src/mainwindow.c:842
+ #: src/messageview.c:299
+ msgid "/_Tools"
+-msgstr "/ツール(_T)"
++msgstr "/ツール"
+ 
+ #: src/addressbook.c:449
+ msgid "/_Tools/Import _LDIF file"
+-msgstr "/ツール(_T)/_LDIFファイルをインポート"
++msgstr "/ツール/_LDIFファイルをインポート"
+ 
+ #: src/addressbook.c:450
+ msgid "/_Tools/Import _CSV file"
+-msgstr "/ツール(_T)/_CSVファイルをインポート"
++msgstr "/ツール/_CSVファイルをインポート"
+ 
+ #: src/addressbook.c:451 src/compose.c:724 src/compose.c:727 src/compose.c:731
+ #: src/compose.c:737 src/mainwindow.c:846 src/mainwindow.c:860
+@@ -975,24 +975,24 @@ msgstr "/ツール(_T)/C_SVファイルにエクスポート"
+ #: src/addressbook.c:453 src/compose.c:742 src/mainwindow.c:904
+ #: src/messageview.c:319
+ msgid "/_Help"
+-msgstr "/ヘルプ(_H)"
++msgstr "/ヘルプ"
+ 
+ #: src/addressbook.c:454 src/compose.c:743 src/mainwindow.c:924
+ #: src/messageview.c:320
+ msgid "/_Help/_About"
+-msgstr "/ヘルプ(_H)/このプログラムについて(_A)"
++msgstr ""
+ 
+ #: src/addressbook.c:471 src/addressbook.c:481
+ msgid "/New _Address"
+-msgstr "/新規アドレス(_A)"
++msgstr "/新規アドレス"
+ 
+ #: src/addressbook.c:472 src/addressbook.c:482
+ msgid "/New _Group"
+-msgstr "/新規グループ(_G)"
++msgstr "/新規グループ"
+ 
+ #: src/addressbook.c:473 src/addressbook.c:483
+ msgid "/New _Folder"
+-msgstr "/新規フォルダ(_F)"
++msgstr "/新規フォルダ"
+ 
+ #: src/addressbook.c:474 src/addressbook.c:484 src/addressbook.c:491
+ #: src/addressbook.c:494 src/compose.c:574 src/compose.c:577
+@@ -1009,11 +1009,11 @@ msgstr "/---"
+ 
+ #: src/addressbook.c:476 src/addressbook.c:493 src/summaryview.c:464
+ msgid "/_Delete"
+-msgstr "/削除(_D)"
++msgstr "/削除"
+ 
+ #: src/addressbook.c:485
+ msgid "/Add _to recipient"
+-msgstr "宛先に追加(_T)"
++msgstr "宛先に追加"
+ 
+ #: src/addressbook.c:487
+ msgid "/Add t_o Cc"
+@@ -1025,11 +1025,11 @@ msgstr "_Bccに追加"
+ 
+ #: src/addressbook.c:495
+ msgid "/_Copy"
+-msgstr "/コピー(_C)"
++msgstr "/コピー"
+ 
+ #: src/addressbook.c:496
+ msgid "/_Paste"
+-msgstr "/ペースト(_P)"
++msgstr "/ペースト"
+ 
+ #: src/addressbook.c:621 src/prefs_common_dialog.c:2838 src/prefs_toolbar.c:90
+ msgid "Address book"
+@@ -1090,7 +1090,7 @@ msgstr "検索"
+ 
+ #: src/addressbook.c:984
+ msgid "_Close"
+-msgstr "閉じる(_C)"
++msgstr "閉じる"
+ 
+ #. Confirm deletion
+ #: src/addressbook.c:1180
+@@ -1116,11 +1116,11 @@ msgstr "フォルダの削除"
+ 
+ #: src/addressbook.c:2371
+ msgid "_Folder only"
+-msgstr "フォルダのみ(_F)"
++msgstr "フォルダのみ"
+ 
+ #: src/addressbook.c:2371
+ msgid "Folder and _addresses"
+-msgstr "フォルダとアドレス(_A)"
++msgstr "フォルダとアドレス"
+ 
+ #: src/addressbook.c:2376
+ #, c-format
+@@ -1329,141 +1329,141 @@ msgstr "なし"
+ 
+ #: src/compose.c:573 src/mimeview.c:135
+ msgid "/_Open"
+-msgstr "/開く(_O)"
++msgstr "/開く"
+ 
+ #: src/compose.c:575
+ msgid "/_Add..."
+-msgstr "/追加(_A)..."
++msgstr "/追加..."
+ 
+ #: src/compose.c:576
+ msgid "/_Remove"
+-msgstr "/削除(_R)"
++msgstr "/削除"
+ 
+ #: src/compose.c:578 src/folderview.c:273 src/folderview.c:299
+ #: src/folderview.c:321
+ msgid "/_Properties..."
+-msgstr "/プロパティ(_P)..."
++msgstr "/プロパティ..."
+ 
+ #: src/compose.c:584
+ msgid "/_File/_Send"
+-msgstr "/ファイル(_F)/送信(_S)"
++msgstr "/ファイル/送信"
+ 
+ #: src/compose.c:586
+ msgid "/_File/Send _later"
+-msgstr "/ファイル(_F)/後で送信(_L)"
++msgstr "/ファイル/後で送信"
+ 
+ #: src/compose.c:589
+ msgid "/_File/Save to _draft folder"
+-msgstr "/ファイル(_F)/草稿フォルダに保存(_D)"
++msgstr "/ファイル/草稿フォルダに保存"
+ 
+ #: src/compose.c:591
+ msgid "/_File/Save and _keep editing"
+-msgstr "/ファイル(_F)/保存して編集を続ける(_K)"
++msgstr "/ファイル/保存して編集を続ける"
+ 
+ #: src/compose.c:594
+ msgid "/_File/_Attach file"
+-msgstr "/ファイル(_F)/ファイルを添付(_A)"
++msgstr "/ファイル/ファイルを添付"
+ 
+ #: src/compose.c:595
+ msgid "/_File/_Insert file"
+-msgstr "/ファイル(_F)/ファイルを挿入(_I)"
++msgstr "/ファイル/ファイルを挿入"
+ 
+ #: src/compose.c:597
+ msgid "/_File/Insert si_gnature"
+-msgstr "/ファイル(_F)/署名を挿入(_G)"
++msgstr "/ファイル/署名を挿入"
+ 
+ #: src/compose.c:598
+ msgid "/_File/A_ppend signature"
+-msgstr "/ファイル(_F)/署名を追加(_P)"
++msgstr "/ファイル/署名を追加"
+ 
+ #: src/compose.c:603
+ msgid "/_Edit/_Undo"
+-msgstr "/編集(_E)/元に戻す(_U)"
++msgstr "/編集/元に戻す"
+ 
+ #: src/compose.c:604
+ msgid "/_Edit/_Redo"
+-msgstr "/編集(_E)/やり直し(_R)"
++msgstr "/編集/やり直し"
+ 
+ #: src/compose.c:605 src/compose.c:612 src/mainwindow.c:598
+ #: src/messageview.c:179
+ msgid "/_Edit/---"
+-msgstr "/編集(_E)/---"
++msgstr "/編集/---"
+ 
+ #: src/compose.c:606
+ msgid "/_Edit/Cu_t"
+-msgstr "/編集(_E)/カット(_T)"
++msgstr "/編集/カット"
+ 
+ #: src/compose.c:609
+ msgid "/_Edit/Paste as _quotation"
+-msgstr "/編集(_E)/引用としてペースト(_Q)"
++msgstr "/編集/引用としてペースト"
+ 
+ #: src/compose.c:611 src/mainwindow.c:596 src/messageview.c:178
+ msgid "/_Edit/Select _all"
+-msgstr "/編集(_E)/すべて選択(_A)"
++msgstr "/編集/すべて選択"
+ 
+ #: src/compose.c:613
+ msgid "/_Edit/_Wrap current paragraph"
+-msgstr "/編集(_E)/現在の段落を整形する(_W)"
++msgstr "/編集/現在の段落を整形する"
+ 
+ #: src/compose.c:615
+ msgid "/_Edit/Wrap all long _lines"
+-msgstr "/編集(_E)/すべての長い行を折り返す(_L)"
++msgstr "/編集/すべての長い行を折り返す"
+ 
+ #: src/compose.c:617
+ msgid "/_Edit/Aut_o wrapping"
+-msgstr "/編集(_E)/自動整形(_O)"
++msgstr "/編集/自動整形"
+ 
+ #: src/compose.c:618 src/mainwindow.c:604 src/messageview.c:183
+ #: src/summaryview.c:483
+ msgid "/_View"
+-msgstr "/表示(_V)"
++msgstr "/表示"
+ 
+ #: src/compose.c:619
+ msgid "/_View/_To"
+-msgstr "/表示(_V)/宛先(_T)"
++msgstr "/表示/宛先"
+ 
+ #: src/compose.c:620
+ msgid "/_View/_Cc"
+-msgstr "/表示(_V)/_Cc"
++msgstr "/表示/_Cc"
+ 
+ #: src/compose.c:621
+ msgid "/_View/_Bcc"
+-msgstr "/表示(_V)/_Bcc"
++msgstr "/表示/_Bcc"
+ 
+ #: src/compose.c:622
+ msgid "/_View/_Reply-To"
+-msgstr "/表示(_V)/返信先を指定(_Reply-To)"
++msgstr "/表示/返信先を指定(_Reply-To)"
+ 
+ #: src/compose.c:623 src/compose.c:625 src/compose.c:627 src/compose.c:629
+ #: src/compose.c:632 src/mainwindow.c:627 src/mainwindow.c:633
+ #: src/mainwindow.c:660 src/mainwindow.c:684 src/mainwindow.c:787
+ #: src/mainwindow.c:791 src/messageview.c:275
+ msgid "/_View/---"
+-msgstr "/表示(_V)/---"
++msgstr "/表示/---"
+ 
+ #: src/compose.c:624
+ msgid "/_View/_Followup-To"
+-msgstr "/表示(_V)/フォロー先を指定(_Followup-To)"
++msgstr "/表示/フォロー先を指定(_Followup-To)"
+ 
+ #: src/compose.c:626
+ msgid "/_View/R_uler"
+-msgstr "/表示(_V)/ルーラ(_U)"
++msgstr "/表示/ルーラ"
+ 
+ #: src/compose.c:628
+ msgid "/_View/_Attachment"
+-msgstr "/表示(_V)/添付(_A)"
++msgstr "/表示/添付"
+ 
+ #: src/compose.c:630
+ msgid "/_View/Cu_stomize toolbar..."
+-msgstr "/表示(_V)/ツールバーをカスタマイズ(_S)..."
++msgstr "/表示/ツールバーをカスタマイズ..."
+ 
+ #: src/compose.c:638 src/mainwindow.c:691 src/messageview.c:190
+ msgid "/_View/Character _encoding"
+-msgstr "/表示(_V)/文字エンコーディング(_E)"
++msgstr "/表示/文字エンコーディング"
+ 
+ #: src/compose.c:639
+ msgid "/_View/Character _encoding/_Automatic"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/自動(_A)"
++msgstr "/表示/文字エンコーディング/自動"
+ 
+ #: src/compose.c:641 src/compose.c:647 src/compose.c:653 src/compose.c:657
+ #: src/compose.c:665 src/compose.c:669 src/compose.c:675 src/compose.c:681
+@@ -1471,143 +1471,143 @@ msgstr "/表示(_V)/文字エンコーディング(_E)/自動(_A)"
+ #: src/compose.c:711 src/mainwindow.c:687 src/mainwindow.c:694
+ #: src/messageview.c:186
+ msgid "/_View/Character _encoding/---"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/---"
++msgstr "/表示/文字エンコーディング/---"
+ 
+ #: src/compose.c:643 src/mainwindow.c:695 src/messageview.c:194
+ msgid "/_View/Character _encoding/7bit ascii (US-ASC_II)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/7bit ascii (US-ASC_II)"
++msgstr "/表示/文字エンコーディング/7bit ascii (US-ASC_II)"
+ 
+ #: src/compose.c:645 src/mainwindow.c:697 src/messageview.c:197
+ msgid "/_View/Character _encoding/Unicode (_UTF-8)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/Unicode (_UTF-8)"
++msgstr "/表示/文字エンコーディング/Unicode (_UTF-8)"
+ 
+ #: src/compose.c:649 src/mainwindow.c:701 src/messageview.c:200
+ msgid "/_View/Character _encoding/Western European (ISO-8859-_1)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/欧米 (ISO-8859-_1)"
++msgstr "/表示/文字エンコーディング/欧米 (ISO-8859-_1)"
+ 
+ #: src/compose.c:651 src/mainwindow.c:703 src/messageview.c:202
+ msgid "/_View/Character _encoding/Western European (ISO-8859-15)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/欧米 (ISO-8859-15)"
++msgstr "/表示/文字エンコーディング/欧米 (ISO-8859-15)"
+ 
+ #: src/compose.c:655 src/mainwindow.c:709 src/messageview.c:207
+ msgid "/_View/Character _encoding/Central European (ISO-8859-_2)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/中欧 (ISO-8859-_2)"
++msgstr "/表示/文字エンコーディング/中欧 (ISO-8859-_2)"
+ 
+ #: src/compose.c:659 src/mainwindow.c:713 src/messageview.c:210
+ msgid "/_View/Character _encoding/_Baltic (ISO-8859-13)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/バルト諸国 (ISO-8859-13)"
++msgstr "/表示/文字エンコーディング/バルト諸国 (ISO-8859-13)"
+ 
+ #: src/compose.c:661 src/mainwindow.c:715 src/messageview.c:212
+ msgid "/_View/Character _encoding/Baltic (ISO-8859-_4)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/バルト諸国 (ISO-8859-_4)"
++msgstr "/表示/文字エンコーディング/バルト諸国 (ISO-8859-_4)"
+ 
+ #: src/compose.c:663 src/mainwindow.c:717 src/messageview.c:214
+ msgid "/_View/Character _encoding/Baltic (Windows-1257)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/バルト諸国 (Windows-1257)"
++msgstr "/表示/文字エンコーディング/バルト諸国 (Windows-1257)"
+ 
+ #: src/compose.c:667 src/mainwindow.c:721 src/messageview.c:217
+ msgid "/_View/Character _encoding/Greek (ISO-8859-_7)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/ギリシャ語 (ISO-8859-_7)"
++msgstr "/表示/文字エンコーディング/ギリシャ語 (ISO-8859-_7)"
+ 
+ #: src/compose.c:671 src/mainwindow.c:725 src/messageview.c:220
+ msgid "/_View/Character _encoding/Arabic (ISO-8859-_6)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/アラビア語 (ISO-8859-_6)"
++msgstr "/表示/文字エンコーディング/アラビア語 (ISO-8859-_6)"
+ 
+ #: src/compose.c:673 src/mainwindow.c:727 src/messageview.c:222
+ msgid "/_View/Character _encoding/Arabic (Windows-1256)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/アラビア語 (Windows-1256)"
++msgstr "/表示/文字エンコーディング/アラビア語 (Windows-1256)"
+ 
+ #: src/compose.c:677 src/mainwindow.c:731 src/messageview.c:225
+ msgid "/_View/Character _encoding/Hebrew (ISO-8859-_8)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/ヘブライ語 (ISO-8859-_8)"
++msgstr "/表示/文字エンコーディング/ヘブライ語 (ISO-8859-_8)"
+ 
+ #: src/compose.c:679 src/mainwindow.c:733 src/messageview.c:227
+ msgid "/_View/Character _encoding/Hebrew (Windows-1255)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/ヘブライ語 (Windows-1255)"
++msgstr "/表示/文字エンコーディング/ヘブライ語 (Windows-1255)"
+ 
+ #: src/compose.c:683 src/mainwindow.c:737 src/messageview.c:230
+ msgid "/_View/Character _encoding/Turkish (ISO-8859-_9)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/トルコ語 (ISO-8859-_9)"
++msgstr "/表示/文字エンコーディング/トルコ語 (ISO-8859-_9)"
+ 
+ #: src/compose.c:687 src/mainwindow.c:741 src/messageview.c:233
+ msgid "/_View/Character _encoding/Cyrillic (ISO-8859-_5)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/キリル文字 (ISO-8859-_5)"
++msgstr "/表示/文字エンコーディング/キリル文字 (ISO-8859-_5)"
+ 
+ #: src/compose.c:689 src/mainwindow.c:743 src/messageview.c:235
+ msgid "/_View/Character _encoding/Cyrillic (KOI8-_R)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/キリル文字 (KOI8-_R)"
++msgstr "/表示/文字エンコーディング/キリル文字 (KOI8-_R)"
+ 
+ #: src/compose.c:691 src/mainwindow.c:745 src/messageview.c:237
+ msgid "/_View/Character _encoding/Cyrillic (KOI8-U)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/キリル文字 (KOI8-U)"
++msgstr "/表示/文字エンコーディング/キリル文字 (KOI8-U)"
+ 
+ #: src/compose.c:693 src/mainwindow.c:747 src/messageview.c:239
+ msgid "/_View/Character _encoding/Cyrillic (Windows-1251)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/キリル文字 (Windows-1251)"
++msgstr "/表示/文字エンコーディング/キリル文字 (Windows-1251)"
+ 
+ #: src/compose.c:697 src/mainwindow.c:751 src/messageview.c:242
+ msgid "/_View/Character _encoding/Japanese (ISO-2022-_JP)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/日本語 (ISO-2022-_JP)"
++msgstr "/表示/文字エンコーディング/日本語 (ISO-2022-_JP)"
+ 
+ #: src/compose.c:701 src/mainwindow.c:761 src/messageview.c:251
+ msgid "/_View/Character _encoding/Simplified Chinese (_GB2312)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/簡体字中国語 (_GB2312)"
++msgstr "/表示/文字エンコーディング/簡体字中国語 (_GB2312)"
+ 
+ #: src/compose.c:703 src/mainwindow.c:763 src/messageview.c:253
+ msgid "/_View/Character _encoding/Simplified Chinese (GBK)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/簡体字中国語 (GBK)"
++msgstr "/表示/文字エンコーディング/簡体字中国語 (GBK)"
+ 
+ #: src/compose.c:705 src/mainwindow.c:765 src/messageview.c:255
+ msgid "/_View/Character _encoding/Traditional Chinese (_Big5)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/繁体字中国語 (_Big5)"
++msgstr "/表示/文字エンコーディング/繁体字中国語 (_Big5)"
+ 
+ #: src/compose.c:709 src/mainwindow.c:773 src/messageview.c:262
+ msgid "/_View/Character _encoding/Korean (EUC-_KR)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/韓国語 (EUC-_KR)"
++msgstr "/表示/文字エンコーディング/韓国語 (EUC-_KR)"
+ 
+ #: src/compose.c:713 src/mainwindow.c:779 src/messageview.c:267
+ msgid "/_View/Character _encoding/Thai (TIS-620)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/タイ語 (TIS-620)"
++msgstr "/表示/文字エンコーディング/タイ語 (TIS-620)"
+ 
+ #: src/compose.c:715 src/mainwindow.c:781 src/messageview.c:269
+ msgid "/_View/Character _encoding/Thai (Windows-874)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/タイ語 (Windows-874)"
++msgstr "/表示/文字エンコーディング/タイ語 (Windows-874)"
+ 
+ #: src/compose.c:719 src/mainwindow.c:843 src/messageview.c:300
+ msgid "/_Tools/_Address book"
+-msgstr "/ツール(_T)/アドレス帳(_A)"
++msgstr "/ツール/アドレス帳"
+ 
+ #: src/compose.c:720
+ msgid "/_Tools/_Template"
+-msgstr "/ツール(_T)/テンプレート(_T)"
++msgstr "/ツール/テンプレート"
+ 
+ #: src/compose.c:722 src/mainwindow.c:867 src/messageview.c:316
+ msgid "/_Tools/Actio_ns"
+-msgstr "/ツール(_T)/アクション(_N)"
++msgstr "/ツール/アクション"
+ 
+ #: src/compose.c:725
+ msgid "/_Tools/Edit with e_xternal editor"
+-msgstr "/ツール(_T)/外部エディタで編集(_X)"
++msgstr "/ツール/外部エディタで編集"
+ 
+ #: src/compose.c:728
+ msgid "/_Tools/Request _disposition notification"
+-msgstr "/ツール(_T)/開封確認を要求する(_D)"
++msgstr "/ツール/開封確認を要求する"
+ 
+ #: src/compose.c:732
+ msgid "/_Tools/PGP Si_gn"
+-msgstr "/ツール(_T)/PGP署名(_G)"
++msgstr "/ツール/PGP署名"
+ 
+ #: src/compose.c:733
+ msgid "/_Tools/PGP _Encrypt"
+-msgstr "/ツール(_T)/PGP暗号化(_E)"
++msgstr "/ツール/PGP暗号化"
+ 
+ #: src/compose.c:738
+ msgid "/_Tools/_Check spell"
+-msgstr "/ツール(_T)/スペルチェック(_C)"
++msgstr "/ツール/スペルチェック"
+ 
+ #: src/compose.c:739
+ msgid "/_Tools/_Set spell language"
+-msgstr "/ツール(_T)/スペルチェックの言語を指定(_S)"
++msgstr "/ツール/スペルチェックの言語を指定"
+ 
+ #: src/compose.c:1022
+ #, c-format
+@@ -1708,7 +1708,7 @@ msgstr "件名:"
+ 
+ #: src/compose.c:3446
+ msgid "_Send"
+-msgstr "送信(_S)"
++msgstr "送信"
+ 
+ #: src/compose.c:3476
+ msgid ""
+@@ -1936,7 +1936,7 @@ msgstr ""
+ 
+ #: src/compose.c:7478 src/mainwindow.c:3080
+ msgid "_Customize toolbar..."
+-msgstr "ツールバーをカスタマイズ(_C)..."
++msgstr "ツールバーをカスタマイズ..."
+ 
+ #: src/compose.c:7654 src/compose.c:7660 src/compose.c:7682
+ msgid "Can't queue the message."
+@@ -1960,7 +1960,7 @@ msgstr "このメッセージは変更されています。草稿に保存しま
+ 
+ #: src/compose.c:7875 src/compose.c:7879
+ msgid "Close _without saving"
+-msgstr "保存せずに閉じる(_W)"
++msgstr "保存せずに閉じる"
+ 
+ #: src/compose.c:7926
+ #, c-format
+@@ -1973,11 +1973,11 @@ msgstr "テンプレートの適用"
+ 
+ #: src/compose.c:7929
+ msgid "_Replace"
+-msgstr "置換(_R)"
++msgstr "置換"
+ 
+ #: src/compose.c:7929
+ msgid "_Insert"
+-msgstr "挿入(_I)"
++msgstr "挿入"
+ 
+ #: src/editaddress.c:161
+ msgid "Add New Person"
+@@ -2458,67 +2458,67 @@ msgstr "フォルダ `%s' を作成できません。"
+ 
+ #: src/folderview.c:254 src/folderview.c:278
+ msgid "/Create _new folder..."
+-msgstr "/新規フォルダを作成(_N)..."
++msgstr "/新規フォルダを作成..."
+ 
+ #: src/folderview.c:255 src/folderview.c:279 src/folderview.c:307
+ msgid "/_Rename folder..."
+-msgstr "/フォルダ名を変更(_R)..."
++msgstr "/フォルダ名を変更..."
+ 
+ #: src/folderview.c:256 src/folderview.c:280
+ msgid "/_Move folder..."
+-msgstr "/フォルダを移動(_M)..."
++msgstr "/フォルダを移動..."
+ 
+ #: src/folderview.c:257 src/folderview.c:281 src/folderview.c:308
+ msgid "/_Delete folder"
+-msgstr "/フォルダを削除(_D)"
++msgstr "/フォルダを削除"
+ 
+ #: src/folderview.c:259 src/folderview.c:283
+ msgid "/Empty _junk"
+-msgstr "/迷惑メールを空にする(_J)"
++msgstr "/迷惑メールを空にする"
+ 
+ #: src/folderview.c:260 src/folderview.c:284
+ msgid "/Empty _trash"
+-msgstr "/ごみ箱を空にする(_T)"
++msgstr "/ごみ箱を空にする"
+ 
+ #: src/folderview.c:262 src/folderview.c:288 src/folderview.c:312
+ msgid "/_Check for new messages"
+-msgstr "/新着メッセージをチェック(_C)"
++msgstr "/新着メッセージをチェック"
+ 
+ #: src/folderview.c:264 src/folderview.c:290
+ msgid "/R_ebuild folder tree"
+-msgstr "/フォルダツリーを再構築(_E)"
++msgstr "/フォルダツリーを再構築"
+ 
+ #: src/folderview.c:265 src/folderview.c:291 src/folderview.c:314
+ msgid "/_Update summary"
+-msgstr "/サマリを更新(_U)"
++msgstr "/サマリを更新"
+ 
+ #: src/folderview.c:267 src/folderview.c:293 src/folderview.c:316
+ msgid "/Mar_k all read"
+-msgstr "/すべて読んだことにする(_K)"
++msgstr "/すべて読んだことにする"
+ 
+ #: src/folderview.c:268 src/folderview.c:294
+ msgid "/Send _queued messages"
+-msgstr "/送信待機中のメッセージを送信(_Q)"
++msgstr "/送信待機中のメッセージを送信"
+ 
+ #: src/folderview.c:270 src/folderview.c:296 src/folderview.c:318
+ msgid "/_Search messages..."
+-msgstr "/メッセージを検索(_S)..."
++msgstr "/メッセージを検索..."
+ 
+ #: src/folderview.c:271 src/folderview.c:297 src/folderview.c:319
+ msgid "/Ed_it search condition..."
+-msgstr "/検索条件を編集(_I)..."
++msgstr "/検索条件を編集..."
+ 
+ #: src/folderview.c:286 src/folderview.c:310
+ msgid "/Down_load"
+-msgstr "/ダウンロード(_L)"
++msgstr "/ダウンロード"
+ 
+ #: src/folderview.c:304
+ msgid "/Su_bscribe to newsgroup..."
+-msgstr "/ニュースグループを購読(_B)..."
++msgstr "/ニュースグループを購読..."
+ 
+ #: src/folderview.c:306
+ msgid "/_Remove newsgroup"
+-msgstr "/ニュースグループを削除(_R)"
++msgstr "/ニュースグループを削除"
+ 
+ #: src/folderview.c:343
+ msgid "Creating folder view...\n"
+@@ -2943,7 +2943,7 @@ msgstr "新着メッセージを受信中"
+ 
+ #: src/inc.c:699
+ msgid "Cancel _all"
+-msgstr "すべてキャンセル(_A)"
++msgstr "すべてキャンセル"
+ 
+ #: src/inc.c:745
+ msgid "Standby"
+@@ -3340,538 +3340,537 @@ msgstr ""
+ 
+ #: src/mainwindow.c:559
+ msgid "/_File/_Folder"
+-msgstr "/ファイル(_F)/フォルダ(_F)"
++msgstr "/ファイル/フォルダ"
+ 
+ #: src/mainwindow.c:560
+ msgid "/_File/_Folder/Create _new folder..."
+-msgstr "/ファイル(_F)/フォルダ(_F)/新規フォルダを作成(_N)..."
++msgstr "/ファイル/フォルダ/新規フォルダを作成..."
+ 
+ #: src/mainwindow.c:562
+ msgid "/_File/_Folder/_Rename folder..."
+-msgstr "/ファイル(_F)/フォルダ(_F)/フォルダ名を変更(_R)..."
++msgstr "/ファイル/フォルダ/フォルダ名を変更..."
+ 
+ #: src/mainwindow.c:563
+ msgid "/_File/_Folder/_Move folder..."
+-msgstr "/ファイル(_F)/フォルダ(_F)/フォルダを移動(_M)..."
++msgstr "/ファイル/フォルダ/フォルダを移動..."
+ 
+ #: src/mainwindow.c:564
+ msgid "/_File/_Folder/_Delete folder"
+-msgstr "/ファイル(_F)/フォルダ(_F)/フォルダを削除(_D)"
++msgstr "/ファイル/フォルダ/フォルダを削除"
+ 
+ #: src/mainwindow.c:565
+ msgid "/_File/_Mailbox"
+-msgstr "/ファイル(_F)/メールボックス(_M)"
++msgstr "/ファイル/メールボックス"
+ 
+ #: src/mainwindow.c:566
+ msgid "/_File/_Mailbox/Add _mailbox..."
+-msgstr "/ファイル(_F)/メールボックス(_M)/メールボックスを追加(_M)..."
++msgstr "/ファイル/メールボックス/メールボックスを追加..."
+ 
+ #: src/mainwindow.c:567
+ msgid "/_File/_Mailbox/_Remove mailbox"
+-msgstr "/ファイル(_F)/メールボックス(_M)/メールボックスを削除(_R)"
++msgstr "/ファイル/メールボックス/メールボックスを削除"
+ 
+ #: src/mainwindow.c:568 src/mainwindow.c:573
+ msgid "/_File/_Mailbox/---"
+-msgstr "/ファイル(_F)/メールボックス(_M)/---"
++msgstr "/ファイル/メールボックス/---"
+ 
+ #: src/mainwindow.c:569
+ msgid "/_File/_Mailbox/_Check for new messages"
+-msgstr "/ファイル(_F)/メールボックス(_M)/新着メッセージをチェック(_C)"
++msgstr "/ファイル/メールボックス/新着メッセージをチェック"
+ 
+ #: src/mainwindow.c:571
+ msgid "/_File/_Mailbox/Check for new messages in _all mailboxes"
+ msgstr ""
+-"/ファイル(_F)/メールボックス(_M)/すべてのメールボックスの新着メッセージを"
+-"チェック(_A)"
++"/ファイル/メールボックス/すべてのメールボックスの新着メッセージをチェック"
+ 
+ #: src/mainwindow.c:574
+ msgid "/_File/_Mailbox/R_ebuild folder tree"
+-msgstr "/ファイル(_F)/メールボックス(_M)/フォルダツリーを再構築(_E)"
++msgstr "/ファイル/メールボックス/フォルダツリーを再構築"
+ 
+ #: src/mainwindow.c:577
+ msgid "/_File/_Import mail data..."
+-msgstr "/ファイル(_F)/メールデータをインポート(_I)..."
++msgstr "/ファイル/メールデータをインポート..."
+ 
+ #: src/mainwindow.c:578
+ msgid "/_File/_Export mail data..."
+-msgstr "/ファイル(_F)/メールデータをエクスポート(_E)..."
++msgstr "/ファイル/メールデータをエクスポート..."
+ 
+ #: src/mainwindow.c:580
+ msgid "/_File/Empty all _trash"
+-msgstr "/ファイル(_F)/すべてのごみ箱を空にする(_T)"
++msgstr "/ファイル/すべてのごみ箱を空にする"
+ 
+ #: src/mainwindow.c:582 src/messageview.c:167
+ msgid "/_File/_Save as..."
+-msgstr "/ファイル(_F)/名前を付けて保存(_S)..."
++msgstr "/ファイル/名前を付けて保存..."
+ 
+ #: src/mainwindow.c:585 src/messageview.c:170
+ msgid "/_File/Page set_up..."
+-msgstr "/ファイル(_F)/ページ設定(_U)..."
++msgstr "/ファイル/ページ設定..."
+ 
+ #: src/mainwindow.c:587 src/messageview.c:172
+ msgid "/_File/_Print..."
+-msgstr "/ファイル(_F)/印刷(_P)..."
++msgstr "/ファイル/印刷..."
+ 
+ #: src/mainwindow.c:589
+ msgid "/_File/_Work offline"
+-msgstr "/ファイル(_F)/オフラインにする(_W)"
++msgstr "/ファイル/オフラインにする"
+ 
+ #. {N_("/_File/_Close"),		"<alt>W", app_exit_cb, 0, NULL},
+ #: src/mainwindow.c:592
+ msgid "/_File/E_xit"
+-msgstr "/ファイル(_F)/終了(_X)"
++msgstr "/ファイル/終了"
+ 
+ #: src/mainwindow.c:597
+ msgid "/_Edit/Select _thread"
+-msgstr "/編集(_E)/スレッドを選択(_T)"
++msgstr "/編集/スレッドを選択"
+ 
+ #: src/mainwindow.c:599 src/messageview.c:180
+ msgid "/_Edit/_Find in current message..."
+-msgstr "/編集(_E)/現在のメッセージ内を検索(_F)..."
++msgstr "/編集/現在のメッセージ内を検索..."
+ 
+ #: src/mainwindow.c:601
+ msgid "/_Edit/_Search messages..."
+-msgstr "/編集(_E)/メッセージを検索(_S)..."
++msgstr "/編集/メッセージを検索..."
+ 
+ #: src/mainwindow.c:602
+ msgid "/_Edit/_Quick search"
+-msgstr "/編集(_E)/クイック検索(_Q)"
++msgstr "/編集/クイック検索"
+ 
+ #: src/mainwindow.c:605
+ msgid "/_View/Show or hi_de"
+-msgstr "/表示(_V)/表示・非表示(_D)"
++msgstr "/表示/表示・非表示"
+ 
+ #: src/mainwindow.c:606
+ msgid "/_View/Show or hi_de/_Folder tree"
+-msgstr "/表示(_V)/表示・非表示(_D)/フォルダツリー(_F)"
++msgstr "/表示/表示・非表示/フォルダツリー"
+ 
+ #: src/mainwindow.c:608
+ msgid "/_View/Show or hi_de/_Message view"
+-msgstr "/表示(_V)/表示・非表示(_D)/メッセージビュー(_M)"
++msgstr "/表示/表示・非表示/メッセージビュー"
+ 
+ #: src/mainwindow.c:610
+ msgid "/_View/Show or hi_de/_Toolbar"
+-msgstr "/表示(_V)/表示・非表示(_D)/ツールバー(_T)"
++msgstr "/表示/表示・非表示/ツールバー"
+ 
+ #: src/mainwindow.c:612
+ msgid "/_View/Show or hi_de/_Toolbar/Icon _and text"
+-msgstr "/表示(_V)/表示・非表示(_D)/ツールバー(_T)/アイコンと文字(_A)"
++msgstr "/表示/表示・非表示/ツールバー/アイコンと文字"
+ 
+ #: src/mainwindow.c:614
+ msgid "/_View/Show or hi_de/_Toolbar/Text at the _right of icon"
+-msgstr "/表示(_V)/表示・非表示(_D)/ツールバー(_T)/アイコンの右に文字(_R)"
++msgstr "/表示/表示・非表示/ツールバー/アイコンの右に文字"
+ 
+ #: src/mainwindow.c:616
+ msgid "/_View/Show or hi_de/_Toolbar/_Icon"
+-msgstr "/表示(_V)/表示・非表示(_D)/ツールバー(_T)/アイコン(_I)"
++msgstr "/表示/表示・非表示/ツールバー/アイコン"
+ 
+ #: src/mainwindow.c:618
+ msgid "/_View/Show or hi_de/_Toolbar/_Text"
+-msgstr "/表示(_V)/表示・非表示(_D)/ツールバー(_T)/文字(_T)"
++msgstr "/表示/表示・非表示/ツールバー/文字"
+ 
+ #: src/mainwindow.c:620
+ msgid "/_View/Show or hi_de/_Toolbar/_None"
+-msgstr "/表示(_V)/表示・非表示(_D)/ツールバー(_T)/非表示(_N)"
++msgstr "/表示/表示・非表示/ツールバー/非表示"
+ 
+ #: src/mainwindow.c:622
+ msgid "/_View/Show or hi_de/_Search bar"
+-msgstr "/表示(_V)/表示・非表示(_D)/検索バー(_S)"
++msgstr "/表示/表示・非表示/検索バー"
+ 
+ #: src/mainwindow.c:624
+ msgid "/_View/Show or hi_de/Status _bar"
+-msgstr "/表示(_V)/表示・非表示(_D)/ステータスバー(_B)"
++msgstr "/表示/表示・非表示/ステータスバー"
+ 
+ #: src/mainwindow.c:626
+ msgid "/_View/_Customize toolbar..."
+-msgstr "/表示(_V)/ツールバーをカスタマイズ(_C)..."
++msgstr "/表示/ツールバーをカスタマイズ..."
+ 
+ #: src/mainwindow.c:628
+ msgid "/_View/Layou_t"
+-msgstr "/表示(_V)/レイアウト(_T)"
++msgstr "/表示/レイアウト"
+ 
+ #: src/mainwindow.c:629
+ msgid "/_View/Layou_t/_Normal"
+-msgstr "/表示(_V)/レイアウト(_T)/標準(_N)"
++msgstr "/表示/レイアウト/標準"
+ 
+ #: src/mainwindow.c:630
+ msgid "/_View/Layou_t/_Vertical"
+-msgstr "/表示(_V)/レイアウト(_T)/縦3列(_V)"
++msgstr "/表示/レイアウト/縦3列"
+ 
+ #: src/mainwindow.c:631
+ msgid "/_View/Separate f_older tree"
+-msgstr "/表示(_V)/フォルダツリーを分離(_O)"
++msgstr "/表示/フォルダツリーを分離"
+ 
+ #: src/mainwindow.c:632
+ msgid "/_View/Separate _message view"
+-msgstr "/表示(_V)/メッセージビューを分離(_M)"
++msgstr "/表示/メッセージビューを分離"
+ 
+ #: src/mainwindow.c:634
+ msgid "/_View/_Sort"
+-msgstr "/表示(_V)/ソート(_S)"
++msgstr "/表示/ソート"
+ 
+ #: src/mainwindow.c:635
+ msgid "/_View/_Sort/by _number"
+-msgstr "/表示(_V)/ソート(_S)/番号順(_N)"
++msgstr "/表示/ソート/番号順"
+ 
+ #: src/mainwindow.c:636
+ msgid "/_View/_Sort/by s_ize"
+-msgstr "/表示(_V)/ソート(_S)/サイズ順(_I)"
++msgstr "/表示/ソート/サイズ順"
+ 
+ #: src/mainwindow.c:637
+ msgid "/_View/_Sort/by _date"
+-msgstr "/表示(_V)/ソート(_S)/日付順(_D)"
++msgstr "/表示/ソート/日付順"
+ 
+ #: src/mainwindow.c:638
+ msgid "/_View/_Sort/by t_hread date"
+-msgstr "/表示(_V)/ソート(_S)/スレッドの日付順(_H)"
++msgstr "/表示/ソート/スレッドの日付順"
+ 
+ #: src/mainwindow.c:639
+ msgid "/_View/_Sort/by _from"
+-msgstr "/表示(_V)/ソート(_S)/差出人順(_F)"
++msgstr "/表示/ソート/差出人順"
+ 
+ #: src/mainwindow.c:640
+ msgid "/_View/_Sort/by _recipient"
+-msgstr "/表示(_V)/ソート(_S)/宛先順(_R)"
++msgstr "/表示/ソート/宛先順"
+ 
+ #: src/mainwindow.c:641
+ msgid "/_View/_Sort/by _subject"
+-msgstr "/表示(_V)/ソート(_S)/件名順(_S)"
++msgstr "/表示/ソート/件名順"
+ 
+ #: src/mainwindow.c:642
+ msgid "/_View/_Sort/by _color label"
+-msgstr "/表示(_V)/ソート(_S)/カラーラベル順(_C)"
++msgstr "/表示/ソート/カラーラベル順"
+ 
+ #: src/mainwindow.c:644
+ msgid "/_View/_Sort/by _mark"
+-msgstr "/表示(_V)/ソート(_S)/マーク(_M)"
++msgstr "/表示/ソート/マーク"
+ 
+ #: src/mainwindow.c:645
+ msgid "/_View/_Sort/by _unread"
+-msgstr "/表示(_V)/ソート(_S)/未読(_U)"
++msgstr "/表示/ソート/未読"
+ 
+ #: src/mainwindow.c:646
+ msgid "/_View/_Sort/by a_ttachment"
+-msgstr "/表示(_V)/ソート(_S)/添付(_T)"
++msgstr "/表示/ソート/添付"
+ 
+ #: src/mainwindow.c:648
+ msgid "/_View/_Sort/D_on't sort"
+-msgstr "/表示(_V)/ソート(_S)/ソートしない(_O)"
++msgstr "/表示/ソート/ソートしない"
+ 
+ #: src/mainwindow.c:649 src/mainwindow.c:652
+ msgid "/_View/_Sort/---"
+-msgstr "/表示(_V)/ソート(_S)/---"
++msgstr "/表示/ソート/---"
+ 
+ #: src/mainwindow.c:650
+ msgid "/_View/_Sort/Ascending"
+-msgstr "/表示(_V)/ソート(_S)/昇順"
++msgstr "/表示/ソート/昇順"
+ 
+ #: src/mainwindow.c:651
+ msgid "/_View/_Sort/Descending"
+-msgstr "/表示(_V)/ソート(_S)/降順"
++msgstr "/表示/ソート/降順"
+ 
+ #: src/mainwindow.c:653
+ msgid "/_View/_Sort/_Attract by subject"
+-msgstr "/表示(_V)/ソート(_S)/件名でまとめる(_A)"
++msgstr "/表示/ソート/件名でまとめる"
+ 
+ #: src/mainwindow.c:655
+ msgid "/_View/Th_read view"
+-msgstr "/表示(_V)/スレッド表示(_R)"
++msgstr "/表示/スレッド表示"
+ 
+ #: src/mainwindow.c:656
+ msgid "/_View/E_xpand all threads"
+-msgstr "/表示(_V)/すべてのスレッドを展開(_X)"
++msgstr "/表示/すべてのスレッドを展開"
+ 
+ #: src/mainwindow.c:657
+ msgid "/_View/Co_llapse all threads"
+-msgstr "/表示(_V)/すべてのスレッドを閉じる(_L)"
++msgstr "/表示/すべてのスレッドを閉じる"
+ 
+ #: src/mainwindow.c:658
+ msgid "/_View/Set display _item..."
+-msgstr "/表示(_V)/表示項目の設定(_I)..."
++msgstr "/表示/表示項目の設定..."
+ 
+ #: src/mainwindow.c:661
+ msgid "/_View/_Go to"
+-msgstr "/表示(_V)/移動(_G)"
++msgstr "/表示/移動"
+ 
+ #: src/mainwindow.c:662
+ msgid "/_View/_Go to/_Prev message"
+-msgstr "/表示(_V)/移動(_G)/前のメッセージ(_P)"
++msgstr "/表示/移動/前のメッセージ"
+ 
+ #: src/mainwindow.c:663
+ msgid "/_View/_Go to/_Next message"
+-msgstr "/表示(_V)/移動(_G)/次のメッセージ(_N)"
++msgstr "/表示/移動/次のメッセージ"
+ 
+ #: src/mainwindow.c:664 src/mainwindow.c:669 src/mainwindow.c:672
+ #: src/mainwindow.c:677 src/mainwindow.c:682
+ msgid "/_View/_Go to/---"
+-msgstr "/表示(_V)/移動(_G)/---"
++msgstr "/表示/移動/---"
+ 
+ #: src/mainwindow.c:665
+ msgid "/_View/_Go to/P_rev unread message"
+-msgstr "/表示(_V)/移動(_G)/前の未読メッセージ(_R)"
++msgstr "/表示/移動/前の未読メッセージ"
+ 
+ #: src/mainwindow.c:667
+ msgid "/_View/_Go to/N_ext unread message"
+-msgstr "/表示(_V)/移動(_G)/次の未読メッセージ(_E)"
++msgstr "/表示/移動/次の未読メッセージ"
+ 
+ #: src/mainwindow.c:670
+ msgid "/_View/_Go to/Prev ne_w message"
+-msgstr "/表示(_V)/移動(_G)/前の新着メッセージ(_W)"
++msgstr "/表示/移動/前の新着メッセージ"
+ 
+ #: src/mainwindow.c:671
+ msgid "/_View/_Go to/Ne_xt new message"
+-msgstr "/表示(_V)/移動(_G)/次の新着メッセージ(_X)"
++msgstr "/表示/移動/次の新着メッセージ"
+ 
+ #: src/mainwindow.c:673
+ msgid "/_View/_Go to/Prev _marked message"
+-msgstr "/表示(_V)/移動(_G)/前のマーク付きメッセージ(_M)"
++msgstr "/表示/移動/前のマーク付きメッセージ"
+ 
+ #: src/mainwindow.c:675
+ msgid "/_View/_Go to/Next m_arked message"
+-msgstr "/表示(_V)/移動(_G)/次のマーク付きメッセージ(_A)"
++msgstr "/表示/移動/次のマーク付きメッセージ"
+ 
+ #: src/mainwindow.c:678
+ msgid "/_View/_Go to/Prev _labeled message"
+-msgstr "/表示(_V)/移動(_G)/前のラベル付きメッセージ(_L)"
++msgstr "/表示/移動/前のラベル付きメッセージ"
+ 
+ #: src/mainwindow.c:680
+ msgid "/_View/_Go to/Next la_beled message"
+-msgstr "/表示(_V)/移動(_G)/次のラベル付きメッセージ(_B)"
++msgstr "/表示/移動/次のラベル付きメッセージ"
+ 
+ #: src/mainwindow.c:683
+ msgid "/_View/_Go to/Other _folder..."
+-msgstr "/表示(_V)/移動(_G)/別のフォルダ(_F)..."
++msgstr "/表示/移動/別のフォルダ..."
+ 
+ #: src/mainwindow.c:692 src/messageview.c:191
+ msgid "/_View/Character _encoding/_Auto detect"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/自動検出(_A)"
++msgstr "/表示/文字エンコーディング/自動検出"
+ 
+ #: src/mainwindow.c:705 src/messageview.c:204
+ msgid "/_View/Character _encoding/Western European (Windows-1252)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/欧米 (Windows-1252)"
++msgstr "/表示/文字エンコーディング/欧米 (Windows-1252)"
+ 
+ #: src/mainwindow.c:753 src/messageview.c:244
+ msgid "/_View/Character _encoding/Japanese (ISO-2022-JP-2)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/日本語 (ISO-2022-JP-2)"
++msgstr "/表示/文字エンコーディング/日本語 (ISO-2022-JP-2)"
+ 
+ #: src/mainwindow.c:755 src/messageview.c:246
+ msgid "/_View/Character _encoding/Japanese (_EUC-JP)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/日本語 (_EUC-JP)"
++msgstr "/表示/文字エンコーディング/日本語 (_EUC-JP)"
+ 
+ #: src/mainwindow.c:757 src/messageview.c:248
+ msgid "/_View/Character _encoding/Japanese (_Shift__JIS)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/日本語 (_Shift__JIS)"
++msgstr "/表示/文字エンコーディング/日本語 (_Shift__JIS)"
+ 
+ #: src/mainwindow.c:767 src/messageview.c:257
+ msgid "/_View/Character _encoding/Traditional Chinese (EUC-_TW)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/繁体字中国語 (EUC-_TW)"
++msgstr "/表示/文字エンコーディング/繁体字中国語 (EUC-_TW)"
+ 
+ #: src/mainwindow.c:769 src/messageview.c:259
+ msgid "/_View/Character _encoding/Chinese (ISO-2022-_CN)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/中国語 (ISO-2022-_CN)"
++msgstr "/表示/文字エンコーディング/中国語 (ISO-2022-_CN)"
+ 
+ #: src/mainwindow.c:775 src/messageview.c:264
+ msgid "/_View/Character _encoding/Korean (ISO-2022-KR)"
+-msgstr "/表示(_V)/文字エンコーディング(_E)/韓国語 (ISO-2022-KR)"
++msgstr "/表示/文字エンコーディング/韓国語 (ISO-2022-KR)"
+ 
+ #: src/mainwindow.c:788 src/summaryview.c:484
+ msgid "/_View/Open in new _window"
+-msgstr "/表示(_V)/新しいウィンドウで開く(_W)"
++msgstr "/表示/新しいウィンドウで開く"
+ 
+ #: src/mainwindow.c:789 src/messageview.c:276 src/summaryview.c:486
+ msgid "/_View/Mess_age source"
+-msgstr "/表示(_V)/メッセージのソース(_A)"
++msgstr "/表示/メッセージのソース"
+ 
+ #: src/mainwindow.c:790 src/messageview.c:277 src/summaryview.c:487
+ msgid "/_View/All _headers"
+-msgstr "/表示(_V)/すべてのヘッダ(_H)"
++msgstr "/表示/すべてのヘッダ"
+ 
+ #: src/mainwindow.c:792
+ msgid "/_View/_Update summary"
+-msgstr "/表示(_V)/サマリを更新(_U)"
++msgstr "/表示/サマリを更新"
+ 
+ #: src/mainwindow.c:794 src/messageview.c:280
+ msgid "/_Message"
+-msgstr "/メッセージ(_M)"
++msgstr "/メッセージ"
+ 
+ #: src/mainwindow.c:795
+ msgid "/_Message/Recei_ve"
+-msgstr "/メッセージ(_M)/受信(_V)"
++msgstr "/メッセージ/受信"
+ 
+ #: src/mainwindow.c:796
+ msgid "/_Message/Recei_ve/Get from _current account"
+-msgstr "/メッセージ(_M)/受信(_V)/現在のアカウントから受信(_C)"
++msgstr "/メッセージ/受信/現在のアカウントから受信"
+ 
+ #: src/mainwindow.c:798
+ msgid "/_Message/Recei_ve/Get from _all accounts"
+-msgstr "/メッセージ(_M)/受信(_V)/全アカウントから受信(_A)"
++msgstr "/メッセージ/受信/全アカウントから受信"
+ 
+ #: src/mainwindow.c:800
+ msgid "/_Message/Recei_ve/Stop receivin_g"
+-msgstr "/メッセージ(_M)/受信(_V)/受信を中止(_G)"
++msgstr "/メッセージ/受信/受信を中止"
+ 
+ #: src/mainwindow.c:802
+ msgid "/_Message/Recei_ve/_Remote mailbox..."
+-msgstr "/メッセージ(_M)/受信(_V)/リモートメールボックス(_R)..."
++msgstr "/メッセージ/受信/リモートメールボックス..."
+ 
+ #: src/mainwindow.c:804
+ msgid "/_Message/Recei_ve/---"
+-msgstr "/メッセージ(_M)/受信(_V)/---"
++msgstr "/メッセージ/受信/---"
+ 
+ #: src/mainwindow.c:805
+ msgid "/_Message/_Send queued messages"
+-msgstr "/メッセージ(_M)/送信待機中のメッセージを送信(_S)"
++msgstr "/メッセージ/送信待機中のメッセージを送信"
+ 
+ #: src/mainwindow.c:806 src/mainwindow.c:808 src/mainwindow.c:815
+ #: src/mainwindow.c:820 src/mainwindow.c:823 src/mainwindow.c:834
+ #: src/mainwindow.c:836 src/mainwindow.c:839 src/messageview.c:283
+ #: src/messageview.c:291 src/messageview.c:296
+ msgid "/_Message/---"
+-msgstr "/メッセージ(_M)/---"
++msgstr "/メッセージ/---"
+ 
+ #: src/mainwindow.c:807 src/messageview.c:281
+ msgid "/_Message/Compose _new message"
+-msgstr "/メッセージ(_M)/新規メッセージを作成(_N)"
++msgstr "/メッセージ/新規メッセージを作成"
+ 
+ #: src/mainwindow.c:809 src/messageview.c:284
+ msgid "/_Message/_Reply"
+-msgstr "/メッセージ(_M)/返信(_R)"
++msgstr "/メッセージ/返信"
+ 
+ #: src/mainwindow.c:810
+ msgid "/_Message/Repl_y to"
+-msgstr "/メッセージ(_M)/返信の宛先(_Y)"
++msgstr "/メッセージ/返信の宛先"
+ 
+ #: src/mainwindow.c:811 src/messageview.c:285
+ msgid "/_Message/Repl_y to/_all"
+-msgstr "/メッセージ(_M)/返信の宛先(_Y)/全員に返信(_A)"
++msgstr "/メッセージ/返信の宛先/全員に返信"
+ 
+ #: src/mainwindow.c:812 src/messageview.c:287
+ msgid "/_Message/Repl_y to/_sender"
+-msgstr "/メッセージ(_M)/返信の宛先(_Y)/差出人に返信(_S)"
++msgstr "/メッセージ/返信の宛先/差出人に返信"
+ 
+ #: src/mainwindow.c:813 src/messageview.c:289
+ msgid "/_Message/Repl_y to/mailing _list"
+-msgstr "/メッセージ(_M)/返信の宛先(_Y)/メーリングリストに返信(_L)"
++msgstr "/メッセージ/返信の宛先/メーリングリストに返信"
+ 
+ #: src/mainwindow.c:816 src/messageview.c:292
+ msgid "/_Message/_Forward"
+-msgstr "/メッセージ(_M)/転送(_F)"
++msgstr "/メッセージ/転送"
+ 
+ #: src/mainwindow.c:817 src/messageview.c:293
+ msgid "/_Message/For_ward as attachment"
+-msgstr "/メッセージ(_M)/添付として転送(_W)"
++msgstr "/メッセージ/添付として転送"
+ 
+ #: src/mainwindow.c:819 src/messageview.c:295
+ msgid "/_Message/Redirec_t"
+-msgstr "/メッセージ(_M)/手を加えずに転送(_T)"
++msgstr "/メッセージ/手を加えずに転送"
+ 
+ #: src/mainwindow.c:821
+ msgid "/_Message/M_ove..."
+-msgstr "/メッセージ(_M)/移動(_O)..."
++msgstr "/メッセージ/移動..."
+ 
+ #: src/mainwindow.c:822
+ msgid "/_Message/_Copy..."
+-msgstr "/メッセージ(_M)/コピー(_C)..."
++msgstr "/メッセージ/コピー..."
+ 
+ #: src/mainwindow.c:824
+ msgid "/_Message/_Mark"
+-msgstr "/メッセージ(_M)/マーク(_M)"
++msgstr "/メッセージ/マーク"
+ 
+ #: src/mainwindow.c:825
+ msgid "/_Message/_Mark/Set _flag"
+-msgstr "/メッセージ(_M)/マーク(_M)/フラグを付ける(_F)"
++msgstr "/メッセージ/マーク/フラグを付ける"
+ 
+ #: src/mainwindow.c:826
+ msgid "/_Message/_Mark/_Unset flag"
+-msgstr "/メッセージ(_M)/マーク(_M)/フラグを外す(_U)"
++msgstr "/メッセージ/マーク/フラグを外す"
+ 
+ #: src/mainwindow.c:827
+ msgid "/_Message/_Mark/---"
+-msgstr "/メッセージ(_M)/マーク(_M)/---"
++msgstr "/メッセージ/マーク/---"
+ 
+ #: src/mainwindow.c:828
+ msgid "/_Message/_Mark/Mark as unr_ead"
+-msgstr "/メッセージ(_M)/マーク(_M)/未読としてマーク(_E)"
++msgstr "/メッセージ/マーク/未読としてマーク"
+ 
+ #: src/mainwindow.c:829
+ msgid "/_Message/_Mark/Mark as rea_d"
+-msgstr "/メッセージ(_M)/マーク(_M)/読んだことにする(_D)"
++msgstr "/メッセージ/マーク/読んだことにする"
+ 
+ #: src/mainwindow.c:831
+ msgid "/_Message/_Mark/Mark _thread as read"
+-msgstr "/メッセージ(_M)/マーク(_M)/スレッドを読んだことにする(_T)"
++msgstr "/メッセージ/マーク/スレッドを読んだことにする"
+ 
+ #: src/mainwindow.c:833
+ msgid "/_Message/_Mark/Mark all _read"
+-msgstr "/メッセージ(_M)/マーク(_M)/すべて読んだことにする(_R)"
++msgstr "/メッセージ/マーク/すべて読んだことにする"
+ 
+ #: src/mainwindow.c:835
+ msgid "/_Message/_Delete"
+-msgstr "/メッセージ(_M)/削除(_D)"
++msgstr "/メッセージ/削除"
+ 
+ #: src/mainwindow.c:837
+ msgid "/_Message/Set as _junk mail"
+-msgstr "/メッセージ(_M)/迷惑メールに指定(_J)"
++msgstr "/メッセージ/迷惑メールに指定"
+ 
+ #: src/mainwindow.c:838
+ msgid "/_Message/Set as not j_unk mail"
+-msgstr "/メッセージ(_M)/迷惑メールではない(_U)"
++msgstr "/メッセージ/迷惑メールではない"
+ 
+ #: src/mainwindow.c:840 src/messageview.c:297
+ msgid "/_Message/Re-_edit"
+-msgstr "/メッセージ(_M)/再編集(_E)"
++msgstr "/メッセージ/再編集"
+ 
+ #: src/mainwindow.c:844
+ msgid "/_Tools/Add sender to address boo_k..."
+-msgstr "/ツール(_T)/差出人をアドレス帳に追加(_K)..."
++msgstr "/ツール/差出人をアドレス帳に追加..."
+ 
+ #: src/mainwindow.c:847
+ msgid "/_Tools/_Filter all messages in folder"
+-msgstr "/ツール(_T)/フォルダ中のすべてのメッセージを振り分け(_F)"
++msgstr "/ツール/フォルダ中のすべてのメッセージを振り分け"
+ 
+ #: src/mainwindow.c:849
+ msgid "/_Tools/Filter _selected messages"
+-msgstr "/ツール(_T)/選択中のメッセージを振り分け(_S)"
++msgstr "/ツール/選択中のメッセージを振り分け"
+ 
+ #: src/mainwindow.c:851 src/messageview.c:304
+ msgid "/_Tools/_Create filter rule"
+-msgstr "/ツール(_T)/振り分けルールを作成(_C)"
++msgstr "/ツール/振り分けルールを作成"
+ 
+ #: src/mainwindow.c:852 src/messageview.c:306
+ msgid "/_Tools/_Create filter rule/_Automatically"
+-msgstr "/ツール(_T)/振り分けルールを作成(_C)/自動(_A)"
++msgstr "/ツール/振り分けルールを作成/自動"
+ 
+ #: src/mainwindow.c:854 src/messageview.c:308
+ msgid "/_Tools/_Create filter rule/by _From"
+-msgstr "/ツール(_T)/振り分けルールを作成(_C)/_Fromから"
++msgstr "/ツール/振り分けルールを作成/_Fromから"
+ 
+ #: src/mainwindow.c:856 src/messageview.c:310
+ msgid "/_Tools/_Create filter rule/by _To"
+-msgstr "/ツール(_T)/振り分けルールを作成(_C)/_Toから"
++msgstr "/ツール/振り分けルールを作成/_Toから"
+ 
+ #: src/mainwindow.c:858 src/messageview.c:312
+ msgid "/_Tools/_Create filter rule/by _Subject"
+-msgstr "/ツール(_T)/振り分けルールを作成(_C)/_Subjectから"
++msgstr "/ツール/振り分けルールを作成/_Subjectから"
+ 
+ #: src/mainwindow.c:861
+ msgid "/_Tools/Filter _junk mails in folder"
+-msgstr "/ツール(_T)/フォルダ中の迷惑メールを振り分け(_J)"
++msgstr "/ツール/フォルダ中の迷惑メールを振り分け"
+ 
+ #: src/mainwindow.c:863
+ msgid "/_Tools/Filter junk _mails in selected messages"
+-msgstr "/ツール(_T)/選択メッセージ中の迷惑メールを振り分け(_M)"
++msgstr "/ツール/選択メッセージ中の迷惑メールを振り分け"
+ 
+ #: src/mainwindow.c:870
+ msgid "/_Tools/Delete du_plicated messages"
+-msgstr "/ツール(_T)/重複メッセージを削除(_P)"
++msgstr "/ツール/重複メッセージを削除"
+ 
+ #: src/mainwindow.c:872
+ msgid "/_Tools/C_oncatenate separated messages"
+-msgstr "/ツール(_T)/分割メッセージを結合(_O)"
++msgstr "/ツール/分割メッセージを結合"
+ 
+ #: src/mainwindow.c:875
+ msgid "/_Tools/E_xecute marked process"
+-msgstr "/ツール(_T)/マークされた処理を実行(_X)"
++msgstr "/ツール/マークされた処理を実行"
+ 
+ #: src/mainwindow.c:877
+ msgid "/_Tools/Op_en configuration folder"
+@@ -3883,103 +3882,107 @@ msgstr "/ツール(_T)/添付ファイルフォルダを開く(_T)"
+ 
+ #: src/mainwindow.c:881
+ msgid "/_Tools/_Log window"
+-msgstr "/ツール(_T)/ログウィンドウ(_L)"
++msgstr "/ツール/ログウィンドウ"
+ 
+ #: src/mainwindow.c:883
+ msgid "/_Configuration"
+-msgstr "/設定(_C)"
++msgstr "/設定"
++
++#: src/mainwindow.c:880
++msgid "/_Configuration/Preferences..."
++msgstr "/設定/環境設定..."
+ 
+ #: src/mainwindow.c:884
+ msgid "/_Configuration/_Common preferences..."
+-msgstr "/設定(_C)/全般の設定(_C)..."
++msgstr "/設定/全般の設定..."
+ 
+ #: src/mainwindow.c:886
+ msgid "/_Configuration/_Filter settings..."
+-msgstr "/設定(_C)/振り分けの設定(_F)..."
++msgstr "/設定/振り分けの設定..."
+ 
+ #: src/mainwindow.c:888
+ msgid "/_Configuration/_Template..."
+-msgstr "/設定(_C)/テンプレート(_T)..."
++msgstr "/設定/テンプレート..."
+ 
+ #: src/mainwindow.c:890
+ msgid "/_Configuration/_Actions..."
+-msgstr "/設定(_C)/アクション(_A)..."
++msgstr "/設定/アクション..."
+ 
+ #: src/mainwindow.c:892
+ msgid "/_Configuration/Plug-in _manager..."
+-msgstr "/設定(_C)/プラグインの管理(_M)..."
++msgstr "/設定/プラグインの管理..."
+ 
+ #: src/mainwindow.c:894
+ msgid "/_Configuration/---"
+-msgstr "/設定(_C)/---"
++msgstr "/設定/---"
+ 
+ #: src/mainwindow.c:895
+ msgid "/_Configuration/_Preferences for current account..."
+-msgstr "/設定(_C)/現在のアカウントの設定(_P)..."
++msgstr "/設定/現在のアカウントの設定..."
+ 
+ #: src/mainwindow.c:897
+ msgid "/_Configuration/Create _new account..."
+-msgstr "/設定(_C)/新規アカウントの作成(_N)..."
++msgstr "/設定/新規アカウントの作成..."
+ 
+ #: src/mainwindow.c:899
+ msgid "/_Configuration/_Edit accounts..."
+-msgstr "/設定(_C)/アカウントの編集(_E)..."
++msgstr "/設定/アカウントの編集..."
+ 
+ #: src/mainwindow.c:901
+ msgid "/_Configuration/C_hange current account"
+-msgstr "/設定(_C)/現在のアカウントを変更(_H)"
++msgstr "/設定/現在のアカウントを変更"
+ 
+ #: src/mainwindow.c:905
+ msgid "/_Help/_Manual"
+-msgstr "/ヘルプ(_H)/マニュアル(_M)"
++msgstr "/ヘルプ/マニュアル"
+ 
+ #: src/mainwindow.c:906
+ msgid "/_Help/_Manual/_English"
+-msgstr "/ヘルプ(_H)/マニュアル(_M)/英語(_E)"
++msgstr "/ヘルプ/マニュアル/英語"
+ 
+ #: src/mainwindow.c:907
+ msgid "/_Help/_Manual/_Japanese"
+-msgstr "/ヘルプ(_H)/マニュアル(_M)/日本語(_J)"
++msgstr "/ヘルプ/マニュアル/日本語"
+ 
+ #: src/mainwindow.c:908
+ msgid "/_Help/_FAQ"
+-msgstr "/ヘルプ(_H)/_FAQ"
++msgstr "/ヘルプ/_FAQ"
+ 
+ #: src/mainwindow.c:909
+ msgid "/_Help/_FAQ/_English"
+-msgstr "/ヘルプ(_H)/_FAQ/英語(_E)"
++msgstr "/ヘルプ/_FAQ/英語"
+ 
+ #: src/mainwindow.c:910
+ msgid "/_Help/_FAQ/_German"
+-msgstr "/ヘルプ(_H)/_FAQ/ドイツ語(_G)"
++msgstr "/ヘルプ/_FAQ/ドイツ語"
+ 
+ #: src/mainwindow.c:911
+ msgid "/_Help/_FAQ/_Spanish"
+-msgstr "/ヘルプ(_H)/_FAQ/スペイン語(_S)"
++msgstr "/ヘルプ/_FAQ/スペイン語"
+ 
+ #: src/mainwindow.c:912
+ msgid "/_Help/_FAQ/_French"
+-msgstr "/ヘルプ(_H)/_FAQ/フランス語(_F)"
++msgstr "/ヘルプ/_FAQ/フランス語"
+ 
+ #: src/mainwindow.c:913
+ msgid "/_Help/_FAQ/_Italian"
+-msgstr "/ヘルプ(_H)/_FAQ/イタリア語(_I)"
++msgstr "/ヘルプ/_FAQ/イタリア語"
+ 
+ #: src/mainwindow.c:914
+ msgid "/_Help/_Command line options"
+-msgstr "/ヘルプ(_H)/コマンドラインオプション(_C)"
++msgstr "/ヘルプ/コマンドラインオプション"
+ 
+ #: src/mainwindow.c:916 src/mainwindow.c:923
+ msgid "/_Help/---"
+-msgstr "/ヘルプ(_H)/---"
++msgstr "/ヘルプ/---"
+ 
+ #: src/mainwindow.c:917
+ msgid "/_Help/_Update check..."
+-msgstr "/ヘルプ(_H)/アップデートをチェック(_U)..."
++msgstr "/ヘルプ/アップデートをチェック..."
+ 
+ #: src/mainwindow.c:919
+ msgid "/_Help/Update check of _plug-ins..."
+-msgstr "/ヘルプ(_H)/プラグインのアップデートをチェック(_P)..."
++msgstr "/ヘルプ/プラグインのアップデートをチェック..."
+ 
+ #: src/mainwindow.c:966
+ msgid "Creating main window...\n"
+@@ -4060,51 +4063,51 @@ msgstr "Sylpheed - メッセージビュー"
+ 
+ #: src/mainwindow.c:2607 src/mimeview.c:142 src/summaryview.c:438
+ msgid "/_Reply"
+-msgstr "/返信(_R)"
++msgstr "/返信"
+ 
+ #: src/mainwindow.c:2608
+ msgid "/Reply to _all"
+-msgstr "/全員に返信(_A)"
++msgstr "/全員に返信"
+ 
+ #: src/mainwindow.c:2609
+ msgid "/Reply to _sender"
+-msgstr "/差出人に返信(_S)"
++msgstr "/差出人に返信"
+ 
+ #: src/mainwindow.c:2610
+ msgid "/Reply to mailing _list"
+-msgstr "/メーリングリストに返信(_L)"
++msgstr "/メーリングリストに返信"
+ 
+ #: src/mainwindow.c:2615 src/summaryview.c:445
+ msgid "/_Forward"
+-msgstr "/転送(_F)"
++msgstr "/転送"
+ 
+ #: src/mainwindow.c:2616 src/summaryview.c:446
+ msgid "/For_ward as attachment"
+-msgstr "/添付として転送(_W)"
++msgstr "/添付として転送"
+ 
+ #: src/mainwindow.c:2617 src/summaryview.c:447
+ msgid "/Redirec_t"
+-msgstr "/手を加えずに転送(_T)"
++msgstr "/手を加えずに転送"
+ 
+ #: src/mainwindow.c:3073
+ msgid "Icon _and text"
+-msgstr "アイコンと文字(_A)"
++msgstr "アイコンと文字"
+ 
+ #: src/mainwindow.c:3074
+ msgid "Text at the _right of icon"
+-msgstr "アイコンの右に文字(_R)"
++msgstr "アイコンの右に文字"
+ 
+ #: src/mainwindow.c:3076
+ msgid "_Icon"
+-msgstr "アイコン(_I)"
++msgstr "アイコン"
+ 
+ #: src/mainwindow.c:3077
+ msgid "_Text"
+-msgstr "文字(_T)"
++msgstr "文字"
+ 
+ #: src/mainwindow.c:3078
+ msgid "_None"
+-msgstr "非表示(_N)"
++msgstr "非表示"
+ 
+ #: src/mainwindow.c:3116
+ msgid "You are offline. Click the icon to go online."
+@@ -4253,7 +4256,7 @@ msgstr "検索完了"
+ 
+ #: src/messageview.c:301
+ msgid "/_Tools/Add sender to address boo_k"
+-msgstr "/ツール(_T)/差出人をアドレス帳に追加(_K)"
++msgstr "/ツール/差出人をアドレス帳に追加"
+ 
+ #: src/messageview.c:343
+ msgid "Creating message view...\n"
+@@ -4273,7 +4276,7 @@ msgstr "添付リストビューに切り替える"
+ 
+ #: src/messageview.c:417
+ msgid "Save _all attachments..."
+-msgstr "すべての添付ファイルを保存(_A)..."
++msgstr "すべての添付ファイルを保存..."
+ 
+ #: src/messageview.c:481
+ msgid "Message View - Sylpheed"
+@@ -4294,43 +4297,43 @@ msgstr "ファイル `%s' を保存できません。"
+ 
+ #: src/mimeview.c:136
+ msgid "/Open _with..."
+-msgstr "/アプリケーションから開く(_W)..."
++msgstr "/アプリケーションから開く..."
+ 
+ #: src/mimeview.c:137
+ msgid "/_Display as text"
+-msgstr "/テキストとして表示(_D)"
++msgstr "/テキストとして表示"
+ 
+ #: src/mimeview.c:138
+ msgid "/_Save as..."
+-msgstr "/名前を付けて保存(_S)..."
++msgstr "/名前を付けて保存..."
+ 
+ #: src/mimeview.c:139
+ msgid "/Save _all..."
+-msgstr "/すべて保存(_A)..."
++msgstr "/すべて保存..."
+ 
+ #: src/mimeview.c:140 src/summaryview.c:489
+ msgid "/_Print..."
+-msgstr "/印刷(_P)..."
++msgstr "/印刷..."
+ 
+ #: src/mimeview.c:143
+ msgid "/_Reply/_Reply"
+-msgstr "/返信(_R)/返信(_R)"
++msgstr "/返信/返信"
+ 
+ #: src/mimeview.c:144
+ msgid "/_Reply/Reply to _all"
+-msgstr "/返信(_R)/全員に返信(_A)"
++msgstr "/返信/全員に返信"
+ 
+ #: src/mimeview.c:146
+ msgid "/_Reply/Reply to _sender"
+-msgstr "/返信(_R)/差出人に返信(_S)"
++msgstr "/返信/差出人に返信"
+ 
+ #: src/mimeview.c:148
+ msgid "/_Reply/Reply to mailing _list"
+-msgstr "/返信(_R)/メーリングリストに返信(_L)"
++msgstr "/返信/メーリングリストに返信"
+ 
+ #: src/mimeview.c:152
+ msgid "/_Check signature"
+-msgstr "/署名を検証(_C)"
++msgstr "/署名を検証"
+ 
+ #: src/mimeview.c:180
+ msgid "Creating MIME view...\n"
+@@ -4346,15 +4349,15 @@ msgstr "添付ファイルに対する操作を選択してください:\n"
+ 
+ #: src/mimeview.c:659 src/textview.c:847
+ msgid "Open _with..."
+-msgstr "アプリケーションから開く(_W)..."
++msgstr "アプリケーションから開く..."
+ 
+ #: src/mimeview.c:663
+ msgid "_Display as text"
+-msgstr "テキストとして表示(_D)"
++msgstr "テキストとして表示"
+ 
+ #: src/mimeview.c:667 src/textview.c:850
+ msgid "_Save as..."
+-msgstr "名前を付けて保存(_S)..."
++msgstr "名前を付けて保存..."
+ 
+ #: src/mimeview.c:713
+ msgid ""
+@@ -4366,7 +4369,7 @@ msgstr ""
+ 
+ #: src/mimeview.c:719
+ msgid "_Check signature"
+-msgstr "署名を検証(_C)"
++msgstr "署名を検証"
+ 
+ #: src/mimeview.c:1015 src/mimeview.c:1111 src/mimeview.c:1141
+ #: src/mimeview.c:1161 src/mimeview.c:1213 src/mimeview.c:1340
+@@ -4425,7 +4428,7 @@ msgstr "プラグインの管理"
+ 
+ #: src/plugin_manager.c:142
+ msgid "Check for _update"
+-msgstr "アップデートをチェック(_U)"
++msgstr "アップデートをチェック"
+ 
+ #: src/plugin_manager.c:193
+ msgid "Plug-in information"
+@@ -6867,7 +6870,7 @@ msgstr "印刷(_P)..."
+ 
+ #: src/query_search.c:526
+ msgid "_Save as search folder"
+-msgstr "検索フォルダとして保存(_S)"
++msgstr "検索フォルダとして保存"
+ 
+ #: src/query_search.c:661
+ #, c-format
+@@ -6984,23 +6987,23 @@ msgstr "署名検証エラー"
+ 
+ #: src/rpop3.c:247
+ msgid "_File"
+-msgstr "ファイル(_F)"
++msgstr "ファイル"
+ 
+ #: src/rpop3.c:248 src/rpop3.c:458
+ msgid "_Get"
+-msgstr "受信(_G)"
++msgstr "受信"
+ 
+ #: src/rpop3.c:251 src/rpop3.c:1105
+ msgid "_Resume"
+-msgstr "再開(_R)"
++msgstr "再開"
+ 
+ #: src/rpop3.c:254
+ msgid "_Help"
+-msgstr "ヘルプ(_H)"
++msgstr "ヘルプ"
+ 
+ #: src/rpop3.c:255
+ msgid "_About"
+-msgstr "このプログラムについて(_A)"
++msgstr ""
+ 
+ #: src/rpop3.c:357
+ #, c-format
+@@ -7558,15 +7561,15 @@ msgstr "この証明書を受け入れますか?"
+ 
+ #: src/sslmanager.c:190 src/sslmanager.c:198
+ msgid "_Reject"
+-msgstr "拒否する(_R)"
++msgstr "拒否する"
+ 
+ #: src/sslmanager.c:191 src/sslmanager.c:197
+ msgid "_Temporarily accept"
+-msgstr "一時的に受け入れる(_T)"
++msgstr "一時的に受け入れる"
+ 
+ #: src/sslmanager.c:192 src/sslmanager.c:196
+ msgid "Always _accept"
+-msgstr "常に受け入れる(_A)"
++msgstr "常に受け入れる"
+ 
+ #: src/subscribedialog.c:203
+ msgid "Subscribe to newsgroup"
+@@ -7623,99 +7626,99 @@ msgstr "%d ニュースグループを受信 (%s 受信)"
+ 
+ #: src/summaryview.c:439
+ msgid "/Repl_y to"
+-msgstr "/返信の宛先(_Y)"
++msgstr "/返信の宛先"
+ 
+ #: src/summaryview.c:440
+ msgid "/Repl_y to/_all"
+-msgstr "/返信の宛先(_Y)/全員に返信(_A)"
++msgstr "/返信の宛先/全員に返信"
+ 
+ #: src/summaryview.c:441
+ msgid "/Repl_y to/_sender"
+-msgstr "/返信の宛先(_Y)/差出人に返信(_S)"
++msgstr "/返信の宛先/差出人に返信"
+ 
+ #: src/summaryview.c:442
+ msgid "/Repl_y to/mailing _list"
+-msgstr "/返信の宛先(_Y)/メーリングリストに返信(_L)"
++msgstr "/返信の宛先/メーリングリストに返信"
+ 
+ #: src/summaryview.c:449
+ msgid "/M_ove..."
+-msgstr "/移動(_O)..."
++msgstr "/移動..."
+ 
+ #: src/summaryview.c:450
+ msgid "/_Copy..."
+-msgstr "/コピー(_C)..."
++msgstr "/コピー..."
+ 
+ #: src/summaryview.c:452
+ msgid "/_Mark"
+-msgstr "/マーク(_M)"
++msgstr "/マーク"
+ 
+ #: src/summaryview.c:453
+ msgid "/_Mark/Set _flag"
+-msgstr "/マーク(_M)/フラグを付ける(_F)"
++msgstr "/マーク/フラグを付ける"
+ 
+ #: src/summaryview.c:454
+ msgid "/_Mark/_Unset flag"
+-msgstr "/マーク(_M)/フラグを外す(_U)"
++msgstr "/マーク/フラグを外す"
+ 
+ #: src/summaryview.c:455
+ msgid "/_Mark/---"
+-msgstr "/マーク(_M)/---"
++msgstr "/マーク/---"
+ 
+ #: src/summaryview.c:456
+ msgid "/_Mark/Mark as unr_ead"
+-msgstr "/マーク(_M)/未読としてマーク(_E)"
++msgstr "/マーク/未読としてマーク"
+ 
+ #: src/summaryview.c:457
+ msgid "/_Mark/Mark as rea_d"
+-msgstr "/マーク(_M)/読んだことにする(_D)"
++msgstr "/マーク/読んだことにする"
+ 
+ #: src/summaryview.c:459
+ msgid "/_Mark/Mark _thread as read"
+-msgstr "/マーク(_M)/スレッドを読んだことにする(_T)"
++msgstr "/マーク/スレッドを読んだことにする"
+ 
+ #: src/summaryview.c:461
+ msgid "/_Mark/Mark all _read"
+-msgstr "/マーク(_M)/すべて読んだことにする(_R)"
++msgstr "/マーク/すべて読んだことにする"
+ 
+ #: src/summaryview.c:462
+ msgid "/Color la_bel"
+-msgstr "/カラーラベル(_B)"
++msgstr "/カラーラベル"
+ 
+ #: src/summaryview.c:466
+ msgid "/Set as _junk mail"
+-msgstr "/迷惑メールに指定(_J)"
++msgstr "/迷惑メールに指定"
+ 
+ #: src/summaryview.c:467
+ msgid "/Set as not j_unk mail"
+-msgstr "/迷惑メールではない(_U)"
++msgstr "/迷惑メールではない"
+ 
+ #: src/summaryview.c:469
+ msgid "/Re-_edit"
+-msgstr "/再編集(_E)"
++msgstr "/再編集"
+ 
+ #: src/summaryview.c:471
+ msgid "/Add sender to address boo_k..."
+-msgstr "/差出人をアドレス帳に追加(_K)..."
++msgstr "/差出人をアドレス帳に追加..."
+ 
+ #: src/summaryview.c:473
+ msgid "/Create f_ilter rule"
+-msgstr "/振り分けルールを作成(_I)"
++msgstr "/振り分けルールを作成"
+ 
+ #: src/summaryview.c:474
+ msgid "/Create f_ilter rule/_Automatically"
+-msgstr "/振り分けルールを作成(_I)/自動(_A)"
++msgstr "/振り分けルールを作成/自動"
+ 
+ #: src/summaryview.c:476
+ msgid "/Create f_ilter rule/by _From"
+-msgstr "/振り分けルールを作成(_I)/_Fromから"
++msgstr "/振り分けルールを作成/_Fromから"
+ 
+ #: src/summaryview.c:478
+ msgid "/Create f_ilter rule/by _To"
+-msgstr "/振り分けルールを作成(_I)/_Toから"
++msgstr "/振り分けルールを作成/_Toから"
+ 
+ #: src/summaryview.c:480
+ msgid "/Create f_ilter rule/by _Subject"
+-msgstr "/振り分けルールを作成(_I)/_Subjectから"
++msgstr "/振り分けルールを作成/_Subjectから"
+ 
+ #: src/summaryview.c:513
+ msgid "Creating summary view...\n"
+@@ -7749,7 +7752,7 @@ msgstr "サーバに接続できませんでした。"
+ 
+ #: src/summaryview.c:1626
+ msgid "_Search again"
+-msgstr "再検索(_S)"
++msgstr "再検索"
+ 
+ #: src/summaryview.c:1648 src/summaryview.c:1657
+ msgid "No more unread messages"
+@@ -7975,7 +7978,7 @@ msgstr "このメッセージは暗号化されていますが、復号できま
+ 
+ #: src/textview.c:859
+ msgid "_Copy file name"
+-msgstr "ファイル名をコピー(_C)"
++msgstr "ファイル名をコピー"
+ 
+ #: src/textview.c:1201
+ msgid "This message can't be displayed.\n"
+@@ -7991,31 +7994,31 @@ msgstr ""
+ 
+ #: src/textview.c:2477
+ msgid "Sa_ve this image as..."
+-msgstr "画像を保存(_V)..."
++msgstr "画像を保存..."
+ 
+ #: src/textview.c:2497 src/trayicon.c:160
+ msgid "Compose _new message"
+-msgstr "新規メッセージを作成(_N)"
++msgstr "新規メッセージを作成"
+ 
+ #: src/textview.c:2499
+ msgid "R_eply to this address"
+-msgstr "このアドレスに返信(_E)"
++msgstr "このアドレスに返信"
+ 
+ #: src/textview.c:2502
+ msgid "Add to address _book..."
+-msgstr "アドレス帳に追加(_B)..."
++msgstr "アドレス帳に追加..."
+ 
+ #: src/textview.c:2504
+ msgid "Copy this add_ress"
+-msgstr "アドレスをコピー(_R)"
++msgstr "アドレスをコピー"
+ 
+ #: src/textview.c:2507
+ msgid "_Open with Web browser"
+-msgstr "Webブラウザで開く(_O)"
++msgstr "Webブラウザで開く"
+ 
+ #: src/textview.c:2509
+ msgid "Copy this _link"
+-msgstr "リンクをコピー(_L)"
++msgstr "リンクをコピー"
+ 
+ #: src/textview.c:2716
+ #, c-format
+@@ -8036,23 +8039,23 @@ msgstr "偽装URLの警告"
+ 
+ #: src/trayicon.c:141
+ msgid "_Display Sylpheed"
+-msgstr "Sylpheedを表示(_D)"
++msgstr "Sylpheedを表示"
+ 
+ #: src/trayicon.c:146
+ msgid "Get from _current account"
+-msgstr "現在のアカウントから受信(_C)"
++msgstr "現在のアカウントから受信"
+ 
+ #: src/trayicon.c:150
+ msgid "Get from _all accounts"
+-msgstr "全アカウントから受信(_A)"
++msgstr "全アカウントから受信"
+ 
+ #: src/trayicon.c:154
+ msgid "_Send queued messages"
+-msgstr "送信待機中のメッセージを送信(_S)"
++msgstr "送信待機中のメッセージを送信"
+ 
+ #: src/trayicon.c:166
+ msgid "E_xit"
+-msgstr "終了(_X)"
++msgstr "終了"
+ 
+ #: src/trayicon.c:200 src/trayicon.c:300
+ msgid "Sylpheed"
+diff --git a/po/sylpheed.pot b/po/sylpheed.pot
+index 00edae3..18693f1 100644
+--- a/po/sylpheed.pot
++++ b/po/sylpheed.pot
+@@ -3764,6 +3764,10 @@ msgstr ""
+ msgid "/_Configuration"
+ msgstr ""
+ 
++#: src/mainwindow.c:880
++msgid "/_Configuration/Preferences..."
++msgstr ""
++
+ #: src/mainwindow.c:884
+ msgid "/_Configuration/_Common preferences..."
+ msgstr ""
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 4708707..277935e 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -641,6 +641,7 @@ sylpheed_LDADD = \
+ 	$(LDAP_LIBS) \
+ 	$(LIBICONV) \
+ 	$(SYLPHEED_LIBS) \
++	-lgtkmacintegration \
+ 	libsylpheed-plugin-0.la \
+ 	../libsylph/libsylph-0.la \
+ 	$(SYLPHEED_RES)
+diff --git a/src/addressbook.c b/src/addressbook.c
+index b013507..eaaa56a 100644
+--- a/src/addressbook.c
++++ b/src/addressbook.c
+@@ -27,6 +27,12 @@
+ #include <glib/gi18n.h>
+ #include <gdk/gdkkeysyms.h>
+ #include <gtk/gtk.h>
++
++#define GTKOSXAPPLICATION 1
++#ifdef GTKOSXAPPLICATION
++#include <gtkmacintegration/gtkosxapplication.h>
++#endif
++
+ #include <string.h>
+ #include <setjmp.h>
+ 
+@@ -423,27 +429,27 @@ static GtkItemFactoryEntry addressbook_entries[] =
+ 	{N_("/_File/_Edit"),		NULL,		addressbook_treenode_edit_cb,   0, NULL},
+ 	{N_("/_File/_Delete"),		NULL,		addressbook_treenode_delete_cb, 0, NULL},
+ 	{N_("/_File/---"),		NULL,		NULL, 0, "<Separator>"},
+-	{N_("/_File/_Save"),		"<control>S",	addressbook_file_save_cb,       0, NULL},
+-	{N_("/_File/_Close"),		"<control>W",	close_cb, 0, NULL},
++	{N_("/_File/_Save"),		"<meta>S",	addressbook_file_save_cb,       0, NULL},
++	{N_("/_File/_Close"),		"<meta>W",	close_cb, 0, NULL},
+ 
+ 	{N_("/_Edit"),			NULL,		NULL, 0, "<Branch>"},
+-	{N_("/_Edit/_Copy"),		"<control>C",	addressbook_copy_address_cb,    0, NULL},
+-	{N_("/_Edit/_Paste"),		"<control>V",	addressbook_paste_address_cb,    0, NULL},
++	{N_("/_Edit/_Copy"),		"<meta>C",	addressbook_copy_address_cb,    0, NULL},
++	{N_("/_Edit/_Paste"),		"<meta>V",	addressbook_paste_address_cb,    0, NULL},
+ 
+ 	{N_("/_Address"),		NULL,		NULL, 0, "<Branch>"},
+-	{N_("/_Address/New _Address"),	"<control>N",	addressbook_new_address_cb,     0, NULL},
+-	{N_("/_Address/New _Group"),	"<control>G",	addressbook_new_group_cb,       0, NULL},
+-	{N_("/_Address/New _Folder"),	"<control>F",	addressbook_new_folder_cb,      0, NULL},
++	{N_("/_Address/New _Address"),	"<meta>N",	addressbook_new_address_cb,     0, NULL},
++	{N_("/_Address/New _Group"),	"<meta>G",	addressbook_new_group_cb,       0, NULL},
++	{N_("/_Address/New _Folder"),	"<meta>F",	addressbook_new_folder_cb,      0, NULL},
+ 	{N_("/_Address/---"),		NULL,		NULL, 0, "<Separator>"},
+ 	{N_("/_Address/Add _to recipient"),
+-					"<control>M",	addressbook_compose_to_cb, COMPOSE_ENTRY_TO, NULL},
++					"<meta>M",	addressbook_compose_to_cb, COMPOSE_ENTRY_TO, NULL},
+ 	{N_("/_Address/Add to _Cc"),
+ 					NULL,		addressbook_compose_to_cb, COMPOSE_ENTRY_CC, NULL},
+ 	{N_("/_Address/Add to _Bcc"),
+ 					NULL,		addressbook_compose_to_cb, COMPOSE_ENTRY_BCC, NULL},
+ 	{N_("/_Address/---"),		NULL,		NULL, 0, "<Separator>"},
+-	{N_("/_Address/_Edit"),		"<control>Return",	addressbook_edit_address_cb,    0, NULL},
+-	{N_("/_Address/_Delete"),	"Delete",	addressbook_delete_address_cb,  0, NULL},
++	{N_("/_Address/_Edit"),		"<meta>Return",	addressbook_edit_address_cb,    0, NULL},
++	{N_("/_Address/_Delete"),	"<meta>Delete",	addressbook_delete_address_cb,  0, NULL},
+ 
+ 	{N_("/_Tools"),			NULL,		NULL, 0, "<Branch>"},
+ 	{N_("/_Tools/Import _LDIF file"), NULL,		addressbook_import_ldif_cb,	0, NULL},
+@@ -457,7 +463,7 @@ static GtkItemFactoryEntry addressbook_entries[] =
+ /* New options to be added. */
+ /*
+ 	{N_("/_Edit"),			NULL,		NULL, 0, "<Branch>"},
+-	{N_("/_Edit/C_ut"),		"<control>X",	NULL,				0, NULL},
++	{N_("/_Edit/C_ut"),		"<meta>X",	NULL,				0, NULL},
+ 	{N_("/_Tools"),			NULL,		NULL, 0, "<Branch>"},
+ 	{N_("/_Tools/Import _Mozilla"),	NULL,           NULL,				0, NULL},
+ 	{N_("/_Tools/Import _vCard"),	NULL,           NULL,				0, NULL},
+@@ -615,6 +621,11 @@ static void addressbook_create(void)
+ 	gint n_entries;
+ 	GList *nodeIf;
+ 
++#ifdef GTKOSXAPPLICATION
++        GtkosxApplication *osxapp;
++	GtkWidget *about_menu;
++#endif
++
+ 	debug_print("Creating addressbook window...\n");
+ 
+ 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+@@ -1072,6 +1083,16 @@ static void addressbook_create(void)
+ 	addrbook.list_selected = NULL;
+ 	address_completion_start(window);
+ 	gtk_widget_show_all(window);
++
++#ifdef GTKOSXAPPLICATION
++        osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
++        gtk_widget_hide(menubar);
++        gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
++	about_menu = gtk_item_factory_get_item(menu_factory, "/Help/About");
++	gtkosx_application_insert_app_menu_item(osxapp, about_menu, 0);
++        gtkosx_application_ready(osxapp);
++#endif
++
+ }
+ 
+ static gint addressbook_close(void)
+diff --git a/src/compose.c b/src/compose.c
+index 0e5a032..d2b2976 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -77,6 +77,11 @@
+ #endif
+ #endif
+ 
++#define GTKOSXAPPLICATION 1
++#ifdef GTKOSXAPPLICATION
++#include <gtkmacintegration/gtkosxapplication.h>
++#endif
++
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+@@ -581,40 +586,40 @@ static GtkItemFactoryEntry compose_popup_entries[] =
+ static GtkItemFactoryEntry compose_entries[] =
+ {
+ 	{N_("/_File"),				NULL, NULL, 0, "<Branch>"},
+-	{N_("/_File/_Send"),			"<shift><control>E",
++	{N_("/_File/_Send"),			"<shift><meta>E",
+ 						compose_send_cb, 0, NULL},
+-	{N_("/_File/Send _later"),		"<shift><control>S",
++	{N_("/_File/Send _later"),		"<shift><meta>S",
+ 						compose_send_later_cb,  0, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_File/Save to _draft folder"),
+-						"<shift><control>D", compose_draft_cb, 0, NULL},
++						"<shift><meta>D", compose_draft_cb, 0, NULL},
+ 	{N_("/_File/Save and _keep editing"),
+-						"<control>S", compose_draft_cb, 1, NULL},
++						"<meta>S", compose_draft_cb, 1, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_File/_Attach file"),		"<control>M", compose_attach_cb,      0, NULL},
+-	{N_("/_File/_Insert file"),		"<control>I", compose_insert_file_cb, 0, NULL},
++	{N_("/_File/_Attach file"),		"<meta>M", compose_attach_cb,      0, NULL},
++	{N_("/_File/_Insert file"),		"<meta>I", compose_insert_file_cb, 0, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_File/Insert si_gnature"),	"<control>G", compose_insert_sig_cb,  0, NULL},
+-	{N_("/_File/A_ppend signature"),	"<shift><control>G", compose_insert_sig_cb,  1, NULL},
++	{N_("/_File/Insert si_gnature"),	"<meta>G", compose_insert_sig_cb,  0, NULL},
++	{N_("/_File/A_ppend signature"),	"<shift><meta>G", compose_insert_sig_cb,  1, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_File/_Close"),			"<control>W", compose_close_cb, 0, NULL},
++	{N_("/_File/_Close"),			"<meta>W", compose_close_cb, 0, NULL},
+ 
+ 	{N_("/_Edit"),			NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Edit/_Undo"),		"<control>Z", compose_undo_cb, 0, NULL},
+-	{N_("/_Edit/_Redo"),		"<control>Y", compose_redo_cb, 0, NULL},
++	{N_("/_Edit/_Undo"),		"<meta>Z", compose_undo_cb, 0, NULL},
++	{N_("/_Edit/_Redo"),		"<meta>Y", compose_redo_cb, 0, NULL},
+ 	{N_("/_Edit/---"),		NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Edit/Cu_t"),		"<control>X", compose_cut_cb,    0, NULL},
+-	{N_("/_Edit/_Copy"),		"<control>C", compose_copy_cb,   0, NULL},
+-	{N_("/_Edit/_Paste"),		"<control>V", compose_paste_cb,  0, NULL},
++	{N_("/_Edit/Cu_t"),		"<meta>X", compose_cut_cb,    0, NULL},
++	{N_("/_Edit/_Copy"),		"<meta>C", compose_copy_cb,   0, NULL},
++	{N_("/_Edit/_Paste"),		"<meta>V", compose_paste_cb,  0, NULL},
+ 	{N_("/_Edit/Paste as _quotation"),
+ 					NULL, compose_paste_as_quote_cb, 0, NULL},
+-	{N_("/_Edit/Select _all"),	"<control>A", compose_allsel_cb, 0, NULL},
++	{N_("/_Edit/Select _all"),	"<meta>A", compose_allsel_cb, 0, NULL},
+ 	{N_("/_Edit/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Edit/_Wrap current paragraph"),
+-					"<control>L", compose_wrap_cb, 0, NULL},
++					"<meta>L", compose_wrap_cb, 0, NULL},
+ 	{N_("/_Edit/Wrap all long _lines"),
+-					"<control><alt>L", compose_wrap_cb, 1, NULL},
+-	{N_("/_Edit/Aut_o wrapping"),	"<shift><control>L", compose_toggle_autowrap_cb, 0, "<ToggleItem>"},
++					"<meta><alt>L", compose_wrap_cb, 1, NULL},
++	{N_("/_Edit/Aut_o wrapping"),	"<shift><meta>L", compose_toggle_autowrap_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View"),			NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_View/_To"),		NULL, compose_toggle_to_cb     , 0, "<ToggleItem>"},
+ 	{N_("/_View/_Cc"),		NULL, compose_toggle_cc_cb     , 0, "<ToggleItem>"},
+@@ -716,14 +721,14 @@ static GtkItemFactoryEntry compose_entries[] =
+ 	 ENC_ACTION(C_WINDOWS_874)},
+ 
+ 	{N_("/_Tools"),			NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Tools/_Address book"),	"<shift><control>A", compose_address_cb , 0, NULL},
++	{N_("/_Tools/_Address book"),	"<shift><meta>A", compose_address_cb , 0, NULL},
+ 	{N_("/_Tools/_Template"),	NULL, NULL, 0, "<Branch>"},
+ #ifndef G_OS_WIN32
+ 	{N_("/_Tools/Actio_ns"),	NULL, NULL, 0, "<Branch>"},
+ #endif
+ 	{N_("/_Tools/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Edit with e_xternal editor"),
+-					"<shift><control>X", compose_ext_editor_cb, 0, NULL},
++					"<shift><meta>X", compose_ext_editor_cb, 0, NULL},
+ 	{N_("/_Tools/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Request _disposition notification"),   	NULL, compose_toggle_mdn_cb   , 0, "<ToggleItem>"},
+ 
+@@ -5405,6 +5410,10 @@ static Compose *compose_create(PrefsAccount *account, ComposeMode mode)
+ #ifndef G_OS_WIN32
+ 	static GdkGeometry geometry;
+ #endif
++#ifdef GTKOSXAPPLICATION
++        GtkosxApplication *osxapp;
++	GtkWidget *about_menu;
++#endif
+ 
+ 	g_return_val_if_fail(account != NULL, NULL);
+ 
+@@ -5716,6 +5725,15 @@ static Compose *compose_create(PrefsAccount *account, ComposeMode mode)
+ 		(ifactory, "/Tools/Set spell language");
+ #endif
+ 
++#ifdef GTKOSXAPPLICATION
++	osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
++        gtk_widget_hide(menubar);
++        gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
++	about_menu = gtk_item_factory_get_item(ifactory, "/Help/About");
++	gtkosx_application_insert_app_menu_item(osxapp, about_menu, 0);
++        gtkosx_application_ready(osxapp);
++#endif
++
+ 	gtk_widget_hide(bcc_hbox);
+ 	gtk_widget_hide(bcc_entry);
+ 	gtk_widget_hide(reply_hbox);
+diff --git a/src/mainwindow.c b/src/mainwindow.c
+index bc7e713..9521b88 100644
+--- a/src/mainwindow.c
++++ b/src/mainwindow.c
+@@ -49,6 +49,11 @@
+ #include <gtk/gtkimage.h>
+ #include <string.h>
+ 
++#define GTKOSXAPPLICATION 1
++#ifdef GTKOSXAPPLICATION
++#include <gtkmacintegration/gtkosxapplication.h>
++#endif
++
+ #include "main.h"
+ #include "mainwindow.h"
+ #include "folderview.h"
+@@ -211,6 +216,11 @@ static gint message_window_close_cb		(GtkWidget	*widget,
+ 						 GdkEventAny	*event,
+ 						 gpointer	 data);
+ 
++#ifdef GTKOSXAPPLICATION
++static gboolean osx_block_termination		(GtkosxApplication *app,
++						 gpointer	 data);
++#endif
++
+ static void main_window_size_allocate_cb	(GtkWidget	*widget,
+ 						 GtkAllocation	*allocation,
+ 						 gpointer	 data);
+@@ -579,7 +589,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_File/Empty all _trash"),		NULL, empty_trash_cb, 0, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_File/_Save as..."),		"<control>S", save_as_cb, 0, NULL},
++	{N_("/_File/_Save as..."),		"<meta>S", save_as_cb, 0, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+ #if GTK_CHECK_VERSION(2, 10, 0)
+ 	{N_("/_File/Page set_up..."),		NULL, page_setup_cb, 0, NULL},
+@@ -587,26 +597,28 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_File/_Print..."),		NULL, print_cb, 0, NULL},
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_File/_Work offline"),		NULL, toggle_offline_cb, 0, "<ToggleItem>"},
++#ifndef GTKOSXAPPLICATION
+ 	{N_("/_File/---"),			NULL, NULL, 0, "<Separator>"},
+ 	/* {N_("/_File/_Close"),		"<alt>W", app_exit_cb, 0, NULL}, */
+-	{N_("/_File/E_xit"),			"<control>Q", app_exit_cb, 0, NULL},
++	{N_("/_File/E_xit"),			"<meta>Q", app_exit_cb, 0, NULL},
++#endif
+ 
+ 	{N_("/_Edit"),				NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Edit/_Copy"),			"<control>C", copy_cb, 0, NULL},
+-	{N_("/_Edit/Select _all"),		"<control>A", allsel_cb, 0, NULL},
++	{N_("/_Edit/_Copy"),			"<meta>C", copy_cb, 0, NULL},
++	{N_("/_Edit/Select _all"),		"<meta>A", allsel_cb, 0, NULL},
+ 	{N_("/_Edit/Select _thread"),		NULL, select_thread_cb, 0, NULL},
+ 	{N_("/_Edit/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Edit/_Find in current message..."),
+-						"<control>F", search_cb, 0, NULL},
+-	{N_("/_Edit/_Search messages..."),	"<shift><control>F", search_cb, 1, NULL},
+-	{N_("/_Edit/_Quick search"),		"<shift><control>S", search_cb, 2, NULL},
++						"<meta>F", search_cb, 0, NULL},
++	{N_("/_Edit/_Search messages..."),	"<shift><meta>F", search_cb, 1, NULL},
++	{N_("/_Edit/_Quick search"),		"<shift><meta>S", search_cb, 2, NULL},
+ 
+ 	{N_("/_View"),				NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_View/Show or hi_de"),		NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_View/Show or hi_de/_Folder tree"),
+ 						NULL, toggle_folder_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/Show or hi_de/_Message view"),
+-						"V", toggle_message_cb, 0, "<ToggleItem>"},
++						"<meta>V", toggle_message_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/Show or hi_de/_Toolbar"),
+ 						NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_View/Show or hi_de/_Toolbar/Icon _and text"),
+@@ -652,20 +664,20 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_View/_Sort/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/_Sort/_Attract by subject"),
+ 						NULL, attract_by_subject_cb, 0, NULL},
+-	{N_("/_View/Th_read view"),		"<control>T", thread_cb, 0, "<ToggleItem>"},
++	{N_("/_View/Th_read view"),		"<meta>T", thread_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/E_xpand all threads"),	NULL, expand_threads_cb, 0, NULL},
+ 	{N_("/_View/Co_llapse all threads"),	NULL, collapse_threads_cb, 0, NULL},
+ 	{N_("/_View/Set display _item..."),	NULL, set_display_item_cb, 0, NULL},
+ 
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/_Go to"),			NULL, NULL, 0, "<Branch>"},
+-	{N_("/_View/_Go to/_Prev message"),	"P", prev_cb, 0, NULL},
+-	{N_("/_View/_Go to/_Next message"),	"N", next_cb, 0, NULL},
++	{N_("/_View/_Go to/_Prev message"),	"<control>P", prev_cb, 0, NULL},
++	{N_("/_View/_Go to/_Next message"),	"<control>N", next_cb, 0, NULL},
+ 	{N_("/_View/_Go to/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/_Go to/P_rev unread message"),
+-						"<shift>P", prev_unread_cb, 0, NULL},
++						"<meta><control>P", prev_unread_cb, 0, NULL},
+ 	{N_("/_View/_Go to/N_ext unread message"),
+-						"<shift>N", next_unread_cb, 0, NULL},
++						"<meta><control>N", next_unread_cb, 0, NULL},
+ 	{N_("/_View/_Go to/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/_Go to/Prev ne_w message"),	NULL, prev_new_cb, 0, NULL},
+ 	{N_("/_View/_Go to/Ne_xt new message"),	NULL, next_new_cb, 0, NULL},
+@@ -680,7 +692,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_View/_Go to/Next la_beled message"),
+ 						NULL, next_labeled_cb, 0, NULL},
+ 	{N_("/_View/_Go to/---"),		NULL, NULL, 0, "<Separator>"},
+-	{N_("/_View/_Go to/Other _folder..."),	"G", goto_folder_cb, 0, NULL},
++	{N_("/_View/_Go to/Other _folder..."),	"<meta>G", goto_folder_cb, 0, NULL},
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+ 
+ #define ENC_SEPARATOR \
+@@ -785,18 +797,18 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ #undef CODESET_ACTION
+ 
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_View/Open in new _window"),	"<control><alt>N", open_msg_cb, 0, NULL},
+-	{N_("/_View/Mess_age source"),		"<control>U", view_source_cb, 0, NULL},
+-	{N_("/_View/All _headers"),	"<control>H", show_all_header_cb, 0, "<ToggleItem>"},
++	{N_("/_View/Open in new _window"),	"<meta><alt>N", open_msg_cb, 0, NULL},
++	{N_("/_View/Mess_age source"),		"<meta>U", view_source_cb, 0, NULL},
++	{N_("/_View/All _headers"),	"<meta>H", show_all_header_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_View/_Update summary"),		"<control><alt>U", update_summary_cb,  0, NULL},
++	{N_("/_View/_Update summary"),		"<meta><alt>U", update_summary_cb,  0, NULL},
+ 
+ 	{N_("/_Message"),			NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_Message/Recei_ve"),		NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_Message/Recei_ve/Get from _current account"),
+-						"<control>I",	inc_mail_cb, 0, NULL},
++						"<meta>I",	inc_mail_cb, 0, NULL},
+ 	{N_("/_Message/Recei_ve/Get from _all accounts"),
+-						"<shift><control>I", inc_all_account_mail_cb, 0, NULL},
++						"<shift><meta>I", inc_all_account_mail_cb, 0, NULL},
+ 	{N_("/_Message/Recei_ve/Stop receivin_g"),
+ 						NULL, inc_stop_cb, 0, NULL},
+ 	{N_("/_Message/Recei_ve/_Remote mailbox..."),
+@@ -804,43 +816,43 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_Message/Recei_ve/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Message/_Send queued messages"), NULL, send_queue_cb, 0, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/Compose _new message"),	"<control>M",	compose_cb, 0, NULL},
++	{N_("/_Message/Compose _new message"),	"<meta>M",	compose_cb, 0, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/_Reply"),		"<control>R", 	reply_cb, COMPOSE_REPLY, NULL},
++	{N_("/_Message/_Reply"),		"<meta>R", 	reply_cb, COMPOSE_REPLY, NULL},
+ 	{N_("/_Message/Repl_y to"),		NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Message/Repl_y to/_all"),	"<shift><control>R", reply_cb, COMPOSE_REPLY_TO_ALL, NULL},
++	{N_("/_Message/Repl_y to/_all"),	"<shift><meta>R", reply_cb, COMPOSE_REPLY_TO_ALL, NULL},
+ 	{N_("/_Message/Repl_y to/_sender"),	NULL, reply_cb, COMPOSE_REPLY_TO_SENDER, NULL},
+ 	{N_("/_Message/Repl_y to/mailing _list"),
+-						"<control>L", reply_cb, COMPOSE_REPLY_TO_LIST, NULL},
++						"<meta>L", reply_cb, COMPOSE_REPLY_TO_LIST, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/_Forward"),		"<control><alt>F", reply_cb, COMPOSE_FORWARD, NULL},
++	{N_("/_Message/_Forward"),		"<meta><alt>F", reply_cb, COMPOSE_FORWARD, NULL},
+ 	{N_("/_Message/For_ward as attachment"),
+-						"<shift><control><alt>F", reply_cb, COMPOSE_FORWARD_AS_ATTACH, NULL},
++						"<shift><meta><alt>F", reply_cb, COMPOSE_FORWARD_AS_ATTACH, NULL},
+ 	{N_("/_Message/Redirec_t"),		NULL, reply_cb, COMPOSE_REDIRECT, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/M_ove..."),		"<control>O", move_to_cb, 0, NULL},
+-	{N_("/_Message/_Copy..."),		"<shift><control>O", copy_to_cb, 0, NULL},
++	{N_("/_Message/M_ove..."),		"<meta>O", move_to_cb, 0, NULL},
++	{N_("/_Message/_Copy..."),		"<shift><meta>O", copy_to_cb, 0, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Message/_Mark"),			NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Message/_Mark/Set _flag"),	"<shift>asterisk", mark_cb, 0, NULL},
+-	{N_("/_Message/_Mark/_Unset flag"),	"U", unmark_cb, 0, NULL},
++	{N_("/_Message/_Mark/Set _flag"),	"<shift><meta>asterisk", mark_cb, 0, NULL},
++	{N_("/_Message/_Mark/_Unset flag"),	"<shift><meta>U", unmark_cb, 0, NULL},
+ 	{N_("/_Message/_Mark/---"),		NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/_Mark/Mark as unr_ead"),	"<shift>exclam", mark_as_unread_cb, 0, NULL},
++	{N_("/_Message/_Mark/Mark as unr_ead"),	"<shift><meta>exclam", mark_as_unread_cb, 0, NULL},
+ 	{N_("/_Message/_Mark/Mark as rea_d"),
+ 						NULL, mark_as_read_cb, 0, NULL},
+ 	{N_("/_Message/_Mark/Mark _thread as read"),
+ 						NULL, mark_thread_as_read_cb, 0, NULL},
+ 	{N_("/_Message/_Mark/Mark all _read"),	NULL, mark_all_read_cb, 0, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/_Delete"),		"<control>D", delete_cb, 0, NULL},
++	{N_("/_Message/_Delete"),		"<meta>D", delete_cb, 0, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Message/Set as _junk mail"),	"<control>J", junk_cb, 0, NULL},
+-	{N_("/_Message/Set as not j_unk mail"),	"<shift><control>J", junk_cb, 1, NULL},
++	{N_("/_Message/Set as _junk mail"),	"<meta>J", junk_cb, 0, NULL},
++	{N_("/_Message/Set as not j_unk mail"),	"<shift><meta>J", junk_cb, 1, NULL},
+ 	{N_("/_Message/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Message/Re-_edit"),		NULL, reedit_cb, 0, NULL},
+ 
+ 	{N_("/_Tools"),				NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Tools/_Address book"),		"<shift><control>A", addressbook_open_cb, 0, NULL},
++	{N_("/_Tools/_Address book"),		"<shift><meta>A", addressbook_open_cb, 0, NULL},
+ 	{N_("/_Tools/Add sender to address boo_k..."),
+ 						NULL, add_address_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+@@ -872,17 +884,22 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_Tools/C_oncatenate separated messages"),
+ 						NULL, concat_partial_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Tools/E_xecute marked process"),	"X", execute_summary_cb, 0, NULL},
++	{N_("/_Tools/E_xecute marked process"),	"<meta>X", execute_summary_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Op_en configuration folder"),
+ 						NULL, open_config_folder_cb, 0, NULL},
+ 	{N_("/_Tools/Open a_ttachments folder"),NULL, open_attachments_folder_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Tools/_Log window"),		"<shift><control>L", log_window_show_cb, 0, NULL},
++	{N_("/_Tools/_Log window"),		"<shift><meta>L", log_window_show_cb, 0, NULL},
+ 
+ 	{N_("/_Configuration"),			NULL, NULL, 0, "<Branch>"},
++#ifdef GTKOSXAPPLICATION
++	{N_("/_Configuration/Preferences..."),
++						"<meta>comma", prefs_common_open_cb, 0, NULL},
++#else
+ 	{N_("/_Configuration/_Common preferences..."),
+ 						NULL, prefs_common_open_cb, 0, NULL},
++#endif
+ 	{N_("/_Configuration/_Filter settings..."),
+ 						NULL, prefs_filter_open_cb, 0, NULL},
+ 	{N_("/_Configuration/_Template..."),	NULL, prefs_template_open_cb, 0, NULL},
+@@ -959,6 +976,11 @@ MainWindow *main_window_create(SeparateType type)
+ 	GtkItemFactory *ifactory;
+ 	GtkWidget *ac_menu;
+ 	GtkWidget *menuitem;
++#ifdef GTKOSXAPPLICATION
++	GtkosxApplication *osxapp;
++	GtkWidget *about_menu;
++	GtkWidget *prefs_menu;
++#endif
+ 	gint i;
+ 
+ 	static GdkGeometry geometry;
+@@ -966,6 +988,10 @@ MainWindow *main_window_create(SeparateType type)
+ 	debug_print(_("Creating main window...\n"));
+ 	mainwin = g_new0(MainWindow, 1);
+ 
++#ifdef GTKOSXAPPLICATION
++	osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
++#endif
++
+ 	/* main window */
+ 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ 	gtk_window_set_title(GTK_WINDOW(window), PROG_VERSION);
+@@ -1198,6 +1224,18 @@ MainWindow *main_window_create(SeparateType type)
+ 	action_update_mainwin_menu(ifactory, mainwin);
+ #endif
+ 
++#ifdef GTKOSXAPPLICATION
++	gtk_widget_hide(menubar);
++	gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
++	about_menu = gtk_item_factory_get_item(ifactory, "/Help/About");
++        prefs_menu = gtk_item_factory_get_item(ifactory, "/Configuration/Preferences...");
++        gtkosx_application_insert_app_menu_item(osxapp, about_menu, 0);
++        gtkosx_application_insert_app_menu_item(osxapp, prefs_menu, 1);
++	g_signal_connect(G_OBJECT(osxapp), "NSApplicationBlockTermination",
++			 G_CALLBACK(osx_block_termination), mainwin);
++	gtkosx_application_ready(osxapp);
++#endif
++
+ 	/* initialize online switch */
+ 	if (prefs_common.startup_online_mode == 1)
+ 		prefs_common.online_mode = TRUE;
+@@ -2157,8 +2195,10 @@ void main_window_set_menu_sensitive(MainWindow *mainwin)
+ 		{"/File/Save as..."  , M_SINGLE_TARGET_EXIST},
+ 		{"/File/Print..."    , M_TARGET_EXIST},
+ 		{"/File/Work offline", M_UNLOCKED},
++#ifndef GTKOSXAPPLICATION
+ 		/* {"/File/Close"    , M_UNLOCKED}, */
+ 		{"/File/Exit"        , M_UNLOCKED},
++#endif
+ 
+ 		{"/Edit/Select thread"             , M_SINGLE_TARGET_EXIST},
+ 
+@@ -2218,7 +2258,11 @@ void main_window_set_menu_sensitive(MainWindow *mainwin)
+ 		{"/Tools/Concatenate separated messages"
+ 						       , M_TARGET_EXIST|M_UNLOCKED|M_ALLOW_DELETE},
+ 
++#ifdef GTKOSXAPPLICATION
++		{"/Configuration/Preferences...", M_UNLOCKED},
++#else
+ 		{"/Configuration/Common preferences...", M_UNLOCKED},
++#endif
+ 		{"/Configuration/Filter settings...", M_UNLOCKED},
+ 		{"/Configuration/Preferences for current account...", M_UNLOCKED},
+ 		{"/Configuration/Create new account...", M_UNLOCKED},
+@@ -3196,6 +3240,18 @@ static gint main_window_close_cb(GtkWidget *widget, GdkEventAny *event,
+ 	return TRUE;
+ }
+ 
++#ifdef GTKOSXAPPLICATION
++static gboolean osx_block_termination(GtkosxApplication *app, gpointer data)
++{
++	MainWindow *mainwin = (MainWindow *)data;
++
++	if (mainwin->lock_count == 0)
++		app_exit_cb(data, 0, NULL);
++
++	return TRUE;
++}
++#endif
++
+ static gint folder_window_close_cb(GtkWidget *widget, GdkEventAny *event,
+ 				   gpointer data)
+ {
+diff --git a/src/messageview.c b/src/messageview.c
+index 782bc80..6d75275 100644
+--- a/src/messageview.c
++++ b/src/messageview.c
+@@ -33,6 +33,12 @@
+ #include <gtk/gtkstatusbar.h>
+ #include <gtk/gtktooltips.h>
+ #include <gtk/gtkarrow.h>
++
++#define GTKOSXAPPLICATION 1
++#ifdef GTKOSXAPPLICATION
++#include <gtkmacintegration/gtkosxapplication.h>
++#endif
++
+ #include <stdio.h>
+ #include <ctype.h>
+ #include <string.h>
+@@ -477,6 +483,11 @@ MessageView *messageview_create_with_new_window(void)
+ 	GtkWidget *statusbar;
+ 	guint n_menu_entries;
+ 
++#ifdef GTKOSXAPPLICATION
++        GtkosxApplication *osxapp;
++	GtkWidget *about_menu;
++#endif
++
+ 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ 	gtk_window_set_title(GTK_WINDOW(window), _("Message View - Sylpheed"));
+ 	gtk_window_set_wmclass(GTK_WINDOW(window), "message_view", "Sylpheed");
+@@ -542,6 +553,14 @@ MessageView *messageview_create_with_new_window(void)
+ #ifndef G_OS_WIN32
+ 	action_update_msgview_menu(ifactory, msgview);
+ #endif
++#ifdef GTKOSXAPPLICATION
++        osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
++        gtk_widget_hide(menubar);
++        gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
++	about_menu = gtk_item_factory_get_item(ifactory, "/Help/About");
++	gtkosx_application_insert_app_menu_item(osxapp, about_menu, 0);
++        gtkosx_application_ready(osxapp);
++#endif
+ 
+ 	messageview_list = g_list_append(messageview_list, msgview);
+ 
+diff --git a/src/rpop3.c b/src/rpop3.c
+index 571671f..31ffa73 100644
+--- a/src/rpop3.c
++++ b/src/rpop3.c
+@@ -39,6 +39,12 @@
+ #include <gtk/gtktreeselection.h>
+ #include <gtk/gtkcellrenderertext.h>
+ #include <gtk/gtkuimanager.h>
++
++#define GTKOSXAPPLICATION 1
++#ifdef GTKOSXAPPLICATION
++#include <gtkmacintegration/gtkosxapplication.h>
++#endif
++
+ #include <string.h>
+ 
+ #include "rpop3.h"
+@@ -245,9 +251,9 @@ static gint cmp_by_size		(GtkTreeModel	*model,
+ 
+ static GtkActionEntry action_entries[] = {
+ 	{"FileAction", NULL, N_("_File"), NULL, NULL, NULL},
+-	{"ReceiveAction", NULL, N_("_Get"), "<Control>G", NULL, rpop3_recv_cb},
++	{"ReceiveAction", NULL, N_("_Get"), "<Meta>G", NULL, rpop3_recv_cb},
+ 	{"OpenAction", GTK_STOCK_OPEN, NULL, NULL, NULL, rpop3_open_cb},
+-	{"DeleteAction", GTK_STOCK_DELETE, NULL, "<Shift>Delete", NULL, rpop3_delete_cb},
++	{"DeleteAction", GTK_STOCK_DELETE, NULL, "<Meta>Delete", NULL, rpop3_delete_cb},
+ 	{"ResumeAction", GTK_STOCK_REFRESH, N_("_Resume"), NULL, NULL, rpop3_resume_cb},
+ 	{"StopAction", GTK_STOCK_STOP, NULL, NULL, NULL, rpop3_stop_cb},
+ 	{"CloseAction", GTK_STOCK_CLOSE, NULL, NULL, NULL, rpop3_close_cb},
+@@ -353,6 +359,11 @@ static void rpop3_window_create(PrefsAccount *account)
+ 	GtkWidget *close_btn;
+ 	gchar buf[BUFFSIZE];
+ 
++#ifdef GTKOSXAPPLICATION
++        GtkosxApplication *osxapp;
++	GtkWidget *about_menu;
++#endif
++
+ 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ 	g_snprintf(buf, sizeof(buf), _("%s - POP3 Remote mailbox"),
+ 		   account->account_name ? account->account_name : "");
+@@ -503,6 +514,15 @@ static void rpop3_window_create(PrefsAccount *account)
+ 
+ 	gtk_widget_show_all(window);
+ 
++#ifdef GTKOSXAPPLICATION
++        osxapp = g_object_new(GTKOSX_TYPE_APPLICATION, NULL);
++        gtk_widget_hide(menubar);
++        gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
++	about_menu = gtk_ui_manager_get_widget(ui, "/RPop3Menu/Help/About");
++	gtkosx_application_insert_app_menu_item(osxapp, about_menu, 0);
++        gtkosx_application_ready(osxapp);
++#endif
++
+ 	rpop3_window.window = window;
+ 	rpop3_window.treeview = treeview;
+ 	rpop3_window.store = store;
+-- 
+2.30.0
+

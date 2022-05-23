@@ -1,0 +1,78 @@
+From 5919491416956c28d216aff3701f52ca7dbbfa42 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 4 Jan 2021 21:16:39 +0700
+Subject: [PATCH 1/5] Update macos bundle project for latest GTK+
+
+---
+ macosx/bundle/launcher.sh     | 14 ++++++++------
+ macosx/bundle/sylpheed.bundle |  2 ++
+ 2 files changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/macosx/bundle/launcher.sh b/macosx/bundle/launcher.sh
+index 67f5051..668a79b 100755
+--- a/macosx/bundle/launcher.sh
++++ b/macosx/bundle/launcher.sh
+@@ -22,7 +22,6 @@ bundle_bin="$bundle_res"/bin
+ bundle_data="$bundle_res"/share
+ bundle_etc="$bundle_res"/etc
+ 
+-export DYLD_LIBRARY_PATH="$bundle_lib"
+ export XDG_CONFIG_DIRS="$bundle_etc"/xdg
+ export XDG_DATA_DIRS="$bundle_data"
+ export GTK_DATA_PREFIX="$bundle_res"
+@@ -31,12 +30,15 @@ export GTK_PATH="$bundle_res"
+ 
+ export GTK2_RC_FILES="$bundle_etc/gtk-2.0/gtkrc"
+ export GTK_IM_MODULE_FILE="$bundle_etc/gtk-2.0/gtk.immodules"
+-export GDK_PIXBUF_MODULE_FILE="$bundle_etc/gtk-2.0/gdk-pixbuf.loaders"
+-export PANGO_RC_FILE="$bundle_etc/pango/pangorc"
++#N.B. When gdk-pixbuf was separated from Gtk+ the location of the
++#loaders cache changed as well. Depending on the version of Gtk+ that
++#you built with you may still need to use the old location:
++#export GDK_PIXBUF_MODULE_FILE="$bundle_etc/gtk-2.0/gdk-pixbuf.loaders"
++export GDK_PIXBUF_MODULE_FILE="$bundle_lib/gdk-pixbuf-2.0/2.10.0/loaders.cache"
+ export PANGO_LIBDIR="$bundle_lib"
+ export PANGO_SYSCONFDIR="$bundle_etc"
+ 
+-APP=sylpheed
++APP=$name
+ I18NDIR="$bundle_data/locale"
+ # Set the locale-related variables appropriately:
+ unset LANG LC_MESSAGES LC_MONETARY LC_COLLATE
+@@ -98,7 +100,7 @@ elif test -z $LANG -a -f "$I18NDIR/${APPLELOCALE:0:2}/LC_MESSAGES/$APP.mo"; then
+     export LANG="${APPLELOCALE:0:2}"
+ fi
+ 
+-#Next we need to set LC_MESSAGES. If at all possilbe, we want a full
++#Next we need to set LC_MESSAGES. If at all possible, we want a full
+ #5-character locale to avoid the "Locale not supported by C library"
+ #warning from Gtk -- even though Gtk will translate with a
+ #two-character code.
+@@ -110,7 +112,7 @@ if test -n $LANG; then
+ 	export LC_MESSAGES=$LANG
+ #Next try if the Applelocale is longer than 2 chars and the language
+ #bit matches $LANG
+-    elif test $LANG == ${APPLELOCALE:0:2} -a $APPLELOCALE ">" ${APPLELOCALE:0:2}; then
++    elif test $LANG == ${APPLELOCALE:0:2} -a $APPLELOCALE > ${APPLELOCALE:0:2}; then
+ 	export LC_MESSAGES=${APPLELOCALE:0:5}
+ #Fail. Get a list of the locales in $PREFIX/share/locale that match
+ #our two letter language code and pick the first one, special casing
+diff --git a/macosx/bundle/sylpheed.bundle b/macosx/bundle/sylpheed.bundle
+index e741404..0bcba75 100644
+--- a/macosx/bundle/sylpheed.bundle
++++ b/macosx/bundle/sylpheed.bundle
+@@ -81,9 +81,11 @@
+     ${prefix}/lib/gdk-pixbuf-2.0/${pkg:${gtk}:gtk_binary_version}/loaders/*.so
+   </binary>
+ 
++<!-- No longer needed for pango >= 1.38
+   <binary>
+      ${prefix}/lib/pango/${pkg:pango:pango_module_version}/modules/*.so
+   </binary>
++-->
+ 
+   <binary>
+      ${prefix}/lib/sylpheed/plugins/*.so
+-- 
+2.30.0
+

@@ -1,0 +1,26 @@
+From 3be9c1a15e495e74ed78102f4cc8bd3efba66de2 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 4 Jan 2021 21:21:49 +0700
+Subject: [PATCH 2/5] Fix warning on macOS 10.15
+
+/Users/user/Desktop/Sylpheed.app/Contents/MacOS/Sylpheed: line 81: test: argument expected
+---
+ macosx/bundle/launcher.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/macosx/bundle/launcher.sh b/macosx/bundle/launcher.sh
+index 668a79b..dea2322 100755
+--- a/macosx/bundle/launcher.sh
++++ b/macosx/bundle/launcher.sh
+@@ -78,7 +78,7 @@ unset APPLELANGUAGES L
+ 
+ # If we didn't get a language from the language list, try the Collation preference, in case it's the only setting that exists.
+ APPLECOLLATION=`defaults read .GlobalPreferences AppleCollationOrder`
+-if test -z ${LANG} -a -n $APPLECOLLATION; then
++if test -z ${LANG} -a -n "$APPLECOLLATION"; then
+     if test -f "$I18NDIR/${APPLECOLLATION:0:2}/LC_MESSAGES/$APP.mo"; then
+ 	export LANG=${APPLECOLLATION:0:2}
+     fi
+-- 
+2.30.0
+
