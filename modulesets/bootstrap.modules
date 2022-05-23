@@ -1,0 +1,252 @@
+<?xml version="1.0" standalone="no"?> <!--*- mode: nxml -*-->
+<?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
+<moduleset>
+  <repository type="tarball" name="ftp.gnu.org" href="http://ftp.gnu.org/gnu/"/>
+  <repository type="tarball" name="savannah.gnu.org" href="https://download.savannah.gnu.org/releases/"/>
+  <repository type="tarball" name="xorg" href="http://xorg.freedesktop.org/"/>
+  <repository type="tarball" name="pkgconfig" href="http://pkgconfig.freedesktop.org/releases/"/>
+  <repository type="tarball" name="python" href="http://www.python.org/ftp/python/"/>
+  <repository type="tarball" name="sourceforge" href="http://downloads.sourceforge.net/sourceforge/"/>
+  <repository type="tarball" name="tukaani.org" href="http://tukaani.org/"/>
+  <repository type="tarball" name="xmlsoft" href="http://xmlsoft.org/sources/"/>
+  <repository type="tarball" name="sourceware" href="http://mirrors.kernel.org/sources.redhat.com/"/>
+  <repository type="tarball" name="launchpad" href="http://launchpad.net/"/>
+  <repository type="tarball" name="gnome-http" href="http://download.gnome.org/sources/"/>
+  <repository type="tarball" name="dbus" href="http://dbus.freedesktop.org/releases/dbus/"/>
+  <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
+  <repository type="tarball" name="tango" href="http://tango.freedesktop.org/releases/"/>
+  <repository type="tarball" name="igj" href="http://www.ijg.org/files/"/>
+  <repository type="tarball" name="ragel" href="http://www.complang.org/ragel/"/>
+  <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
+  <repository type="tarball" name="libproxy" href="http://libproxy.googlecode.com/files/"/>
+  <repository type="tarball" name="cmake" href="http://www.cmake.org/files/"/>
+  <repository type="tarball" name="expat" href="https://github.com/libexpat/libexpat/releases/download/"/>
+  <repository type="tarball" name="zlib" href="https://www.zlib.net/"/>
+  <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
+  <repository type="tarball" name="fontconfig" href="http://www.freedesktop.org/software/fontconfig/release/"/>
+  <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
+
+  <autotools id="xorg-macros">
+    <branch repo="xorg"
+            module="releases/individual/util/util-macros-${version}.tar.bz2" version="1.19.3"
+            size="84690"
+            hash="sha256:0f812e6e9d2786ba8f54b960ee563c0663ddbe2434bf24ff193f5feab1f31971"/>
+  </autotools>
+
+  <autotools id="gettext" autogen-sh="configure">
+    <branch repo="ftp.gnu.org"
+            module="gettext/gettext-0.21.tar.xz" version="0.21"
+            size="9714352"
+            hash="sha256:d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192">
+    </branch>
+    <dependencies>
+      <dep package="xz"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="bison" autogen-sh="configure">
+    <branch repo="ftp.gnu.org"
+            module="bison/bison-${version}.tar.xz" version="3.8.2"
+            size="2817324"
+            hash="sha256:9bba0214ccf7f1079c5d59210045227bcf619519840ebfa80cd3849cff5a5bf2" />
+    <dependencies>
+      <dep package="xz"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="m4" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org"
+            module="m4/m4-${version}.tar.gz" version="1.4.19"
+            size="2953876"
+            hash="sha256:3be4a26d825ffdfda52a56fc43246456989a3630093cced3fbddf4771ee58a70">
+    </branch>
+  </autotools>
+
+  <autotools id="autoconf" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org"
+            module="autoconf/autoconf-2.71.tar.gz" version="2.71"
+            size="2003781"
+            hash="sha256:431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c" />
+    <dependencies>
+      <dep package="m4"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="libtool" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org"
+            module="libtool/libtool-${version}.tar.gz" version="2.4.7"
+            size="1938886"
+            hash="sha256:04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8">
+    </branch>
+  </autotools>
+
+  <autotools id="automake" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org"
+            module="automake/automake-${version}.tar.gz" version="1.16.5"
+            hash="sha256:07bd24ad08a64bc17250ce09ec56e921d6343903943e99ccf63bbf0705e34605"
+            size="2389045"/>
+    <dependencies>
+      <dep package="autoconf"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="pkg-config" autogen-sh="configure" autogenargs="--with-internal-glib">
+    <branch repo="pkgconfig" module="pkg-config-${version}.tar.gz" version="0.29.2"
+            size="2016830" hash="sha256:6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591"/>
+  </autotools>
+
+  <!-- cmakes ./configure is picky about invalid flags so we manually set it -->
+  <autotools id="cmake" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s">
+    <branch repo="cmake"
+            module="v3.23/cmake-${version}.tar.gz" version="3.23.1"
+            size="9982020"
+            hash="sha256:33fd10a8ec687a4d0d5b42473f10459bb92b3ae7def2b745dc10b192760869f3"/>
+  </autotools>
+
+  <autotools id="xz" autogen-sh="configure">
+    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.5"
+            size="1473322"
+            hash="sha256:5117f930900b341493827d63aa910ff5e011e0b994197c3b71c08a20228a42df"/>
+  </autotools>
+
+  <autotools id="intltool" autogen-sh="configure">
+    <branch repo="launchpad" version="0.51.0" size="162286"
+            module="intltool/trunk/${version}/+download/intltool-${version}.tar.gz"
+            hash="md5:12e517cac2b57a0121cda351570f1e63"/>
+  </autotools>
+
+  <autotools id="libxslt" autogen-sh="configure">
+    <branch repo="xmlsoft" module="libxslt-${version}.tar.gz" version="1.1.34"
+            size="3552258"
+            hash="sha256:98b1bd46d6792925ad2dfe9a87452ea2adebf69dcb9919ffd55bf926a7f93f7f"/>
+  </autotools>
+
+  <autotools id="libxml2" autogen-sh="configure">
+    <branch repo="xmlsoft" module="libxml2-${version}.tar.gz" version="2.9.12"
+            size="5681632"
+            hash="sha256:c8d6681e38c56f172892c85ddc0852e1fd4b53b4209e7f4ebf17f7e2eae71d92"/>
+  </autotools>
+
+  <autotools id="gtk-osx-docbook" autogen-sh="configure" supports-non-srcdir-builds="no">
+     <branch repo="sourceforge" module="gtk-osx/gtk-osx-docbook-1.2.tar.gz" version="1.2"
+             size="1985073" hash="sha256:1550665e4130c64914d26036785be1878a5867fd2bd9b954a30d0c82dee98789"/>
+  </autotools>
+
+  <!-- disable-multi-os-directory: see
+       https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
+  <autotools id="libffi" autogen-sh="configure"
+             autogenargs="--disable-multi-os-directory">
+    <branch repo="sourceware" module="libffi/libffi-${version}.tar.gz"
+            version="3.3" size="1305466"
+            hash="sha256:72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056"/>
+  </autotools>
+
+  <autotools id="libpng" autogen-sh="configure">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.xz" version="1.6.37"
+            hash="sha256:505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca"/>
+    <dependencies>
+      <dep package="xz"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="vala-bootstrap" autogen-sh="configure">
+    <branch repo="gnome-http" module="vala/0.56/vala-${version}.tar.xz"
+            version="0.56.1" checkoutdir="vala-${version}"
+            hash="sha256:c518b81dfdda82d1cdf586b3f9b2323162cb96bd3cb5a2c03650cea025d91fb9"/>
+    <dependencies>
+      <dep package="xz"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="expat" autogen-sh="configure">
+    <branch repo="expat" module="R_2_4_8/expat-2.4.8.tar.bz2" version="2.4.8"/>
+  </autotools>
+
+  <autotools id="dbus" autogen-sh="configure">
+    <branch repo="dbus" module="dbus-${version}.tar.gz" version="1.12.22"/>
+  </autotools>
+
+  <autotools id="pixman" autogen-sh="configure">
+    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.40.0"
+            hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc">
+    </branch>
+  </autotools>
+
+  <autotools id="libtasn1" autogen-sh="configure">
+    <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz"
+            version="4.18.0" size="1724441"
+            hash="sha256:4365c154953563d64c67a024b607d1ee75c6db76e0d0f65709ea80a334cd1898"/>
+  </autotools>
+
+  <autotools id="libjpeg" autogen-sh="configure">
+    <branch repo="igj" module="jpegsrc.v${version}.tar.gz" version="9e"
+            checkoutdir="jpeg-${version}"/>
+  </autotools>
+
+  <autotools id="sqlite" autogenargs="--enable-threadsafe" autogen-sh="configure">
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3380500.tar.gz"
+            version="3.38.5"
+            hash="sha256:5af07de982ba658fd91a03170c945f99c971f6955bc79df3266544373e39869c"/>
+  </autotools>
+
+  <autotools id="freetype2" autogen-sh="configure">
+    <branch repo="savannah.gnu.org" module="freetype/freetype-${version}.tar.xz"
+            version="2.11.1"
+            hash="sha256:3333ae7cfda88429c97a7ae63b7d01ab398076c3b67182e960e5684050f2c5c8">
+    </branch>
+    <dependencies>
+      <dep package="xz"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="fontconfig" autogen-sh="autoreconf" autogenargs="--disable-docs">
+    <branch repo="fontconfig" version="2.13.1" module="fontconfig-${version}.tar.gz"/>
+    <dependencies>
+      <dep package="freetype2"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="itstool" autogen-sh="autoreconf">
+    <branch repo="itstool.org" module="itstool-2.0.7.tar.bz2" version="2.0.7" hash="sha256:6b9a7cd29a12bb95598f5750e8763cee78836a1a207f85b74d8b3275b27e87ca" size="104648">
+    </branch>
+  </autotools>
+
+  <!-- GNOME’s cache for autoconf-archive.
+       Please keep this comment for greppability. -->
+  <autotools id="m4-common">
+    <branch repo="gitlab.gnome.org" module="GNOME/m4-common"/>
+  </autotools>
+
+  <metamodule id="meta-bootstrap">
+    <dependencies>
+      <if condition-set="macos">
+        <dep package="xz"/>
+        <dep package="gettext"/>
+        <dep package="autoconf"/>
+        <dep package="libtool"/>
+        <dep package="automake"/>
+        <dep package="bison"/>
+        <dep package="pkg-config"/>
+        <dep package="m4-common"/>
+        <dep package="cmake"/>
+        <dep package="intltool"/>
+        <dep package="libxml2"/>
+        <dep package="libxslt"/>
+        <dep package="gtk-osx-docbook"/>
+        <dep package="libffi"/>
+        <dep package="libpng"/>
+        <dep package="expat"/>
+        <dep package="dbus"/>
+        <dep package="pixman"/>
+        <dep package="libtasn1"/>
+        <dep package="libjpeg"/>
+        <dep package="sqlite"/>
+        <dep package="freetype2"/>
+        <dep package="fontconfig"/>
+        <dep package="itstool"/>
+        <dep package="xorg-macros"/>
+      </if>
+    </dependencies>
+  </metamodule>
+
+</moduleset>
