@@ -1,7 +1,7 @@
-From 4c155650409a3c50e701c9f1b3e43ef7c84a980e Mon Sep 17 00:00:00 2001
+From 0fa435a89d4e15a625cb350abf2a2c7510c9974a Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 5 Jan 2021 07:05:29 +0700
-Subject: [PATCH 5/5] Update Info.plist strings
+Subject: [PATCH 5/9] Update Info.plist strings
 
 ---
  macosx/bundle/Info-sylpheed.plist | 8 ++++----
@@ -38,5 +38,5 @@ index 43e5fbf..bee70db 100644
      <string>10.6</string>
  </dict>
 -- 
-2.30.0
+2.32.1 (Apple Git-133)
 

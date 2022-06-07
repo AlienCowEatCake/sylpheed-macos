@@ -1,0 +1,34 @@
+From fa0620c1335fcf327073a829ca523950822084fb Mon Sep 17 00:00:00 2001
+From: Gustavo Noronha Silva <kov@debian.org>
+Date: Sun, 28 Jan 2018 18:20:19 +0900
+Subject: [PATCH 6/9] fix small bug in addressbook window
+
+---
+ src/addressbook.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/src/addressbook.c b/src/addressbook.c
+index eaaa56a..e2768b4 100644
+--- a/src/addressbook.c
++++ b/src/addressbook.c
+@@ -1347,6 +1347,17 @@ static void addressbook_to_clicked(GtkButton *button, gpointer data)
+ 	if (new_compose)
+ 		compose_block_modified(addrbook.target_compose);
+ 
++	/*
++	 * nothing selected, but maybe there's something on the text entry
++	 */
++	if (node == NULL) {
++		gchar *addr;
++		addr = gtk_entry_get_text(GTK_ENTRY(addrbook.entry));
++		if (addr)
++			compose_entry_append(addrbook.target_compose, addr,
++					     (ComposeEntryType) data);
++	}
++
+ 	while( node ) {
+ 		AddressObject *obj = node->data;
+ 		Compose *compose = addrbook.target_compose;
+-- 
+2.32.1 (Apple Git-133)
+

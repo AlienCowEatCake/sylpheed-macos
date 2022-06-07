@@ -1,0 +1,25 @@
+From 7a6a4bdd7d8c68b287eda934a4fef83cc577265a Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 7 Jun 2022 06:47:29 +0700
+Subject: [PATCH 9/9] Fix separator style before 'Remove attachments' menu item
+
+---
+ src/plugin.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/plugin.c b/src/plugin.c
+index 52fbc5d..3cda762 100644
+--- a/src/plugin.c
++++ b/src/plugin.c
+@@ -666,7 +666,7 @@ gint syl_plugin_add_menuitem(const gchar *parent, const gchar *label,
+ 	if (label)
+ 		menuitem = gtk_menu_item_new_with_label(label);
+ 	else {
+-		menuitem = gtk_menu_item_new();
++		menuitem = gtk_separator_menu_item_new();
+ 		gtk_widget_set_sensitive(menuitem, FALSE);
+ 	}
+ 	gtk_widget_show(menuitem);
+-- 
+2.32.1 (Apple Git-133)
+

@@ -1,7 +1,7 @@
-From 3be9c1a15e495e74ed78102f4cc8bd3efba66de2 Mon Sep 17 00:00:00 2001
+From 8cadeea4f744eb44557a17fbb14bac6364bde7fb Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 21:21:49 +0700
-Subject: [PATCH 2/5] Fix warning on macOS 10.15
+Subject: [PATCH 2/9] Fix warning on macOS 10.15
 
 /Users/user/Desktop/Sylpheed.app/Contents/MacOS/Sylpheed: line 81: test: argument expected
 ---
@@ -22,5 +22,5 @@ index 668a79b..dea2322 100755
  	export LANG=${APPLECOLLATION:0:2}
      fi
 -- 
-2.30.0
+2.32.1 (Apple Git-133)
 

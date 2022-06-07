@@ -13,8 +13,7 @@ export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig"
 
 git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
 cd gtk-osx
-git checkout bc3f9ca8a9e536cfde747a96e7973e99897976c1
-cp -a "${SOURCE_DIR}/modulesets/bootstrap.modules" "./modulesets-stable/"
+git checkout e9fc8c35ea404420d5bf700e835f7d48d2d38ac2
 ./gtk-osx-setup.sh
 cd ..
 
@@ -25,7 +24,7 @@ make install
 cd ..
 
 pushd "${HOME}/Source/jhbuild" >/dev/null
-git checkout 30ef98f32c357ed3f2290a466c94bc728279cd1e
+git checkout 95b4d6efdfbb54d5dd5def8d0082e629ce5f7249
 popd >/dev/null
 
 curl -LO 'https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-mac.zip'
@@ -47,22 +46,13 @@ EOF
 cp -a ~/.config/jhbuildrc-custom ~/.config/jhbuildrc-custom.bak
 cat << EOF > ~/.config/jhbuildrc-custom
 use_local_modulesets = True
-modulesets_dir = '${PWD}/gtk-osx/modulesets-stable'
+modulesets_dir = '${SOURCE_DIR}/modulesets'
 setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["arm64"])
 setup_release()
 append_autogenargs("murrine-engine", 'LDFLAGS="\$LDFLAGS -lpixman-1" CFLAGS="\$CFLAGS -Wno-implicit-function-declaration"')
 EOF
 
 jhbuild bootstrap
-jhbuild build -s python2,python3,python,xz,gettext,autoconf,libtool,automake,bison,pkg-config,m4-common,cmake,intltool,libxml2,libxslt,gtk-osx-docbook,libffi,libpng,expat,dbus,pixman,libtasn1,libjpeg,sqlite,zlib,freetype2,fontconfig,itstool,xorg-macros gtk+-2.0
-jhbuild build openssl
-cp -a "${SOURCE_DIR}/modulesets/gtk-osx-obsolete.modules" "${HOME}/.cache/jhbuild/gtk-osx-obsolete-custom.modules"
-cp -a "${SOURCE_DIR}/modulesets/gtk-osx-obsolete.modules" "${HOME}/Source/jhbuild/modulesets/gtk-osx-obsolete-custom.modules"
-sed -i '' 's|\(<include href="gtk-osx-random.modules"/>\)|\1<include href="gtk-osx-obsolete-custom.modules"/>|' "${HOME}/.cache/jhbuild/gtk-osx.modules"
-jhbuild build tango-icon-theme
-jhbuild build gtk-engines
-jhbuild build murrine-engine
-jhbuild build gtk-mac-integration
 
 curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.7/sylpheed-3.7.0.tar.bz2
 tar -xvpf sylpheed-3.7.0.tar.bz2
@@ -72,6 +62,10 @@ patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0002-Fix-warning-on-macOS-10.15.pat
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0003-Update-sylpheed-3.4.1-osx-test1.patch-for-3.7.0.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0004-Fix-linking-with-modern-gtkmacintegration.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0005-Update-Info.plist-strings.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0006-fix-small-bug-in-addressbook-window.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0007-escape-From-lines-for-not-breaking-GPG-MIME-signatur.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-some-servers-imap.gmail.c.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
 jhbuild run ./makeosx.sh
 cd macosx/bundle
 jhbuild run gtk-mac-bundler sylpheed.bundle
@@ -96,7 +90,7 @@ arch -x86_64 make install
 cd ..
 
 pushd "${HOME}/Source/jhbuild" >/dev/null
-git checkout 30ef98f32c357ed3f2290a466c94bc728279cd1e
+git checkout 95b4d6efdfbb54d5dd5def8d0082e629ce5f7249
 popd >/dev/null
 
 unzip ninja-mac.zip
@@ -116,22 +110,13 @@ EOF
 
 cat << EOF > ~/.config/jhbuildrc-custom
 use_local_modulesets = True
-modulesets_dir = '${PWD}/gtk-osx/modulesets-stable'
+modulesets_dir = '${SOURCE_DIR}/modulesets'
 setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["x86_64"])
 setup_release()
 append_autogenargs("murrine-engine", 'LDFLAGS="\$LDFLAGS -lpixman-1" CFLAGS="\$CFLAGS -Wno-implicit-function-declaration"')
 EOF
 
 arch -x86_64 jhbuild bootstrap
-arch -x86_64 jhbuild build -s python2,python3,python,xz,gettext,autoconf,libtool,automake,bison,pkg-config,m4-common,cmake,intltool,libxml2,libxslt,gtk-osx-docbook,libffi,libpng,expat,dbus,pixman,libtasn1,libjpeg,sqlite,zlib,freetype2,fontconfig,itstool,xorg-macros gtk+-2.0
-arch -x86_64 jhbuild build openssl
-cp -a "${SOURCE_DIR}/modulesets/gtk-osx-obsolete.modules" "${HOME}/.cache/jhbuild/gtk-osx-obsolete-custom.modules"
-cp -a "${SOURCE_DIR}/modulesets/gtk-osx-obsolete.modules" "${HOME}/Source/jhbuild/modulesets/gtk-osx-obsolete-custom.modules"
-sed -i '' 's|\(<include href="gtk-osx-random.modules"/>\)|\1<include href="gtk-osx-obsolete-custom.modules"/>|' "${HOME}/.cache/jhbuild/gtk-osx.modules"
-arch -x86_64 jhbuild build tango-icon-theme
-arch -x86_64 jhbuild build gtk-engines
-arch -x86_64 jhbuild build murrine-engine
-arch -x86_64 jhbuild build gtk-mac-integration
 
 tar -xvpf sylpheed-3.7.0.tar.bz2
 cd sylpheed-3.7.0
@@ -140,6 +125,10 @@ patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0002-Fix-warning-on-macOS-10.15.pat
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0003-Update-sylpheed-3.4.1-osx-test1.patch-for-3.7.0.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0004-Fix-linking-with-modern-gtkmacintegration.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0005-Update-Info.plist-strings.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0006-fix-small-bug-in-addressbook-window.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0007-escape-From-lines-for-not-breaking-GPG-MIME-signatur.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-some-servers-imap.gmail.c.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
 arch -x86_64 jhbuild run ./makeosx.sh
 cd macosx/bundle
 arch -x86_64 jhbuild run gtk-mac-bundler sylpheed.bundle
@@ -158,6 +147,13 @@ do
         mv "${item##*/}" "${item}"
     fi
 done
+
+cd sylpheed-3.7.0
+for i in en $(find po -name '*.po' | sed 's|.*/|| ; s|\..*|| ; s|@.*||' | sort | uniq)
+do
+    mkdir -p "${HOME}/Desktop/Sylpheed.app/Contents/Resources/${i}.lproj"
+done
+cd ..
 
 rm -rf \
     "${HOME}/.cache/g-ir-scanner" \
@@ -230,6 +226,11 @@ find "${INSTALL_DIR}/Sylpheed.app/Contents/Resources/lib" \( -name '*.so' -or -n
 find "${INSTALL_DIR}/Sylpheed.app/Contents/MacOS" -type f -print0 | while IFS= read -r -d '' item ; do sign "${item}" ; done
 sign "${INSTALL_DIR}/Sylpheed.app"
 notarize "${INSTALL_DIR}/Sylpheed.app" "${BUNDLE_IDENTIFIER}"
+
+pushd "${INSTALL_DIR}" >/dev/null
+cp "${SOURCE_DIR}/misc/README.rtf" ./
+/usr/bin/python3 "${SOURCE_DIR}/scripts/DMGCustomizer.py"
+popd >/dev/null
 
 hdiutil create -format UDBZ -fs HFS+ -srcfolder "Sylpheed" -volname "Sylpheed" "Sylpheed_${BUNDLE_VERSION}.dmg"
 sign "Sylpheed_${BUNDLE_VERSION}.dmg"

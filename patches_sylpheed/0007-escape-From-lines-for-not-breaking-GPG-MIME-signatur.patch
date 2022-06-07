@@ -1,0 +1,31 @@
+From 611b594c39324a700010de58c61c254a6f8e31fd Mon Sep 17 00:00:00 2001
+From: Darren Salt <linux@youmustbejoking.demon.co.uk>
+Date: Sun, 28 Jan 2018 18:20:19 +0900
+Subject: [PATCH 7/9] escape '^From ' lines for not breaking GPG MIME
+ signatures
+
+---
+ libsylph/quoted-printable.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/libsylph/quoted-printable.c b/libsylph/quoted-printable.c
+index adcdb05..adee4bc 100644
+--- a/libsylph/quoted-printable.c
++++ b/libsylph/quoted-printable.c
+@@ -52,6 +52,13 @@ void qp_encode_line(gchar *out, const guchar *in)
+ 			if (*inp == '\r')
+ 				inp++;
+ 			inp++;
++			if (strncmp(inp, "From ", 5) == 0) {
++				*outp++ = '=';
++				*outp++ = '4';
++				*outp++ = '6';
++				len += 3;
++				inp++;
++			}
+ 		} else if (ch == '\t' || ch == ' ') {
+ 			if (IS_LBREAK(inp + 1)) {
+ 				SOFT_LBREAK_IF_REQUIRED(3);
+-- 
+2.32.1 (Apple Git-133)
+

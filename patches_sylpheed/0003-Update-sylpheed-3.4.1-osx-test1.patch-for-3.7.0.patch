@@ -1,7 +1,7 @@
-From 78e18589673e5160d2459f4c0e8b4d0be81062c9 Mon Sep 17 00:00:00 2001
+From a7c45e56c0e59b71aa14588c88b5a88d462b417c Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 22:15:56 +0700
-Subject: [PATCH 3/5] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
+Subject: [PATCH 3/9] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
 
 ---
  po/ja.po          | 729 +++++++++++++++++++++++-----------------------
@@ -2623,5 +2623,5 @@ index 571671f..31ffa73 100644
  	rpop3_window.treeview = treeview;
  	rpop3_window.store = store;
 -- 
-2.30.0
+2.32.1 (Apple Git-133)
 

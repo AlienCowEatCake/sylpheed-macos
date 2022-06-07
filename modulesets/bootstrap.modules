@@ -1,223 +1,35 @@
-<?xml version="1.0" standalone="no"?> <!--*- mode: nxml -*-->
+<?xml version="1.0" standalone="no"?>
 <?xml-stylesheet type="text/xsl" href="moduleset.xsl"?>
 <moduleset>
+  <repository type="tarball" name="ftp.gnome.org" default="yes" href="http://ftp.gnome.org/pub/GNOME/sources/"/>
   <repository type="tarball" name="ftp.gnu.org" href="http://ftp.gnu.org/gnu/"/>
-  <repository type="tarball" name="savannah.gnu.org" href="https://download.savannah.gnu.org/releases/"/>
-  <repository type="tarball" name="xorg" href="http://xorg.freedesktop.org/"/>
-  <repository type="tarball" name="pkgconfig" href="http://pkgconfig.freedesktop.org/releases/"/>
-  <repository type="tarball" name="python" href="http://www.python.org/ftp/python/"/>
+  <repository type="tarball" name="xorg.freedesktop.org" href="http://xorg.freedesktop.org/releases/"/>
+  <repository type="tarball" name="pkgconfig.freedesktop.org" href="http://pkgconfig.freedesktop.org/releases/"/>
+  <repository type="tarball" name="dbus.freedesktop.org" href="http://dbus.freedesktop.org/releases/dbus/"/>
+  <repository type="tarball" name="icon-theme.freedesktop.org" href="http://icon-theme.freedesktop.org/releases/"/>
+  <repository type="tarball" name="tango.freedesktop.org" href="http://tango.freedesktop.org/releases/"/>
+  <repository type="tarball" name="fontconfig" href="http://www.freedesktop.org/software/fontconfig/release/"/>
   <repository type="tarball" name="sourceforge" href="http://downloads.sourceforge.net/sourceforge/"/>
   <repository type="tarball" name="tukaani.org" href="http://tukaani.org/"/>
   <repository type="tarball" name="xmlsoft" href="http://xmlsoft.org/sources/"/>
-  <repository type="tarball" name="sourceware" href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="launchpad" href="http://launchpad.net/"/>
-  <repository type="tarball" name="gnome-http" href="http://download.gnome.org/sources/"/>
-  <repository type="tarball" name="dbus" href="http://dbus.freedesktop.org/releases/dbus/"/>
   <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
-  <repository type="tarball" name="tango" href="http://tango.freedesktop.org/releases/"/>
-  <repository type="tarball" name="igj" href="http://www.ijg.org/files/"/>
-  <repository type="tarball" name="ragel" href="http://www.complang.org/ragel/"/>
+  <repository type="tarball" name="cairographics-temp" href="https://gitlab.freedesktop.org/cairo/cairo/-/archive/"/>
+  <repository type="tarball" name="ijg" href="http://www.ijg.org/files/"/>
   <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
-  <repository type="tarball" name="libproxy" href="http://libproxy.googlecode.com/files/"/>
   <repository type="tarball" name="cmake" href="http://www.cmake.org/files/"/>
-  <repository type="tarball" name="expat" href="https://github.com/libexpat/libexpat/releases/download/"/>
-  <repository type="tarball" name="zlib" href="https://www.zlib.net/"/>
   <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
-  <repository type="tarball" name="fontconfig" href="http://www.freedesktop.org/software/fontconfig/release/"/>
+  <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
+  <repository type="tarball" name="github-tarball" href="https://github.com/"/>
+  <repository type="tarball" name="openssl" href="https://www.openssl.org/source/"/>
   <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
+  <repository type="system" name="system"/>
 
-  <autotools id="xorg-macros">
-    <branch repo="xorg"
-            module="releases/individual/util/util-macros-${version}.tar.bz2" version="1.19.3"
-            size="84690"
-            hash="sha256:0f812e6e9d2786ba8f54b960ee563c0663ddbe2434bf24ff193f5feab1f31971"/>
-  </autotools>
+  <systemmodule id="meson">
+    <branch repo="system"/>
+  </systemmodule>
 
-  <autotools id="gettext" autogen-sh="configure">
-    <branch repo="ftp.gnu.org"
-            module="gettext/gettext-0.21.tar.xz" version="0.21"
-            size="9714352"
-            hash="sha256:d20fcbb537e02dcf1383197ba05bd0734ef7bf5db06bdb241eb69b7d16b73192">
-    </branch>
-    <dependencies>
-      <dep package="xz"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="bison" autogen-sh="configure">
-    <branch repo="ftp.gnu.org"
-            module="bison/bison-${version}.tar.xz" version="3.8.2"
-            size="2817324"
-            hash="sha256:9bba0214ccf7f1079c5d59210045227bcf619519840ebfa80cd3849cff5a5bf2" />
-    <dependencies>
-      <dep package="xz"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="m4" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org"
-            module="m4/m4-${version}.tar.gz" version="1.4.19"
-            size="2953876"
-            hash="sha256:3be4a26d825ffdfda52a56fc43246456989a3630093cced3fbddf4771ee58a70">
-    </branch>
-  </autotools>
-
-  <autotools id="autoconf" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org"
-            module="autoconf/autoconf-2.71.tar.gz" version="2.71"
-            size="2003781"
-            hash="sha256:431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c" />
-    <dependencies>
-      <dep package="m4"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="libtool" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org"
-            module="libtool/libtool-${version}.tar.gz" version="2.4.7"
-            size="1938886"
-            hash="sha256:04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8">
-    </branch>
-  </autotools>
-
-  <autotools id="automake" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org"
-            module="automake/automake-${version}.tar.gz" version="1.16.5"
-            hash="sha256:07bd24ad08a64bc17250ce09ec56e921d6343903943e99ccf63bbf0705e34605"
-            size="2389045"/>
-    <dependencies>
-      <dep package="autoconf"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="pkg-config" autogen-sh="configure" autogenargs="--with-internal-glib">
-    <branch repo="pkgconfig" module="pkg-config-${version}.tar.gz" version="0.29.2"
-            size="2016830" hash="sha256:6fc69c01688c9458a57eb9a1664c9aba372ccda420a02bf4429fe610e7e7d591"/>
-  </autotools>
-
-  <!-- cmakes ./configure is picky about invalid flags so we manually set it -->
-  <autotools id="cmake" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s">
-    <branch repo="cmake"
-            module="v3.23/cmake-${version}.tar.gz" version="3.23.1"
-            size="9982020"
-            hash="sha256:33fd10a8ec687a4d0d5b42473f10459bb92b3ae7def2b745dc10b192760869f3"/>
-  </autotools>
-
-  <autotools id="xz" autogen-sh="configure">
-    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.5"
-            size="1473322"
-            hash="sha256:5117f930900b341493827d63aa910ff5e011e0b994197c3b71c08a20228a42df"/>
-  </autotools>
-
-  <autotools id="intltool" autogen-sh="configure">
-    <branch repo="launchpad" version="0.51.0" size="162286"
-            module="intltool/trunk/${version}/+download/intltool-${version}.tar.gz"
-            hash="md5:12e517cac2b57a0121cda351570f1e63"/>
-  </autotools>
-
-  <autotools id="libxslt" autogen-sh="configure">
-    <branch repo="xmlsoft" module="libxslt-${version}.tar.gz" version="1.1.34"
-            size="3552258"
-            hash="sha256:98b1bd46d6792925ad2dfe9a87452ea2adebf69dcb9919ffd55bf926a7f93f7f"/>
-  </autotools>
-
-  <autotools id="libxml2" autogen-sh="configure">
-    <branch repo="xmlsoft" module="libxml2-${version}.tar.gz" version="2.9.12"
-            size="5681632"
-            hash="sha256:c8d6681e38c56f172892c85ddc0852e1fd4b53b4209e7f4ebf17f7e2eae71d92"/>
-  </autotools>
-
-  <autotools id="gtk-osx-docbook" autogen-sh="configure" supports-non-srcdir-builds="no">
-     <branch repo="sourceforge" module="gtk-osx/gtk-osx-docbook-1.2.tar.gz" version="1.2"
-             size="1985073" hash="sha256:1550665e4130c64914d26036785be1878a5867fd2bd9b954a30d0c82dee98789"/>
-  </autotools>
-
-  <!-- disable-multi-os-directory: see
-       https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
-  <autotools id="libffi" autogen-sh="configure"
-             autogenargs="--disable-multi-os-directory">
-    <branch repo="sourceware" module="libffi/libffi-${version}.tar.gz"
-            version="3.3" size="1305466"
-            hash="sha256:72fba7922703ddfa7a028d513ac15a85c8d54c8d67f55fa5a4802885dc652056"/>
-  </autotools>
-
-  <autotools id="libpng" autogen-sh="configure">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.xz" version="1.6.37"
-            hash="sha256:505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca"/>
-    <dependencies>
-      <dep package="xz"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="vala-bootstrap" autogen-sh="configure">
-    <branch repo="gnome-http" module="vala/0.56/vala-${version}.tar.xz"
-            version="0.56.1" checkoutdir="vala-${version}"
-            hash="sha256:c518b81dfdda82d1cdf586b3f9b2323162cb96bd3cb5a2c03650cea025d91fb9"/>
-    <dependencies>
-      <dep package="xz"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="expat" autogen-sh="configure">
-    <branch repo="expat" module="R_2_4_8/expat-2.4.8.tar.bz2" version="2.4.8"/>
-  </autotools>
-
-  <autotools id="dbus" autogen-sh="configure">
-    <branch repo="dbus" module="dbus-${version}.tar.gz" version="1.12.22"/>
-  </autotools>
-
-  <autotools id="pixman" autogen-sh="configure">
-    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.40.0"
-            hash="sha256:6d200dec3740d9ec4ec8d1180e25779c00bc749f94278c8b9021f5534db223fc">
-    </branch>
-  </autotools>
-
-  <autotools id="libtasn1" autogen-sh="configure">
-    <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz"
-            version="4.18.0" size="1724441"
-            hash="sha256:4365c154953563d64c67a024b607d1ee75c6db76e0d0f65709ea80a334cd1898"/>
-  </autotools>
-
-  <autotools id="libjpeg" autogen-sh="configure">
-    <branch repo="igj" module="jpegsrc.v${version}.tar.gz" version="9e"
-            checkoutdir="jpeg-${version}"/>
-  </autotools>
-
-  <autotools id="sqlite" autogenargs="--enable-threadsafe" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3380500.tar.gz"
-            version="3.38.5"
-            hash="sha256:5af07de982ba658fd91a03170c945f99c971f6955bc79df3266544373e39869c"/>
-  </autotools>
-
-  <autotools id="freetype2" autogen-sh="configure">
-    <branch repo="savannah.gnu.org" module="freetype/freetype-${version}.tar.xz"
-            version="2.11.1"
-            hash="sha256:3333ae7cfda88429c97a7ae63b7d01ab398076c3b67182e960e5684050f2c5c8">
-    </branch>
-    <dependencies>
-      <dep package="xz"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="fontconfig" autogen-sh="autoreconf" autogenargs="--disable-docs">
-    <branch repo="fontconfig" version="2.13.1" module="fontconfig-${version}.tar.gz"/>
-    <dependencies>
-      <dep package="freetype2"/>
-    </dependencies>
-  </autotools>
-
-  <autotools id="itstool" autogen-sh="autoreconf">
-    <branch repo="itstool.org" module="itstool-2.0.7.tar.bz2" version="2.0.7" hash="sha256:6b9a7cd29a12bb95598f5750e8763cee78836a1a207f85b74d8b3275b27e87ca" size="104648">
-    </branch>
-  </autotools>
-
-  <!-- GNOME’s cache for autoconf-archive.
-       Please keep this comment for greppability. -->
-  <autotools id="m4-common">
-    <branch repo="gitlab.gnome.org" module="GNOME/m4-common"/>
-  </autotools>
-
-  <metamodule id="meta-bootstrap">
+  <metamodule id="meta-bootstrap-base">
     <dependencies>
       <if condition-set="macos">
         <dep package="xz"/>
@@ -240,13 +52,370 @@
         <dep package="pixman"/>
         <dep package="libtasn1"/>
         <dep package="libjpeg"/>
-        <dep package="sqlite"/>
-        <dep package="freetype2"/>
+        <!--<dep package="sqlite"/>-->
+        <dep package="freetype-no-harfbuzz"/>
         <dep package="fontconfig"/>
         <dep package="itstool"/>
         <dep package="xorg-macros"/>
       </if>
     </dependencies>
   </metamodule>
+
+  <autotools id="xz" autogen-sh="configure">
+    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.5"/>
+  </autotools>
+
+  <autotools id="gettext" autogen-sh="configure">
+    <branch repo="ftp.gnu.org" module="gettext/gettext-0.21.tar.gz" version="0.21"/>
+  </autotools>
+
+  <autotools id="m4" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org" module="m4/m4-${version}.tar.gz" version="1.4.19"/>
+  </autotools>
+
+  <autotools id="autoconf" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org" module="autoconf/autoconf-2.71.tar.gz" version="2.71"/>
+    <dependencies>
+      <dep package="m4"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="libtool" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org" module="libtool/libtool-${version}.tar.gz" version="2.4.7"/>
+  </autotools>
+
+  <autotools id="automake" autogen-sh="configure" bootstrap="true">
+    <branch repo="ftp.gnu.org" module="automake/automake-${version}.tar.gz" version="1.16.5"/>
+    <dependencies>
+      <dep package="autoconf"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="bison" autogen-sh="configure">
+    <branch repo="ftp.gnu.org" module="bison/bison-${version}.tar.gz" version="3.8.2"/>
+  </autotools>
+
+  <autotools id="pkg-config" autogen-sh="configure" autogenargs="--with-internal-glib">
+    <branch repo="pkgconfig.freedesktop.org" module="pkg-config-${version}.tar.gz" version="0.29.2"/>
+  </autotools>
+
+  <autotools id="m4-common">
+    <branch repo="gitlab.gnome.org" module="GNOME/m4-common"/>
+  </autotools>
+
+  <!-- cmakes ./configure is picky about invalid flags so we manually set it -->
+  <autotools id="cmake" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s">
+    <branch repo="cmake" module="v3.23/cmake-${version}.tar.gz" version="3.23.2"/>
+  </autotools>
+
+  <autotools id="intltool" autogen-sh="configure">
+    <branch repo="launchpad" module="intltool/trunk/${version}/+download/intltool-${version}.tar.gz" version="0.51.0"/>
+  </autotools>
+
+  <autotools id="libxml2" autogen-sh="configure">
+    <branch repo="xmlsoft" module="libxml2-${version}.tar.gz" version="2.9.12"/>
+  </autotools>
+
+  <autotools id="libxslt" autogen-sh="configure">
+    <branch repo="xmlsoft" module="libxslt-${version}.tar.gz" version="1.1.34"/>
+  </autotools>
+
+  <autotools id="gtk-osx-docbook" autogen-sh="configure" supports-non-srcdir-builds="no">
+     <branch repo="sourceforge" module="gtk-osx/gtk-osx-docbook-1.2.tar.gz" version="1.2"/>
+  </autotools>
+
+  <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
+  <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir">
+    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.2"/>
+  </autotools>
+
+  <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.37"/>
+  </autotools>
+
+  <autotools id="expat" autogen-sh="configure">
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_4_8/expat-2.4.8.tar.bz2" version="2.4.8"/>
+  </autotools>
+
+  <autotools id="dbus" autogen-sh="configure">
+    <branch repo="dbus.freedesktop.org" module="dbus-${version}.tar.gz" version="1.12.22"/>
+  </autotools>
+
+  <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx">
+    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.40.0"/>
+    <after>
+      <dep package="libpng"/>
+      <dep package="libjpeg"/>
+      <dep package="libtiff"/>
+    </after>
+  </autotools>
+
+  <autotools id="libtasn1" autogen-sh="configure">
+    <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz" version="4.18.0"/>
+  </autotools>
+
+  <autotools id="libjpeg" autogen-sh="configure">
+    <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9e" checkoutdir="jpeg-${version}"/>
+  </autotools>
+
+  <autotools id="sqlite" autogenargs="--disable-tcl --enable-threadsafe" autogen-sh="configure">
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3380500.tar.gz" version="3.38.5"/>
+  </autotools>
+
+  <cmake id="freetype-no-harfbuzz" cmakeargs="-DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -D BUILD_SHARED_LIBS=true -D CMAKE_BUILD_TYPE=Release">
+    <branch module="freetype/freetype-2.12.1.tar.gz" version="2.12.1" repo="sourceforge"/>
+    <dependencies>
+      <dep package="cmake"/>
+    </dependencies>
+  </cmake>
+
+  <autotools id="fontconfig" autogen-sh="autoreconf" autogenargs="--disable-docs --with-default-fonts=/System/Library/Fonts --with-add-fonts=/Library/Fonts,~/Library/Fonts">
+    <branch repo="fontconfig" module="fontconfig-${version}.tar.gz" version="2.14.0"/>
+    <dependencies>
+      <dep package="freetype-no-harfbuzz"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="itstool" autogen-sh="autoreconf">
+    <branch repo="itstool.org" module="itstool-2.0.7.tar.bz2" version="2.0.7"/>
+  </autotools>
+
+  <autotools id="xorg-macros">
+    <branch repo="xorg.freedesktop.org" module="individual/util/util-macros-${version}.tar.bz2" version="1.19.3"/>
+  </autotools>
+
+  <metamodule id="meta-gtk-osx-bootstrap">
+    <dependencies>
+      <dep package="libpng"/>
+      <dep package="libjpeg"/>
+      <dep package="libtiff"/>
+      <dep package="gtk-doc"/>
+    </dependencies>
+  </metamodule>
+
+  <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x">
+    <branch version="4.4.0" module="libtiff/tiff-4.4.0.tar.gz" repo="libtiff">
+      <patch file="tiff-nohtml.patch" strip="1" />
+    </branch>
+    <dependencies>
+      <dep package="libjpeg"/>
+    </dependencies>
+  </autotools>
+
+  <meson id="gtk-doc" mesonargs="-Dyelp_manual=false -Dtests=false">
+    <branch version="1.33.2" module="gtk-doc/1.33/gtk-doc-1.33.2.tar.xz"/>
+    <dependencies>
+      <dep package="libxml2"/>
+      <dep package="libxslt"/>
+      <dep package="itstool"/>
+    </dependencies>
+  </meson>
+
+  <metamodule id="meta-gtk-osx-gtk2">
+    <dependencies>
+      <if condition-set="macos">
+        <dep package="gtk+-2.0"/>
+        <dep package="gtk-mac-integration"/>
+      </if>
+    </dependencies>
+    <after>
+      <dep package="meta-bootstrap-base"/>
+      <dep package="meta-gtk-osx-bootstrap"/>
+    </after>
+  </metamodule>
+
+  <autotools id="libpcre" autogen-sh="configure" autogenargs="--enable-unicode-properties --enable-newline-is-any --enable-jit">
+    <branch repo="sourceforge" module="pcre/pcre-8.45.tar.bz2" version="8.45"/>
+  </autotools>
+
+  <meson id="glib" mesonargs="-Dlibmount=disabled">
+    <branch module="glib/2.72/glib-2.72.2.tar.xz" version="2.72.2"/>
+    <dependencies>
+      <dep package="libffi"/>
+      <dep package="libpcre"/>
+    </dependencies>
+  </meson>
+
+  <autotools id="icu" autogen-sh="source/configure" autogenargs="--enable-rpath" makeargs='CFLAGS="$CFLAGS -DU_CHARSET_IS_UTF8=1 -DU_USING_ICU_NAMESPACE=0"'>
+    <branch repo="github-tarball" version="71.1" checkoutdir="icu" module="unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz"/>
+  </autotools>
+
+  <meson id="harfbuzz-no-cairo" mesonargs="-Dcoretext=enabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled">
+    <branch repo="github-tarball" version="4.3.0" module="harfbuzz/harfbuzz/releases/download/4.3.0/harfbuzz-4.3.0.tar.xz"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="freetype-no-harfbuzz"/>
+      <!--<dep package="icu"/>-->
+    </dependencies>
+  </meson>
+
+  <cmake id="freetype" cmakeargs="-DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -D BUILD_SHARED_LIBS=true -D CMAKE_BUILD_TYPE=Release">
+    <branch module="freetype/freetype-2.12.1.tar.gz" version="2.12.1" repo="sourceforge"/>
+    <dependencies>
+      <dep package="harfbuzz-no-cairo"/>
+    </dependencies>
+  </cmake>
+
+  <meson id="cairo">
+    <branch module="1.17.6/cairo-1.17.6.tar.bz2"  version="1.17.6" repo="cairographics-temp">
+      <patch file="cairo-1.17.6-snapshot-memory-leak.patch" strip="1"/>
+      <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
+      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/9 -->
+      <!--<patch file="0001-quartz-font-Add-support-for-color-emoji-glyphs.patch" strip="1"/>-->
+    </branch>
+    <dependencies>
+      <dep package="pixman"/>
+      <dep package="meta-gtk-osx-bootstrap"/>
+      <dep package="harfbuzz-no-cairo"/>
+      <dep package="fontconfig"/>
+    </dependencies>
+  </meson>
+
+  <meson id="gobject-introspection">
+    <branch module="gobject-introspection/1.72/gobject-introspection-1.72.0.tar.xz" version="1.72.0"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="cairo"/>
+    </dependencies>
+  </meson>
+
+  <meson id="harfbuzz" mesonargs="-Dcoretext=enabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=enabled">
+    <branch repo="github-tarball" version="4.3.0" module="harfbuzz/harfbuzz/releases/download/4.3.0/harfbuzz-4.3.0.tar.xz"/>
+    <dependencies>
+      <dep package="gobject-introspection"/>
+      <dep package="cairo"/>
+      <dep package="fontconfig"/>
+    </dependencies>
+  </meson>
+
+  <meson id="fribidi" mesonargs="-Ddocs=false">
+    <branch module="fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz" repo="github-tarball" version="1.0.12"/>
+  </meson>
+
+  <meson id="pango" mesonargs="-Dfontconfig=enabled">
+    <branch version="1.50.7" module="pango/1.50/pango-1.50.7.tar.xz"/>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="cairo"/>
+      <dep package="harfbuzz"/>
+      <dep package="fribidi"/>
+    </dependencies>
+    <after>
+      <dep package="gobject-introspection"/>
+      <dep package="meta-gtk-osx-bootstrap"/>
+    </after>
+  </meson>
+
+  <meson id="atk">
+    <branch module="atk/2.38/atk-2.38.0.tar.xz" version="2.38.0"/>
+    <after>
+      <dep package="glib"/>
+      <dep package="meta-gtk-osx-bootstrap"/>
+      <dep package="gobject-introspection"/>
+    </after>
+  </meson>
+
+  <meson id="gdk-pixbuf" mesonargs="-Drelocatable=true -Dman=false">
+    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-2.42.8.tar.xz" version="2.42.8">
+      <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
+    </branch>
+    <after>
+      <dep package="pango"/>
+      <dep package="gobject-introspection"/>
+    </after>
+  </meson>
+
+  <autotools id="hicolor-icon-theme">
+    <branch module="hicolor-icon-theme-0.17.tar.xz" version="0.17" repo="icon-theme.freedesktop.org"/>
+  </autotools>
+
+  <autotools id="gtk+-2.0" autogen-sh="autoreconf" autogenargs="--with-gdktarget=quartz --enable-quartz-relocation --disable-introspection --disable-visibility">
+    <branch module="gtk+/2.24/gtk+-2.24.33.tar.xz" version="2.24.33">
+      <patch file="0008-Implement-GtkDragSourceOwner-pasteboardChangedOwner.patch" strip="1"/>
+      <patch file="0006-Bug-658722-Drag-and-Drop-sometimes-stops-working.patch" strip="1"/>
+      <patch file="gtk+-2-m4-creation.patch" strip="1"/>
+      <!-- upstream bug https://bugzilla.gnome.org/show_bug.cgi?id=767091 -->
+      <patch file="gtk-gimp-dnd-bug767091.patch" strip="1"/>
+      <!-- upstream bug: https://gitlab.gnome.org/GNOME/gtk/issues/529 -->
+      <!-- https://gitlab.gnome.org/GNOME/gtk/uploads/f0c19446b9cd1df467c4cc9050516d4b/0001-Bug-743717-Crashes-on-clipboard-operation-influence-.patch -->
+      <patch file="0001-Bug-743717-Crashes-on-clipboard-operation-influence-.patch" strip="1"/>
+      <!-- upstream bug: https://gitlab.gnome.org/GNOME/gtk/issues/580 -->
+      <!-- https://gitlab.gnome.org/GNOME/gtk/uploads/2a194d81de8e8346a81816870264b3bf/gdkimage.patch -->
+      <patch file="gdkimage.patch" strip="1"/>
+    </branch>
+    <dependencies>
+      <dep package="glib"/>
+      <dep package="pango"/>
+      <dep package="atk"/>
+      <dep package="gdk-pixbuf"/>
+      <dep package="gobject-introspection"/>
+      <dep package="hicolor-icon-theme"/>
+    </dependencies>
+    <after>
+      <dep package="meta-gtk-osx-bootstrap"/>
+    </after>
+  </autotools>
+
+  <autotools id="gtk-mac-integration" autogen-sh="configure" autogenargs="--disable-python">
+    <branch module="gtk-mac-integration/3.0/gtk-mac-integration-3.0.1.tar.xz" version="3.0.1">
+      <patch file="gtk-mac-integration-work-around-svg-locale-bug.patch" strip="1"/>
+    </branch>
+    <after>
+      <dep package="gtk+-2.0"/>
+    </after>
+  </autotools>
+
+  <metamodule id="meta-gtk-osx-themes">
+    <dependencies>
+      <dep package="tango-icon-theme"/>
+      <dep package="icon-naming-utils"/>
+      <dep package="gtk-engines"/>
+      <!--<dep package="murrine-engine"/>-->
+    </dependencies>
+  </metamodule>
+
+  <autotools id="icon-naming-utils" autogen-sh="configure">
+    <branch repo="tango.freedesktop.org" version="0.8.90" module="icon-naming-utils-0.8.90.tar.bz2"/>
+    <after>
+      <dep package="meta-gtk-osx-bootstrap"/>
+    </after>
+  </autotools>
+
+  <autotools id="tango-icon-theme" autogenargs="--disable-icon-framing" autogen-sh="configure">
+    <branch repo="tango.freedesktop.org" version="0.8.90" module="tango-icon-theme-0.8.90.tar.gz"/>
+    <dependencies>
+      <dep package="icon-naming-utils"/>
+      <dep package="hicolor-icon-theme"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gtk-engines" autogen-sh="configure">
+    <branch module="gtk-engines/2.20/gtk-engines-2.20.2.tar.bz2" version="2.20.2"/>
+    <after>
+      <dep package="meta-gtk-osx-gtk2"/>
+    </after>
+  </autotools>
+
+  <autotools id="murrine-engine" autogen-sh="configure">
+    <branch module="murrine/0.98/murrine-0.98.1.1.tar.bz2" version="0.98.1.1"/>
+    <after>
+      <dep package="gtk-engines"/>
+    </after>
+  </autotools>
+
+  <metamodule id="meta-bootstrap">
+    <dependencies>
+      <dep package="meta-bootstrap-base"/>
+      <dep package="meta-gtk-osx-bootstrap"/>
+      <dep package="meta-gtk-osx-gtk2"/>
+      <dep package="meta-gtk-osx-themes"/>
+      <dep package="openssl"/>
+    </dependencies>
+  </metamodule>
+
+  <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
+  <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
+    <branch module="openssl-1.1.1o.tar.gz" version="1.1.1o" repo="openssl"/>
+  </autotools>
 
 </moduleset>
