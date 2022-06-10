@@ -5,10 +5,8 @@
   <repository type="tarball" name="ftp.gnu.org" href="http://ftp.gnu.org/gnu/"/>
   <repository type="tarball" name="xorg.freedesktop.org" href="http://xorg.freedesktop.org/releases/"/>
   <repository type="tarball" name="pkgconfig.freedesktop.org" href="http://pkgconfig.freedesktop.org/releases/"/>
-  <repository type="tarball" name="dbus.freedesktop.org" href="http://dbus.freedesktop.org/releases/dbus/"/>
   <repository type="tarball" name="icon-theme.freedesktop.org" href="http://icon-theme.freedesktop.org/releases/"/>
   <repository type="tarball" name="tango.freedesktop.org" href="http://tango.freedesktop.org/releases/"/>
-  <repository type="tarball" name="fontconfig" href="http://www.freedesktop.org/software/fontconfig/release/"/>
   <repository type="tarball" name="sourceforge" href="http://downloads.sourceforge.net/sourceforge/"/>
   <repository type="tarball" name="tukaani.org" href="http://tukaani.org/"/>
   <repository type="tarball" name="xmlsoft" href="http://xmlsoft.org/sources/"/>
@@ -16,8 +14,6 @@
   <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
   <repository type="tarball" name="cairographics-temp" href="https://gitlab.freedesktop.org/cairo/cairo/-/archive/"/>
   <repository type="tarball" name="ijg" href="http://www.ijg.org/files/"/>
-  <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
-  <repository type="tarball" name="cmake" href="http://www.cmake.org/files/"/>
   <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
   <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
   <repository type="tarball" name="github-tarball" href="https://github.com/"/>
@@ -40,28 +36,21 @@
         <dep package="bison"/>
         <dep package="pkg-config"/>
         <dep package="m4-common"/>
-        <dep package="cmake"/>
         <dep package="intltool"/>
         <dep package="libxml2"/>
         <dep package="libxslt"/>
-        <dep package="gtk-osx-docbook"/>
         <dep package="libffi"/>
         <dep package="libpng"/>
         <dep package="expat"/>
-        <dep package="dbus"/>
         <dep package="pixman"/>
         <dep package="libtasn1"/>
-        <dep package="libjpeg"/>
-        <!--<dep package="sqlite"/>-->
-        <dep package="freetype-no-harfbuzz"/>
-        <dep package="fontconfig"/>
         <dep package="itstool"/>
         <dep package="xorg-macros"/>
       </if>
     </dependencies>
   </metamodule>
 
-  <autotools id="xz" autogen-sh="configure">
+  <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc">
     <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.5"/>
   </autotools>
 
@@ -103,11 +92,6 @@
     <branch repo="gitlab.gnome.org" module="GNOME/m4-common"/>
   </autotools>
 
-  <!-- cmakes ./configure is picky about invalid flags so we manually set it -->
-  <autotools id="cmake" autogen-template="%(srcdir)s/configure --prefix=%(prefix)s">
-    <branch repo="cmake" module="v3.23/cmake-${version}.tar.gz" version="3.23.2"/>
-  </autotools>
-
   <autotools id="intltool" autogen-sh="configure">
     <branch repo="launchpad" module="intltool/trunk/${version}/+download/intltool-${version}.tar.gz" version="0.51.0"/>
   </autotools>
@@ -120,10 +104,6 @@
     <branch repo="xmlsoft" module="libxslt-${version}.tar.gz" version="1.1.34"/>
   </autotools>
 
-  <autotools id="gtk-osx-docbook" autogen-sh="configure" supports-non-srcdir-builds="no">
-     <branch repo="sourceforge" module="gtk-osx/gtk-osx-docbook-1.2.tar.gz" version="1.2"/>
-  </autotools>
-
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir">
     <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.2"/>
@@ -133,20 +113,14 @@
     <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.37"/>
   </autotools>
 
-  <autotools id="expat" autogen-sh="configure">
+  <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook">
     <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_4_8/expat-2.4.8.tar.bz2" version="2.4.8"/>
-  </autotools>
-
-  <autotools id="dbus" autogen-sh="configure">
-    <branch repo="dbus.freedesktop.org" module="dbus-${version}.tar.gz" version="1.12.22"/>
   </autotools>
 
   <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx">
     <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.40.0"/>
     <after>
       <dep package="libpng"/>
-      <dep package="libjpeg"/>
-      <dep package="libtiff"/>
     </after>
   </autotools>
 
@@ -156,24 +130,6 @@
 
   <autotools id="libjpeg" autogen-sh="configure">
     <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9e" checkoutdir="jpeg-${version}"/>
-  </autotools>
-
-  <autotools id="sqlite" autogenargs="--disable-tcl --enable-threadsafe" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3380500.tar.gz" version="3.38.5"/>
-  </autotools>
-
-  <cmake id="freetype-no-harfbuzz" cmakeargs="-DCMAKE_DISABLE_FIND_PACKAGE_HarfBuzz=TRUE -DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -D BUILD_SHARED_LIBS=true -D CMAKE_BUILD_TYPE=Release">
-    <branch module="freetype/freetype-2.12.1.tar.gz" version="2.12.1" repo="sourceforge"/>
-    <dependencies>
-      <dep package="cmake"/>
-    </dependencies>
-  </cmake>
-
-  <autotools id="fontconfig" autogen-sh="autoreconf" autogenargs="--disable-docs --with-default-fonts=/System/Library/Fonts --with-add-fonts=/Library/Fonts,~/Library/Fonts">
-    <branch repo="fontconfig" module="fontconfig-${version}.tar.gz" version="2.14.0"/>
-    <dependencies>
-      <dep package="freetype-no-harfbuzz"/>
-    </dependencies>
   </autotools>
 
   <autotools id="itstool" autogen-sh="autoreconf">
@@ -189,27 +145,17 @@
       <dep package="libpng"/>
       <dep package="libjpeg"/>
       <dep package="libtiff"/>
-      <dep package="gtk-doc"/>
     </dependencies>
   </metamodule>
 
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x">
     <branch version="4.4.0" module="libtiff/tiff-4.4.0.tar.gz" repo="libtiff">
-      <patch file="tiff-nohtml.patch" strip="1" />
+      <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="libjpeg"/>
     </dependencies>
   </autotools>
-
-  <meson id="gtk-doc" mesonargs="-Dyelp_manual=false -Dtests=false">
-    <branch version="1.33.2" module="gtk-doc/1.33/gtk-doc-1.33.2.tar.xz"/>
-    <dependencies>
-      <dep package="libxml2"/>
-      <dep package="libxslt"/>
-      <dep package="itstool"/>
-    </dependencies>
-  </meson>
 
   <metamodule id="meta-gtk-osx-gtk2">
     <dependencies>
@@ -228,7 +174,7 @@
     <branch repo="sourceforge" module="pcre/pcre-8.45.tar.bz2" version="8.45"/>
   </autotools>
 
-  <meson id="glib" mesonargs="-Dlibmount=disabled">
+  <meson id="glib" mesonargs="-Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
     <branch module="glib/2.72/glib-2.72.2.tar.xz" version="2.72.2"/>
     <dependencies>
       <dep package="libffi"/>
@@ -236,28 +182,8 @@
     </dependencies>
   </meson>
 
-  <autotools id="icu" autogen-sh="source/configure" autogenargs="--enable-rpath" makeargs='CFLAGS="$CFLAGS -DU_CHARSET_IS_UTF8=1 -DU_USING_ICU_NAMESPACE=0"'>
-    <branch repo="github-tarball" version="71.1" checkoutdir="icu" module="unicode-org/icu/releases/download/release-71-1/icu4c-71_1-src.tgz"/>
-  </autotools>
-
-  <meson id="harfbuzz-no-cairo" mesonargs="-Dcoretext=enabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled">
-    <branch repo="github-tarball" version="4.3.0" module="harfbuzz/harfbuzz/releases/download/4.3.0/harfbuzz-4.3.0.tar.xz"/>
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="freetype-no-harfbuzz"/>
-      <!--<dep package="icu"/>-->
-    </dependencies>
-  </meson>
-
-  <cmake id="freetype" cmakeargs="-DCMAKE_DISABLE_FIND_PACKAGE_BZip2=TRUE -D BUILD_SHARED_LIBS=true -D CMAKE_BUILD_TYPE=Release">
-    <branch module="freetype/freetype-2.12.1.tar.gz" version="2.12.1" repo="sourceforge"/>
-    <dependencies>
-      <dep package="harfbuzz-no-cairo"/>
-    </dependencies>
-  </cmake>
-
-  <meson id="cairo">
-    <branch module="1.17.6/cairo-1.17.6.tar.bz2"  version="1.17.6" repo="cairographics-temp">
+  <meson id="cairo" mesonargs="-Dfontconfig=disabled -Dfreetype=disabled">
+    <branch module="1.17.6/cairo-1.17.6.tar.bz2" version="1.17.6" repo="cairographics-temp">
       <patch file="cairo-1.17.6-snapshot-memory-leak.patch" strip="1"/>
       <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
       <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/9 -->
@@ -266,33 +192,21 @@
     <dependencies>
       <dep package="pixman"/>
       <dep package="meta-gtk-osx-bootstrap"/>
-      <dep package="harfbuzz-no-cairo"/>
-      <dep package="fontconfig"/>
     </dependencies>
   </meson>
 
-  <meson id="gobject-introspection">
-    <branch module="gobject-introspection/1.72/gobject-introspection-1.72.0.tar.xz" version="1.72.0"/>
-    <dependencies>
-      <dep package="glib"/>
-      <dep package="cairo"/>
-    </dependencies>
-  </meson>
-
-  <meson id="harfbuzz" mesonargs="-Dcoretext=enabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=enabled">
+  <meson id="harfbuzz" mesonargs="-Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
     <branch repo="github-tarball" version="4.3.0" module="harfbuzz/harfbuzz/releases/download/4.3.0/harfbuzz-4.3.0.tar.xz"/>
     <dependencies>
-      <dep package="gobject-introspection"/>
       <dep package="cairo"/>
-      <dep package="fontconfig"/>
     </dependencies>
   </meson>
 
-  <meson id="fribidi" mesonargs="-Ddocs=false">
+  <meson id="fribidi" mesonargs="-Ddocs=false -Dtests=false">
     <branch module="fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz" repo="github-tarball" version="1.0.12"/>
   </meson>
 
-  <meson id="pango" mesonargs="-Dfontconfig=enabled">
+  <meson id="pango" mesonargs="-Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
     <branch version="1.50.7" module="pango/1.50/pango-1.50.7.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
@@ -301,27 +215,24 @@
       <dep package="fribidi"/>
     </dependencies>
     <after>
-      <dep package="gobject-introspection"/>
       <dep package="meta-gtk-osx-bootstrap"/>
     </after>
   </meson>
 
-  <meson id="atk">
+  <meson id="atk" mesonargs="-Dintrospection=false">
     <branch module="atk/2.38/atk-2.38.0.tar.xz" version="2.38.0"/>
     <after>
       <dep package="glib"/>
       <dep package="meta-gtk-osx-bootstrap"/>
-      <dep package="gobject-introspection"/>
     </after>
   </meson>
 
-  <meson id="gdk-pixbuf" mesonargs="-Drelocatable=true -Dman=false">
+  <meson id="gdk-pixbuf" mesonargs="-Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
     <branch module="gdk-pixbuf/2.42/gdk-pixbuf-2.42.8.tar.xz" version="2.42.8">
       <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
     <after>
       <dep package="pango"/>
-      <dep package="gobject-introspection"/>
     </after>
   </meson>
 
@@ -342,13 +253,14 @@
       <!-- upstream bug: https://gitlab.gnome.org/GNOME/gtk/issues/580 -->
       <!-- https://gitlab.gnome.org/GNOME/gtk/uploads/2a194d81de8e8346a81816870264b3bf/gdkimage.patch -->
       <patch file="gdkimage.patch" strip="1"/>
+      <!-- https://gist.github.com/brandt/3051415#file-gtk-2-24-10_nodocs-patch -->
+      <patch file="gtk+-2.24.33_nodocs.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="glib"/>
       <dep package="pango"/>
       <dep package="atk"/>
       <dep package="gdk-pixbuf"/>
-      <dep package="gobject-introspection"/>
       <dep package="hicolor-icon-theme"/>
     </dependencies>
     <after>
@@ -370,7 +282,6 @@
       <dep package="tango-icon-theme"/>
       <dep package="icon-naming-utils"/>
       <dep package="gtk-engines"/>
-      <!--<dep package="murrine-engine"/>-->
     </dependencies>
   </metamodule>
 
@@ -389,17 +300,10 @@
     </dependencies>
   </autotools>
 
-  <autotools id="gtk-engines" autogen-sh="configure">
+  <autotools id="gtk-engines" autogen-sh="configure" autogenargs="--disable-crux --disable-hc --disable-industrial --disable-mist --disable-redmond --disable-glide --disable-thinice">
     <branch module="gtk-engines/2.20/gtk-engines-2.20.2.tar.bz2" version="2.20.2"/>
     <after>
       <dep package="meta-gtk-osx-gtk2"/>
-    </after>
-  </autotools>
-
-  <autotools id="murrine-engine" autogen-sh="configure">
-    <branch module="murrine/0.98/murrine-0.98.1.1.tar.bz2" version="0.98.1.1"/>
-    <after>
-      <dep package="gtk-engines"/>
     </after>
   </autotools>
 

@@ -27,11 +27,6 @@ pushd "${HOME}/Source/jhbuild" >/dev/null
 git checkout 95b4d6efdfbb54d5dd5def8d0082e629ce5f7249
 popd >/dev/null
 
-curl -LO 'https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-mac.zip'
-unzip ninja-mac.zip
-mkdir -p "${HOME}/gtk/inst/bin"
-mv ninja "${HOME}/gtk/inst/bin"
-
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/zlib.pc"
 Name: zlib
@@ -49,7 +44,6 @@ use_local_modulesets = True
 modulesets_dir = '${SOURCE_DIR}/modulesets'
 setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["arm64"])
 setup_release()
-append_autogenargs("murrine-engine", 'LDFLAGS="\$LDFLAGS -lpixman-1" CFLAGS="\$CFLAGS -Wno-implicit-function-declaration"')
 EOF
 
 jhbuild bootstrap
@@ -93,10 +87,6 @@ pushd "${HOME}/Source/jhbuild" >/dev/null
 git checkout 95b4d6efdfbb54d5dd5def8d0082e629ce5f7249
 popd >/dev/null
 
-unzip ninja-mac.zip
-mkdir -p "${HOME}/gtk/inst/bin"
-mv ninja "${HOME}/gtk/inst/bin"
-
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/zlib.pc"
 Name: zlib
@@ -113,7 +103,6 @@ use_local_modulesets = True
 modulesets_dir = '${SOURCE_DIR}/modulesets'
 setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["x86_64"])
 setup_release()
-append_autogenargs("murrine-engine", 'LDFLAGS="\$LDFLAGS -lpixman-1" CFLAGS="\$CFLAGS -Wno-implicit-function-declaration"')
 EOF
 
 arch -x86_64 jhbuild bootstrap
@@ -165,7 +154,6 @@ rm -rf \
     "sylpheed-3.7.0" \
     "gtk-osx" \
     "gtk-mac-bundler" \
-    "ninja-mac.zip" \
     "sylpheed-3.7.0.tar.bz2" \
     "${HOME}/.config/jhbuildrc" \
     "${HOME}/.config/jhbuildrc-custom" \
