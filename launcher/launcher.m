@@ -211,8 +211,8 @@ int main(int argc, const char * argv[]) {
     }
 
     @autoreleasepool {
-        const NSUInteger argumentsCount = (NSUInteger)(argc - 1);
-        NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:argumentsCount];
+        const NSUInteger argumentsCount = (NSUInteger)(argc);
+        NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:(argumentsCount - 1)];
         for(NSUInteger i = 1; i < argumentsCount; ++i) {
             NSString * argument = [NSString stringWithUTF8String:argv[i]];
             if(argument)
