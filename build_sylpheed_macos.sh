@@ -62,6 +62,7 @@ patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-som
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0010-Use-native-macOS-notifications.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0011-Replace-gedit-by-open-t.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0012-Add-more-options-available-in-macOS-for-Web-browser.patch"
 jhbuild run ./makeosx.sh
 cd macosx/bundle
 jhbuild run gtk-mac-bundler sylpheed.bundle
@@ -122,6 +123,7 @@ patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-som
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0010-Use-native-macOS-notifications.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0011-Replace-gedit-by-open-t.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0012-Add-more-options-available-in-macOS-for-Web-browser.patch"
 arch -x86_64 jhbuild run ./makeosx.sh
 cd macosx/bundle
 arch -x86_64 jhbuild run gtk-mac-bundler sylpheed.bundle
