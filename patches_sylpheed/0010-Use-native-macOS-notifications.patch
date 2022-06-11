@@ -1,0 +1,198 @@
+From 7ae9cd2dc5aad4e96cb879e2e3158c9728feb638 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Fri, 10 Jun 2022 23:49:41 +0700
+Subject: [PATCH 10/10] Use native macOS notifications
+
+---
+ macosx/bundle/Info-sylpheed.plist |   4 +-
+ src/Makefile.in                   |   2 +
+ src/notificationwindow.c          | 135 ++++++++++++++++++++++++++++++
+ 3 files changed, 140 insertions(+), 1 deletion(-)
+
+diff --git a/macosx/bundle/Info-sylpheed.plist b/macosx/bundle/Info-sylpheed.plist
+index bee70db..9d8dfca 100644
+--- a/macosx/bundle/Info-sylpheed.plist
++++ b/macosx/bundle/Info-sylpheed.plist
+@@ -25,6 +25,8 @@
+     <key>NSHumanReadableCopyright</key>
+     <string>Copyright 1999-2018 Sylpheed Development Team</string>
+     <key>LSMinimumSystemVersion</key>
+-    <string>10.6</string>
++    <string>10.8</string>
++    <key>NSUserNotificationAlertStyle</key>
++    <string>alert</string>
+ </dict>
+ </plist>
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 57e529b..042f814 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -627,6 +627,7 @@ EXTRA_DIST = \
+ INCLUDES = \
+ 	-DG_LOG_DOMAIN=\"Sylpheed\" \
+ 	-I$(top_srcdir)/libsylph \
++	-x objective-c \
+ 	$(GTK_CFLAGS) \
+ 	$(GDK_PIXBUF_CFLAGS) \
+ 	$(GPGME_CFLAGS)
+@@ -642,6 +643,7 @@ sylpheed_LDADD = \
+ 	$(LIBICONV) \
+ 	$(SYLPHEED_LIBS) \
+ 	-lgtkmacintegration-gtk2 \
++	-framework Foundation \
+ 	libsylpheed-plugin-0.la \
+ 	../libsylph/libsylph-0.la \
+ 	$(SYLPHEED_RES)
+diff --git a/src/notificationwindow.c b/src/notificationwindow.c
+index 966c708..88103ea 100644
+--- a/src/notificationwindow.c
++++ b/src/notificationwindow.c
+@@ -21,6 +21,139 @@
+ #  include "config.h"
+ #endif
+ 
++#if defined(__OBJC__) && defined(__APPLE__)
++
++#import <Foundation/Foundation.h>
++
++#include <glib.h>
++#include <gtk/gtk.h>
++
++#include "notificationwindow.h"
++#include "utils.h"
++
++static NSUserNotification *notification = nil;
++static guint notify_tag = 0;
++
++static NSString *format_text(const gchar *str)
++{
++	if (!str || !str[0]) {
++		return nil;
++	}
++
++	NSRange range;
++	NSString *result = [NSString stringWithUTF8String:str];
++	while ((range = [result rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch]).location != NSNotFound) {
++		result = [result stringByReplacingCharactersInRange:range withString:@""];
++	}
++
++	return result;
++}
++
++static void remove_delivered_notification()
++{
++	if (notification) {
++		NSUserNotificationCenter *nc = [NSUserNotificationCenter defaultUserNotificationCenter];
++		[nc removeDeliveredNotification:notification];
++		notification = nil;
++		debug_print("notification removed\n");
++	}
++}
++
++static void deliver_notification(const gchar *message, const gchar *submessage)
++{
++	notification = [[NSUserNotification alloc] init];
++	notification.title = format_text(message);
++	notification.subtitle = nil;
++	notification.informativeText = format_text(submessage);
++	notification.soundName = NSUserNotificationDefaultSoundName;
++	NSUserNotificationCenter *nc = [NSUserNotificationCenter defaultUserNotificationCenter];
++	[nc deliverNotification:notification];
++	debug_print("notification delivered\n");
++}
++
++static gboolean notify_timeout_cb(gpointer data)
++{
++	debug_print("notification timer fired\n");
++	notification_window_close();
++	return FALSE;
++}
++
++static void reset_notify_timer(void)
++{
++	if (notify_tag > 0) {
++		g_source_remove(notify_tag);
++		notify_tag = 0;
++		debug_print("notification timer reset\n");
++	}
++}
++
++gint notification_window_open(const gchar *message, const gchar *submessage, guint timeout)
++{
++	gdk_threads_enter();
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	@try {
++		reset_notify_timer();
++		remove_delivered_notification();
++		deliver_notification(message, submessage);
++		if (timeout > 0) {
++			notify_tag = g_timeout_add(timeout * 1000, notify_timeout_cb, NULL);
++			debug_print("notification timer started\n");
++		}
++	}
++	@catch (NSException *exception) {
++		NSString *reason = [exception reason];
++		if (!reason) {
++			reason = @"nil";
++		}
++		log_error("exception in %s:%d:%s: %s\n", __FILE__, __LINE__, __FUNCTION__, [reason UTF8String]);
++	}
++	[pool release];
++	gdk_threads_leave();
++	return 0;
++}
++
++void notification_window_set_message(const gchar *message, const gchar *submessage)
++{
++	gdk_threads_enter();
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	@try {
++		if (notification) {
++			remove_delivered_notification();
++			deliver_notification(message, submessage);
++		}
++	}
++	@catch (NSException *exception) {
++		NSString *reason = [exception reason];
++		if (!reason) {
++			reason = @"nil";
++		}
++		log_error("exception in %s:%d:%s: %s\n", __FILE__, __LINE__, __FUNCTION__, [reason UTF8String]);
++	}
++	[pool release];
++	gdk_threads_leave();
++}
++
++void notification_window_close(void)
++{
++	gdk_threads_enter();
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	@try {
++		reset_notify_timer();
++		remove_delivered_notification();
++	}
++	@catch (NSException *exception) {
++		NSString *reason = [exception reason];
++		if (!reason) {
++			reason = @"nil";
++		}
++		log_error("exception in %s:%d:%s: %s\n", __FILE__, __LINE__, __FUNCTION__, [reason UTF8String]);
++	}
++	[pool release];
++	gdk_threads_leave();
++}
++
++#else
++
+ #include <glib.h>
+ #include <glib/gi18n.h>
+ #include <gtk/gtk.h>
+@@ -345,3 +478,5 @@ static gboolean nwin_motion_notify(GtkWidget *widget, GdkEventMotion *event,
+ static void nwin_destroy_cb(GtkWidget *widget, gpointer data)
+ {
+ }
++
++#endif
+-- 
+2.32.1 (Apple Git-133)
+
