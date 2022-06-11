@@ -61,6 +61,7 @@ patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0007-escape-From-lines-for-not-brea
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-some-servers-imap.gmail.c.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0010-Use-native-macOS-notifications.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0011-Replace-gedit-by-open-t.patch"
 jhbuild run ./makeosx.sh
 cd macosx/bundle
 jhbuild run gtk-mac-bundler sylpheed.bundle
@@ -120,6 +121,7 @@ patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0007-escape-From-lines-for-not-brea
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-some-servers-imap.gmail.c.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
 patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0010-Use-native-macOS-notifications.patch"
+patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0011-Replace-gedit-by-open-t.patch"
 arch -x86_64 jhbuild run ./makeosx.sh
 cd macosx/bundle
 arch -x86_64 jhbuild run gtk-mac-bundler sylpheed.bundle

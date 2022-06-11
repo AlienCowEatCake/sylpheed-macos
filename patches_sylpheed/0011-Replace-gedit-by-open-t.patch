@@ -1,0 +1,34 @@
+From 641278ee3e340c5ccb8a15f2a090700d113bbdbc Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sun, 12 Jun 2022 03:38:53 +0700
+Subject: [PATCH 11/12] Replace gedit by open -t
+
+---
+ libsylph/prefs_common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/libsylph/prefs_common.c b/libsylph/prefs_common.c
+index 8ed74a3..a244131 100644
+--- a/libsylph/prefs_common.c
++++ b/libsylph/prefs_common.c
+@@ -367,6 +367,8 @@ static PrefParam param[] = {
+ 	{"mime_audio_player", NULL, &prefs_common.mime_audio_player, P_STRING},
+ #ifdef G_OS_WIN32
+ 	{"mime_open_command", "notepad '%s'", &prefs_common.mime_open_cmd,
++#elif defined(__APPLE__)
++	{"mime_open_command", "open -t '%s'", &prefs_common.mime_open_cmd,
+ #else
+ 	{"mime_open_command", "gedit '%s'", &prefs_common.mime_open_cmd,
+ #endif
+@@ -489,6 +491,8 @@ static PrefParam param[] = {
+ 	 P_STRING},
+ #ifdef G_OS_WIN32
+ 	{"ext_editor_command", "notepad '%s'", &prefs_common.ext_editor_cmd,
++#elif defined(__APPLE__)
++	{"ext_editor_command", "open -t '%s'", &prefs_common.ext_editor_cmd,
+ #else
+ 	{"ext_editor_command", "gedit %s", &prefs_common.ext_editor_cmd,
+ #endif
+-- 
+2.32.1 (Apple Git-133)
+
