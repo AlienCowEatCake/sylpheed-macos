@@ -18,6 +18,7 @@
   <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
   <repository type="tarball" name="github-tarball" href="https://github.com/"/>
   <repository type="tarball" name="openssl" href="https://www.openssl.org/source/"/>
+  <repository type="tarball" name="compface" href="http://ftp.xemacs.org/pub/xemacs/aux/"/>
   <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
   <repository type="system" name="system"/>
 
@@ -314,12 +315,42 @@
       <dep package="meta-gtk-osx-gtk2"/>
       <dep package="meta-gtk-osx-themes"/>
       <dep package="openssl"/>
+      <dep package="compface"/>
+      <!-- Broken -->
+      <!--<dep package="gtkspell"/>-->
     </dependencies>
   </metamodule>
 
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
     <branch module="openssl-1.1.1o.tar.gz" version="1.1.1o" repo="openssl"/>
+  </autotools>
+
+  <autotools id="compface" autogen-sh="configure" supports-non-srcdir-builds="no">
+    <branch module="compface-${version}.tar.gz" version="1.5.2" repo="compface">
+      <!-- https://github.com/macports/macports-ports/blob/master/graphics/compface/Portfile -->
+      <patch file="compface-patch-Makefile.in.patch" strip="0"/>
+      <patch file="compface-implicit.patch" strip="0"/>
+    </branch>
+  </autotools>
+
+  <autotools id="enchant" autogen-sh="configure" autogenargs="--disable-static --enable-relocatable --with-applespell --without-hunspell --without-nuspell --without-aspell --without-hspell --without-voikko --without-zemberek">
+    <branch repo="github-tarball" module="AbiWord/enchant/releases/download/v${version}/enchant-${version}.tar.gz" version="2.3.3"/>
+  </autotools>
+
+  <autotools id="gtkspell" autogen-sh="configure" autogenargs="--disable-gtk-doc" supports-non-srcdir-builds="no">
+    <branch repo="sourceforge" module="gtkspell/gtkspell-${version}.tar.gz" version="2.0.16">
+      <!-- https://github.com/macports/macports-ports/blob/master/x11/gtkspell2/Portfile -->
+      <patch file="gtkspell-patch-Makefile.in.diff" strip="0"/>
+      <patch file="gtkspell-patch-configure.diff" strip="0"/>
+      <!-- http://deb.debian.org/debian/pool/main/g/gtkspell/gtkspell_2.0.16-1.3.debian.tar.xz -->
+      <patch file="gtkspell-enchant-2.patch" strip="1"/>
+      <patch file="gtkspell-enchant-2-configure.patch" strip="1"/>
+    </branch>
+    <dependencies>
+      <dep package="enchant"/>
+      <dep package="gtk+-2.0"/>
+    </dependencies>
   </autotools>
 
 </moduleset>

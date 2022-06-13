@@ -1,0 +1,32 @@
+Description: Port to enchant-2
+Author: Laurent Bigonville <bigon@debian.org>
+Forwarded: no
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -12,12 +12,12 @@ AC_CONFIG_SRCDIR(gtkspell/gtkspell.c)
+ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+ AC_CONFIG_HEADERS([config.h])
+ 
+-SPELLER_LIB=-lenchant
++SPELLER_LIB=-lenchant-2
+       
+ AC_SUBST(SPELLER_LIB)
+ GTKSPELL_PACKAGES=gtk+-2.0
+ AC_SUBST(GTKSPELL_PACKAGES)
+-PKG_CHECK_MODULES(GTKSPELL, $GTKSPELL_PACKAGES enchant >= 0.4.0 )
++PKG_CHECK_MODULES(GTKSPELL, $GTKSPELL_PACKAGES enchant-2 >= 2.2.0 )
+ AC_SUBST(GTKSPELL_CFLAGS)
+ AC_SUBST(GTKSPELL_LIBS)
+ 
+--- a/gtkspell/gtkspell.c
++++ b/gtkspell/gtkspell.c
+@@ -277,7 +277,7 @@ add_to_dictionary(GtkWidget *menuitem, G
+ 	get_word_extents_from_mark(spell->buffer, &start, &end, spell->mark_click);
+ 	word = gtk_text_buffer_get_text(spell->buffer, &start, &end, FALSE);
+ 	
+-	enchant_dict_add_to_pwl( spell->speller, word, strlen(word));
++	enchant_dict_add( spell->speller, word, strlen(word));
+ 
+ 	gtkspell_recheck_all(spell);
+ 
