@@ -51,19 +51,7 @@ jhbuild bootstrap
 curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.7/sylpheed-3.7.0.tar.bz2
 tar -xvpf sylpheed-3.7.0.tar.bz2
 cd sylpheed-3.7.0
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0001-Update-macos-bundle-project-for-latest-GTK.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0002-Fix-warning-on-macOS-10.15.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0003-Update-sylpheed-3.4.1-osx-test1.patch-for-3.7.0.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0004-Fix-linking-with-modern-gtkmacintegration.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0005-Update-Info.plist-strings.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0006-fix-small-bug-in-addressbook-window.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0007-escape-From-lines-for-not-breaking-GPG-MIME-signatur.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-some-servers-imap.gmail.c.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0010-Use-native-macOS-notifications.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0011-Replace-gedit-by-open-t.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0012-Add-more-options-available-in-macOS-for-Web-browser.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0013-Add-more-options-available-in-macOS-for-Editor.patch"
+find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 jhbuild run ./makeosx.sh
 cd macosx/bundle
 jhbuild run gtk-mac-bundler sylpheed.bundle
@@ -113,19 +101,7 @@ arch -x86_64 jhbuild bootstrap
 
 tar -xvpf sylpheed-3.7.0.tar.bz2
 cd sylpheed-3.7.0
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0001-Update-macos-bundle-project-for-latest-GTK.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0002-Fix-warning-on-macOS-10.15.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0003-Update-sylpheed-3.4.1-osx-test1.patch-for-3.7.0.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0004-Fix-linking-with-modern-gtkmacintegration.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0005-Update-Info.plist-strings.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0006-fix-small-bug-in-addressbook-window.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0007-escape-From-lines-for-not-breaking-GPG-MIME-signatur.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0008-libsylph-ssl.c-Support-SNI-some-servers-imap.gmail.c.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0009-Fix-separator-style-before-Remove-attachments-menu-i.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0010-Use-native-macOS-notifications.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0011-Replace-gedit-by-open-t.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0012-Add-more-options-available-in-macOS-for-Web-browser.patch"
-patch -p1 -i "${SOURCE_DIR}/patches_sylpheed/0013-Add-more-options-available-in-macOS-for-Editor.patch"
+find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 arch -x86_64 jhbuild run ./makeosx.sh
 cd macosx/bundle
 arch -x86_64 jhbuild run gtk-mac-bundler sylpheed.bundle
