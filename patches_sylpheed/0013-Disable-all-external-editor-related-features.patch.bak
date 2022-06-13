@@ -1,0 +1,380 @@
+From 2b23b9d100f01637013d3d42d6552e9f04823e0e Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sun, 12 Jun 2022 05:28:17 +0700
+Subject: [PATCH 13/13] Disable all external editor related features
+
+It doesn't work as expected anyway
+---
+ src/Makefile.in           |  1 +
+ src/compose.c             | 26 ++++++++++++++++++++++
+ src/prefs_common_dialog.c | 45 +++++++++++++++++++++++++++++++++++++++
+ src/prefs_toolbar.c       |  4 ++++
+ 4 files changed, 76 insertions(+)
+
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 042f814..d5155da 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -628,6 +628,7 @@ INCLUDES = \
+ 	-DG_LOG_DOMAIN=\"Sylpheed\" \
+ 	-I$(top_srcdir)/libsylph \
+ 	-x objective-c \
++	-DDISABLE_EXT_EDITOR=1 \
+ 	$(GTK_CFLAGS) \
+ 	$(GDK_PIXBUF_CFLAGS) \
+ 	$(GPGME_CFLAGS)
+diff --git a/src/compose.c b/src/compose.c
+index d2b2976..ecc8334 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -332,6 +332,7 @@ static gboolean attach_property_key_pressed	(GtkWidget	*widget,
+ 
+ static void compose_attach_open			(Compose	*compose);
+ 
++#ifndef DISABLE_EXT_EDITOR
+ static void compose_exec_ext_editor		(Compose	*compose);
+ static gboolean compose_ext_editor_kill		(Compose	*compose);
+ static void compose_ext_editor_child_exit	(GPid		 pid,
+@@ -339,6 +340,7 @@ static void compose_ext_editor_child_exit	(GPid		 pid,
+ 						 gpointer	 data);
+ static void compose_set_ext_editor_sensitive	(Compose	*compose,
+ 						 gboolean	 sensitive);
++#endif
+ 
+ static void compose_undo_state_changed		(UndoMain	*undostruct,
+ 						 gint		 undo_state,
+@@ -367,8 +369,10 @@ static void toolbar_attach_cb		(GtkWidget	*widget,
+ 					 gpointer	 data);
+ static void toolbar_sig_cb		(GtkWidget	*widget,
+ 					 gpointer	 data);
++#ifndef DISABLE_EXT_EDITOR
+ static void toolbar_ext_editor_cb	(GtkWidget	*widget,
+ 					 gpointer	 data);
++#endif
+ static void toolbar_linewrap_cb		(GtkWidget	*widget,
+ 					 gpointer	 data);
+ static void toolbar_address_cb		(GtkWidget	*widget,
+@@ -435,9 +439,11 @@ static void compose_address_cb		(gpointer	 data,
+ static void compose_template_activate_cb(GtkWidget	*widget,
+ 					 gpointer	 data);
+ 
++#ifndef DISABLE_EXT_EDITOR
+ static void compose_ext_editor_cb	(gpointer	 data,
+ 					 guint		 action,
+ 					 GtkWidget	*widget);
++#endif
+ 
+ static gint compose_delete_cb		(GtkWidget	*widget,
+ 					 GdkEventAny	*event,
+@@ -726,9 +732,11 @@ static GtkItemFactoryEntry compose_entries[] =
+ #ifndef G_OS_WIN32
+ 	{N_("/_Tools/Actio_ns"),	NULL, NULL, 0, "<Branch>"},
+ #endif
++#ifndef DISABLE_EXT_EDITOR
+ 	{N_("/_Tools/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Edit with e_xternal editor"),
+ 					"<shift><meta>X", compose_ext_editor_cb, 0, NULL},
++#endif
+ 	{N_("/_Tools/---"),		NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Request _disposition notification"),   	NULL, compose_toggle_mdn_cb   , 0, "<ToggleItem>"},
+ 
+@@ -834,8 +842,10 @@ Compose *compose_new(PrefsAccount *account, FolderItem *item,
+ 			g_timeout_add_full(G_PRIORITY_LOW,
+ 					   prefs_common.autosave_itv * 60 * 1000,
+ 					   autosave_timeout, compose, NULL);
++#ifndef DISABLE_EXT_EDITOR
+ 	if (prefs_common.auto_exteditor)
+ 		compose_exec_ext_editor(compose);
++#endif
+ 
+ 	return compose;
+ }
+@@ -945,8 +955,10 @@ Compose *compose_reply(MsgInfo *msginfo, FolderItem *item, ComposeMode mode,
+ 			g_timeout_add_full(G_PRIORITY_LOW,
+ 					   prefs_common.autosave_itv * 60 * 1000,
+ 					   autosave_timeout, compose, NULL);
++#ifndef DISABLE_EXT_EDITOR
+ 	if (prefs_common.auto_exteditor)
+ 		compose_exec_ext_editor(compose);
++#endif
+ 
+ 	return compose;
+ }
+@@ -1083,8 +1095,10 @@ Compose *compose_forward(GSList *mlist, FolderItem *item, gboolean as_attach,
+ 			g_timeout_add_full(G_PRIORITY_LOW,
+ 					   prefs_common.autosave_itv * 60 * 1000,
+ 					   autosave_timeout, compose, NULL);
++#ifndef DISABLE_EXT_EDITOR
+ 	if (prefs_common.auto_exteditor)
+ 		compose_exec_ext_editor(compose);
++#endif
+ 
+ 	return compose;
+ }
+@@ -1269,8 +1283,10 @@ Compose *compose_reedit(MsgInfo *msginfo)
+ 			g_timeout_add_full(G_PRIORITY_LOW,
+ 					   prefs_common.autosave_itv * 60 * 1000,
+ 					   autosave_timeout, compose, NULL);
++#ifndef DISABLE_EXT_EDITOR
+ 	if (prefs_common.auto_exteditor)
+ 		compose_exec_ext_editor(compose);
++#endif
+ 
+ 	return compose;
+ }
+@@ -6044,7 +6060,9 @@ static PrefsToolbarItem items[] =
+ 	{T_INSERT_FILE,		FALSE, toolbar_insert_cb},
+ 	{T_ATTACH_FILE,		FALSE, toolbar_attach_cb},
+ 	{T_SIGNATURE,		FALSE, toolbar_sig_cb},
++#ifndef DISABLE_EXT_EDITOR
+ 	{T_EDITOR,		FALSE, toolbar_ext_editor_cb},
++#endif
+ 	{T_LINEWRAP,		FALSE, toolbar_linewrap_cb},
+ 	{T_ADDRESS_BOOK,	FALSE, toolbar_address_cb},
+ 	{T_COMMON_PREFS,	FALSE, toolbar_prefs_common_cb},
+@@ -7061,6 +7079,7 @@ static void compose_attach_open(Compose *compose)
+ #endif
+ }
+ 
++#ifndef DISABLE_EXT_EDITOR
+ static void compose_exec_ext_editor(Compose *compose)
+ {
+ 	gchar *tmp;
+@@ -7272,6 +7291,7 @@ static void compose_set_ext_editor_sensitive(Compose *compose,
+ 
+ #undef SET_SENS
+ }
++#endif
+ 
+ /**
+  * compose_undo_state_changed:
+@@ -7414,12 +7434,14 @@ static void toolbar_sig_cb(GtkWidget *widget, gpointer data)
+ 	compose_insert_sig(compose, TRUE, TRUE, TRUE);
+ }
+ 
++#ifndef DISABLE_EXT_EDITOR
+ static void toolbar_ext_editor_cb(GtkWidget *widget, gpointer data)
+ {
+ 	Compose *compose = (Compose *)data;
+ 
+ 	compose_exec_ext_editor(compose);
+ }
++#endif
+ 
+ static void toolbar_linewrap_cb(GtkWidget *widget, gpointer data)
+ {
+@@ -7881,10 +7903,12 @@ static void compose_close_cb(gpointer data, guint action, GtkWidget *widget)
+ 	if (compose->lock_count > 0)
+ 		return;
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	if (compose->exteditor_pid != 0) {
+ 		if (!compose_ext_editor_kill(compose))
+ 			return;
+ 	}
++#endif
+ 
+ 	if (compose->modified) {
+ 		val = alertpanel(_("Save message"),
+@@ -7953,6 +7977,7 @@ static void compose_template_activate_cb(GtkWidget *widget, gpointer data)
+ 		compose_template_apply(compose, tmpl, FALSE);
+ }
+ 
++#ifndef DISABLE_EXT_EDITOR
+ static void compose_ext_editor_cb(gpointer data, guint action,
+ 				  GtkWidget *widget)
+ {
+@@ -7960,6 +7985,7 @@ static void compose_ext_editor_cb(gpointer data, guint action,
+ 
+ 	compose_exec_ext_editor(compose);
+ }
++#endif
+ 
+ static void compose_undo_cb(Compose *compose)
+ {
+diff --git a/src/prefs_common_dialog.c b/src/prefs_common_dialog.c
+index f4e1c72..de426c3 100644
+--- a/src/prefs_common_dialog.c
++++ b/src/prefs_common_dialog.c
+@@ -105,7 +105,9 @@ static struct Compose {
+ 	GtkWidget *checkbtn_autosig;
+ 	GtkWidget *entry_sigsep;
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	GtkWidget *checkbtn_autoextedit;
++#endif
+ 	GtkWidget *spinbtn_undolevel;
+ 	GtkObject *spinbtn_undolevel_adj;
+ 	GtkWidget *spinbtn_linewrap;
+@@ -253,8 +255,10 @@ static struct Other {
+ static struct Extcmd {
+ 	GtkWidget *uri_combo;
+ 	GtkWidget *uri_entry;
++#ifndef DISABLE_EXT_EDITOR
+ 	GtkWidget *exteditor_combo;
+ 	GtkWidget *exteditor_entry;
++#endif
+ 
+ 	GtkWidget *checkbtn_printcmd;
+ 	GtkWidget *printcmd_entry;
+@@ -379,8 +383,10 @@ static PrefsUIData ui_data[] = {
+ 	{"signature_separator", &compose.entry_sigsep,
+ 	 prefs_set_data_from_entry, prefs_set_entry},
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	{"auto_ext_editor", &compose.checkbtn_autoextedit,
+ 	 prefs_set_data_from_toggle, prefs_set_toggle},
++#endif
+ 
+ 	{"undo_level", &compose.spinbtn_undolevel,
+ 	 prefs_set_data_from_spinbtn, prefs_set_spinbtn},
+@@ -623,8 +629,10 @@ static PrefsUIData ui_data[] = {
+ 	/* External commands */
+ 	{"uri_open_command", &extcmd.uri_entry,
+ 	 prefs_common_uri_set_data_from_entry, prefs_common_uri_set_entry},
++#ifndef DISABLE_EXT_EDITOR
+ 	{"ext_editor_command", &extcmd.exteditor_entry,
+ 	 prefs_set_data_from_entry, prefs_set_entry},
++#endif
+ 
+ 	{"use_print_command", &extcmd.checkbtn_printcmd,
+ 	 prefs_set_data_from_toggle, prefs_set_toggle},
+@@ -1293,7 +1301,9 @@ static void prefs_compose_create(void)
+ 	GtkWidget *entry_sigsep;
+ 
+ 	GtkWidget *vbox2;
++#ifndef DISABLE_EXT_EDITOR
+ 	GtkWidget *checkbtn_autoextedit;
++#endif
+ 	GtkWidget *vbox3;
+ 	GtkWidget *hbox3;
+ 	GtkWidget *hbox4;
+@@ -1386,10 +1396,12 @@ static void prefs_compose_create(void)
+ 	gtk_widget_show (vbox2);
+ 	gtk_container_add (GTK_CONTAINER (vbox_tab), vbox2);
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	PACK_CHECK_BUTTON (vbox2, checkbtn_autoextedit,
+ 			   _("Automatically launch the external editor"));
+ 
+ 	PACK_VSPACER (vbox2, vbox3, VSPACING_NARROW_2);
++#endif
+ 
+ 	/* undo */
+ 
+@@ -1492,7 +1504,9 @@ static void prefs_compose_create(void)
+ 	compose.checkbtn_autosig = checkbtn_autosig;
+ 	compose.entry_sigsep     = entry_sigsep;
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	compose.checkbtn_autoextedit = checkbtn_autoextedit;
++#endif
+ 
+ 	compose.spinbtn_undolevel     = spinbtn_undolevel;
+ 	compose.spinbtn_undolevel_adj = spinbtn_undolevel_adj;
+@@ -2972,9 +2986,11 @@ static GtkWidget *prefs_extcmd_create(void)
+ 	GtkWidget *uri_combo;
+ 	GtkWidget *uri_entry;
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	GtkWidget *exteditor_label;
+ 	GtkWidget *exteditor_combo;
+ 	GtkWidget *exteditor_entry;
++#endif
+ 
+ 	GtkWidget *frame_printcmd;
+ 	GtkWidget *vbox_printcmd;
+@@ -3001,7 +3017,11 @@ static GtkWidget *prefs_extcmd_create(void)
+ 	PACK_FRAME(vbox1, ext_frame,
+ 		   _("External commands (%s will be replaced with file name / URI)"));
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	ext_table = gtk_table_new (2, 2, FALSE);
++#else
++	ext_table = gtk_table_new (1, 2, FALSE);
++#endif
+ 	gtk_widget_show (ext_table);
+ 	gtk_container_add (GTK_CONTAINER (ext_frame), ext_table);
+ 	gtk_container_set_border_width (GTK_CONTAINER (ext_table), 8);
+@@ -3047,6 +3067,7 @@ static GtkWidget *prefs_extcmd_create(void)
+ 			       NULL);
+ 	uri_entry = GTK_COMBO (uri_combo)->entry;
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	exteditor_label = gtk_label_new (_("Editor"));
+ 	gtk_widget_show (exteditor_label);
+ 	gtk_table_attach (GTK_TABLE (ext_table), exteditor_label, 0, 1, 1, 2,
+@@ -3062,6 +3083,27 @@ static GtkWidget *prefs_extcmd_create(void)
+ 			       "notepad '%s'",
+ #elif defined(__APPLE__)
+ 			       "open -t '%s'",
++			       "open -a 'TextEdit' '%s'",
++			       "open -a 'MacVim' '%s'",
++			       "open -a 'Emacs' '%s'",
++			       "open -a 'gedit' '%s'",
++			       "open -a 'kate' '%s'",
++			       "open -a 'CudaText' '%s'",
++			       "open -a 'Visual Studio Code' '%s'",
++			       "open -a 'VSCodium' '%s'",
++			       "open -a 'Atom' '%s'",
++			       "open -a 'TextMate' '%s'",
++			       "open -a 'Xcode' '%s'",
++			       "open -a 'Brackets' '%s'",
++			       "open -a 'Sublime Text' '%s'",
++			       "open -a 'Sublime Text 2' '%s'",
++			       "open -a 'BBEdit' '%s'",
++			       "open -a 'TextWrangler' '%s'",
++			       "open -a 'CodeRunner' '%s'",
++			       "open -a 'Nova' '%s'",
++			       "open -a 'Coda 2' '%s'",
++			       "open -a 'Coda' '%s'",
++			       "open -a 'Espresso' '%s'",
+ #else
+ 			       "gedit %s",
+ 			       "kedit %s",
+@@ -3072,6 +3114,7 @@ static GtkWidget *prefs_extcmd_create(void)
+ #endif
+ 			       NULL);
+ 	exteditor_entry = GTK_COMBO (exteditor_combo)->entry;
++#endif
+ 
+ 	PACK_FRAME_WITH_CHECK_BUTTON(vbox1, frame_printcmd, checkbtn_printcmd,
+ 				     _("Use external program for printing"));
+@@ -3143,8 +3186,10 @@ static GtkWidget *prefs_extcmd_create(void)
+ 	extcmd.checkbtn_printcmd = checkbtn_printcmd;
+ 	extcmd.printcmd_entry = printcmd_entry;
+ 
++#ifndef DISABLE_EXT_EDITOR
+ 	extcmd.exteditor_combo = exteditor_combo;
+ 	extcmd.exteditor_entry = exteditor_entry;
++#endif
+ 
+ #ifndef G_OS_WIN32
+ 	extcmd.checkbtn_incext = checkbtn_incext;
+diff --git a/src/prefs_toolbar.c b/src/prefs_toolbar.c
+index 1aad751..538d9bf 100644
+--- a/src/prefs_toolbar.c
++++ b/src/prefs_toolbar.c
+@@ -162,7 +162,9 @@ static gint compose_available_items[] =
+ 	T_INSERT_FILE,
+ 	T_ATTACH_FILE,
+ 	T_SIGNATURE,
++#ifndef DISABLE_EXT_EDITOR
+ 	T_EDITOR,
++#endif
+ 	T_LINEWRAP,
+ 	T_ADDRESS_BOOK,
+ 	T_COMMON_PREFS,
+@@ -204,7 +206,9 @@ static gint default_compose_items[] =
+ 	T_SEPARATOR,
+ 	T_SIGNATURE,
+ 	T_SEPARATOR,
++#ifndef DISABLE_EXT_EDITOR
+ 	T_EDITOR,
++#endif
+ 	T_LINEWRAP,
+ 	T_SEPARATOR,
+ 	T_ADDRESS_BOOK,
+-- 
+2.32.1 (Apple Git-133)
+
