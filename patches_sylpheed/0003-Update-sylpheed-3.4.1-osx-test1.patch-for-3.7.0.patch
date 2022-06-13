@@ -1,7 +1,7 @@
-From a7c45e56c0e59b71aa14588c88b5a88d462b417c Mon Sep 17 00:00:00 2001
+From 34bb8da19c294339d17c80113a014ed6db48c4c0 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 22:15:56 +0700
-Subject: [PATCH 3/9] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
+Subject: [PATCH 03/14] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
 
 ---
  po/ja.po          | 729 +++++++++++++++++++++++-----------------------

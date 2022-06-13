@@ -1,14 +1,14 @@
-From b316cdd1c90192aa42b3e50e60ec65c4fad28f96 Mon Sep 17 00:00:00 2001
+From 37e238155d4c8e68c595081cb0d629b408dd3eeb Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 12 Jun 2022 03:41:00 +0700
-Subject: [PATCH 12/12] Add more options available in macOS for Web browser
+Subject: [PATCH 13/14] Add more options available in macOS for Web browser
 
 ---
  src/prefs_common_dialog.c | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
 diff --git a/src/prefs_common_dialog.c b/src/prefs_common_dialog.c
-index b46c9b7..f4e1c72 100644
+index f3c38df..321afa6 100644
 --- a/src/prefs_common_dialog.c
 +++ b/src/prefs_common_dialog.c
 @@ -3021,6 +3021,19 @@ static GtkWidget *prefs_extcmd_create(void)

@@ -1,7 +1,7 @@
-From 681fd57b3fccacf3b65b6198e975049d33e2c38f Mon Sep 17 00:00:00 2001
+From 4dbbc782e497923d08aefa9f17f3d728bab14e71 Mon Sep 17 00:00:00 2001
 From: Antonio Ospite <ao2@ao2.it>
 Date: Fri, 24 Aug 2018 10:46:04 +0200
-Subject: [PATCH 8/9] libsylph/ssl.c: Support SNI, some servers
+Subject: [PATCH 08/14] libsylph/ssl.c: Support SNI, some servers
  (imap.gmail.com) seem to require it
 
 ---

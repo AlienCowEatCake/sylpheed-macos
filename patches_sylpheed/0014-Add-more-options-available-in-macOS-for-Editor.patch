@@ -1,36 +1,20 @@
-From 76d48c333d70ea5993f0a65233a154ea1bb85368 Mon Sep 17 00:00:00 2001
+From dbfbe31ad2d29c8bebd5016ffe0c30207ee61c3b Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 13 Jun 2022 07:27:28 +0700
-Subject: [PATCH 13/13] Add more options available in macOS for Editor
+Subject: [PATCH 14/14] Add more options available in macOS for Editor
 
 ---
- libsylph/prefs_common.c   |  2 +-
- src/prefs_common_dialog.c | 16 +++++++++++++++-
- 2 files changed, 16 insertions(+), 2 deletions(-)
+ src/prefs_common_dialog.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/libsylph/prefs_common.c b/libsylph/prefs_common.c
-index a244131..59dc6a2 100644
---- a/libsylph/prefs_common.c
-+++ b/libsylph/prefs_common.c
-@@ -492,7 +492,7 @@ static PrefParam param[] = {
- #ifdef G_OS_WIN32
- 	{"ext_editor_command", "notepad '%s'", &prefs_common.ext_editor_cmd,
- #elif defined(__APPLE__)
--	{"ext_editor_command", "open -t '%s'", &prefs_common.ext_editor_cmd,
-+	{"ext_editor_command", "open -n -W -e '%s'", &prefs_common.ext_editor_cmd,
- #else
- 	{"ext_editor_command", "gedit %s", &prefs_common.ext_editor_cmd,
- #endif
 diff --git a/src/prefs_common_dialog.c b/src/prefs_common_dialog.c
-index f4e1c72..7c8788f 100644
+index 321afa6..7c8788f 100644
 --- a/src/prefs_common_dialog.c
 +++ b/src/prefs_common_dialog.c
-@@ -3061,7 +3061,21 @@ static GtkWidget *prefs_extcmd_create(void)
- #ifdef G_OS_WIN32
+@@ -3062,6 +3062,20 @@ static GtkWidget *prefs_extcmd_create(void)
  			       "notepad '%s'",
  #elif defined(__APPLE__)
--			       "open -t '%s'",
-+			       "open -n -W -e '%s'", /* TextEdit */
+ 			       "open -n -W -e '%s'", /* TextEdit */
 +			       "'/Applications/MacVim.app/Contents/bin/mvim' -g --nofork -c 'au VimLeave * maca hide:' '%s'",
 +			       "open -n -W -a 'Emacs' --args '%s'",
 +			       "open -n -W -a 'gedit' --args --new-window --wait --standalone '%s'",

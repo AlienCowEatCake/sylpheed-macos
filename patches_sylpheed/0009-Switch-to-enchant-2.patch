@@ -1,0 +1,60 @@
+From f4d47bf6e8e5b170e9e01b7672ea7481882e6782 Mon Sep 17 00:00:00 2001
+From: Laurent Bigonville <bigon@debian.org>
+Date: Mon, 13 Jun 2022 18:35:28 +0700
+Subject: [PATCH 09/14] Switch to enchant-2
+
+---
+ configure     | 4 ++--
+ configure.ac  | 4 ++--
+ src/compose.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/configure b/configure
+index 6984cce..559a576 100755
+--- a/configure
++++ b/configure
+@@ -16307,9 +16307,9 @@ $as_echo "yes" >&6; }
+ 
+ $as_echo "#define USE_ENCHANT 1" >>confdefs.h
+ 
+-			LIBS="$LIBS `$PKG_CONFIG --libs enchant`"
++			LIBS="$LIBS `$PKG_CONFIG --libs enchant-2`"
+ 
+-						if $PKG_CONFIG --atleast-version 1.4.2 enchant ; then
++						if $PKG_CONFIG --atleast-version 1.4.2 enchant-2 ; then
+ 				CFLAGS="$CFLAGS `$PKG_CONFIG --cflags dbus-glib-1`"
+ 				LIBS="$LIBS `$PKG_CONFIG --libs dbus-glib-1`"
+ 			fi
+diff --git a/configure.ac b/configure.ac
+index 090177d..0a81b0e 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -319,10 +319,10 @@ if test "$ac_cv_enable_gtkspell" = yes; then
+ 		LIBS="$LIBS `$PKG_CONFIG --libs gtkspell-2.0`"
+ 		if $PKG_CONFIG --atleast-version 2.0.13 gtkspell-2.0 ; then
+ 			AC_DEFINE(USE_ENCHANT, 1, Use Enchant with GtkSpell)
+-			LIBS="$LIBS `$PKG_CONFIG --libs enchant`"
++			LIBS="$LIBS `$PKG_CONFIG --libs enchant-2`"
+ 
+ 			dnl Workaroud for zemberek crash
+-			if $PKG_CONFIG --atleast-version 1.4.2 enchant ; then
++			if $PKG_CONFIG --atleast-version 1.4.2 enchant-2 ; then
+ 				CFLAGS="$CFLAGS `$PKG_CONFIG --cflags dbus-glib-1`"
+ 				LIBS="$LIBS `$PKG_CONFIG --libs dbus-glib-1`"
+ 			fi
+diff --git a/src/compose.c b/src/compose.c
+index d2b2976..e96bf71 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -71,7 +71,7 @@
+ #  include <gtk/gtkradiomenuitem.h>
+ #  include <gtkspell/gtkspell.h>
+ #if USE_ENCHANT
+-#  include <enchant/enchant.h>
++#  include <enchant-2/enchant.h>
+ #else
+ #  include <aspell.h>
+ #endif
+-- 
+2.32.1 (Apple Git-133)
+
