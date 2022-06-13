@@ -11,6 +11,7 @@
   <repository type="tarball" name="tukaani.org" href="http://tukaani.org/"/>
   <repository type="tarball" name="launchpad" href="http://launchpad.net/"/>
   <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
+  <repository type="tarball" name="cairographics-temp" href="https://gitlab.freedesktop.org/cairo/cairo/-/archive/"/>
   <repository type="tarball" name="ijg" href="http://www.ijg.org/files/"/>
   <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
   <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
@@ -188,7 +189,7 @@
   </meson>
 
   <meson id="cairo" mesonargs="-Dfontconfig=disabled -Dfreetype=disabled">
-    <branch module="cairo/1.17/cairo-1.17.6.tar.xz" version="1.17.6">
+    <branch module="1.17.6/cairo-1.17.6.tar.bz2" version="1.17.6" repo="cairographics-temp">
       <patch file="cairo-1.17.6-snapshot-memory-leak.patch" strip="1"/>
       <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
       <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/9 -->
@@ -198,9 +199,6 @@
       <dep package="pixman"/>
       <dep package="meta-gtk-osx-bootstrap"/>
     </dependencies>
-    <after>
-      <dep package="xz"/>
-    </after>
   </meson>
 
   <meson id="harfbuzz" mesonargs="-Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
