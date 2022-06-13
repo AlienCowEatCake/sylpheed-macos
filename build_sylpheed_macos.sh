@@ -24,7 +24,7 @@ make install
 cd ..
 
 pushd "${HOME}/Source/jhbuild" >/dev/null
-git checkout 95b4d6efdfbb54d5dd5def8d0082e629ce5f7249
+git checkout c23ed55f46054b505389c5b6c261c335328cdd5d
 popd >/dev/null
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
@@ -88,7 +88,7 @@ arch -x86_64 make install
 cd ..
 
 pushd "${HOME}/Source/jhbuild" >/dev/null
-git checkout 95b4d6efdfbb54d5dd5def8d0082e629ce5f7249
+git checkout c23ed55f46054b505389c5b6c261c335328cdd5d
 popd >/dev/null
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
