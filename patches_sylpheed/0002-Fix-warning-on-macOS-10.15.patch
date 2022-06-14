@@ -1,7 +1,7 @@
-From dd8d225692460392484ab8af03bb2a1a9add3120 Mon Sep 17 00:00:00 2001
+From f29c8a2554e5d08f4ab94be64d5f98bb16d606e7 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 21:21:49 +0700
-Subject: [PATCH 02/14] Fix warning on macOS 10.15
+Subject: [PATCH 02/15] Fix warning on macOS 10.15
 
 /Users/user/Desktop/Sylpheed.app/Contents/MacOS/Sylpheed: line 81: test: argument expected
 ---

@@ -1,7 +1,7 @@
-From 81f3790d96da660696d66b7b662e55559795f40f Mon Sep 17 00:00:00 2001
+From a053e31f14cf2b305dbc03e66fc62303e9ddeb0e Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 12 Jun 2022 03:38:53 +0700
-Subject: [PATCH 12/14] Replace gedit by open for macOS
+Subject: [PATCH 12/15] Replace gedit by open for macOS
 
 ---
  libsylph/prefs_common.c   | 4 ++++

@@ -1,7 +1,7 @@
-From e493a7b19bc255f412d021dcbbdd544e9212c0c8 Mon Sep 17 00:00:00 2001
+From c4ed6e5c879ab5b128e40b5532df2638854a558e Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 21:16:39 +0700
-Subject: [PATCH 01/14] Update macos bundle project for latest GTK+
+Subject: [PATCH 01/15] Update macos bundle project for latest GTK+
 
 ---
  macosx/bundle/launcher.sh     | 14 ++++++++------

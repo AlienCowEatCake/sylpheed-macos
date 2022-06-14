@@ -1,0 +1,181 @@
+From 4c2862c1eb43cda09b3a23d5859982da14de50e9 Mon Sep 17 00:00:00 2001
+From: Sergey Pinaev <dfo@antex.ru>
+Date: Tue, 14 Jun 2022 17:08:31 +0700
+Subject: [PATCH 15/15] join encoded multibyte headers splited not on character
+ boundary
+
+https://www.sraoss.jp/pipermail/sylpheed/2019-October/006809.html
+
+[sylpheed:36863] [PATCH] join encoded multibyte headers splited not on character boundary
+
+Sergey Pinaev dfo at antex.ru
+Thu Oct 31 21:16:18 JST 2019
+
+hi.
+some very "smart" MUAs (outlook, i guess) sometimes
+split multibyte (i.e. UTF-8) headers not on character
+boundary before base64 (or qp) encode then. so, when decoded,
+character on which header is splited will be lost. attached
+patch joins decoded header lines (with same charset) before
+converting them from specifed charset to utf-8.
+
+--
+mail="Sergey Pinaev <dfo at antex.ru>"
+url="http://`echo $mail | sed 's/.* <\(.*\)@\(.*\)>/\1.\2/'`"
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: sylpheed-utfsplited.patch
+Type: text/x-diff
+Size: 4831 bytes
+Desc: not available
+URL: <http://www.sraoss.jp/pipermail/sylpheed/attachments/20191031/52570c0b/attachment.bin>
+---
+ libsylph/unmime.c | 84 +++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 60 insertions(+), 24 deletions(-)
+
+diff --git a/libsylph/unmime.c b/libsylph/unmime.c
+index 34a3d73..5d59db9 100644
+--- a/libsylph/unmime.c
++++ b/libsylph/unmime.c
+@@ -34,41 +34,64 @@
+ 
+ /* Decodes headers based on RFC2045 and RFC2047. */
+ 
++void convert_str(gchar *decoded_text, gchar *charset, GString *outbuf) {
++        if(charset != NULL && decoded_text != NULL) {
++                gchar *conv_str = conv_codeset_strdup(decoded_text, charset, NULL);
++
++		if (!conv_str)
++			conv_str = conv_utf8todisp(decoded_text, NULL);
++		g_string_append(outbuf, conv_str);
++		g_free(conv_str);
++                g_free(decoded_text);
++        }
++}
++
+ gchar *unmime_header(const gchar *encoded_str)
+ {
+ 	const gchar *p = encoded_str;
+ 	const gchar *eword_begin_p, *encoding_begin_p, *text_begin_p,
+ 		    *eword_end_p;
+ 	gchar charset[32];
++        char *cur_charset = NULL;
+ 	gchar encoding;
+ 	gchar *conv_str;
+ 	GString *outbuf;
+ 	gchar *out_str;
+ 	gsize out_len;
++        gchar *decoded_text = NULL;
++        gint decoded_text_len = 0;
++        
+ 
+ 	outbuf = g_string_sized_new(strlen(encoded_str) * 2);
+ 
+ 	while (*p != '\0') {
+-		gchar *decoded_text = NULL;
+ 		gint len;
+ 
+ 		eword_begin_p = strstr(p, ENCODED_WORD_BEGIN);
+ 		if (!eword_begin_p) {
++                        convert_str(decoded_text, cur_charset, outbuf);
++                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+ 		encoding_begin_p = strchr(eword_begin_p + 2, '?');
+ 		if (!encoding_begin_p) {
++                        convert_str(decoded_text, cur_charset, outbuf);
++                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+ 		text_begin_p = strchr(encoding_begin_p + 1, '?');
+ 		if (!text_begin_p) {
++                        convert_str(decoded_text, cur_charset, outbuf);
++                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+ 		eword_end_p = strstr(text_begin_p + 1, ENCODED_WORD_END);
+ 		if (!eword_end_p) {
++                        convert_str(decoded_text, cur_charset, outbuf);
++                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+@@ -96,36 +119,49 @@ gchar *unmime_header(const gchar *encoded_str)
+ 		charset[len] = '\0';
+ 		encoding = g_ascii_toupper(*(encoding_begin_p + 1));
+ 
++                if(cur_charset != NULL && strcmp(cur_charset, charset) != 0) {
++                    /* convert previous part */
++                    convert_str(decoded_text, cur_charset, outbuf);
++                    decoded_text = NULL;
++                    decoded_text_len = 0;
++                    g_free(cur_charset);
++                    cur_charset = NULL;
++                }
++
++                if(cur_charset == NULL) {
++                    cur_charset = g_strdup(charset);
++                }
++                
+ 		if (encoding == 'B') {
+-			decoded_text = g_malloc
+-				(eword_end_p - (text_begin_p + 1) + 1);
+-			len = base64_decode((guchar *)decoded_text,
+-					    text_begin_p + 1,
+-					    eword_end_p - (text_begin_p + 1));
+-			decoded_text[len] = '\0';
++			decoded_text = g_realloc
++                                (decoded_text,
++                                 decoded_text_len + eword_end_p - (text_begin_p + 1) + 1);
++			decoded_text_len += base64_decode((guchar *)(decoded_text + decoded_text_len),
++				text_begin_p + 1,
++                                eword_end_p - (text_begin_p + 1));
++			decoded_text[decoded_text_len] = '\0';
+ 		} else if (encoding == 'Q') {
+-			decoded_text = g_malloc
+-				(eword_end_p - (text_begin_p + 1) + 1);
+-			len = qp_decode_q_encoding
+-				((guchar *)decoded_text, text_begin_p + 1,
++			decoded_text = g_realloc
++                                (decoded_text,
++				 decoded_text_len + eword_end_p - (text_begin_p + 1) + 1);
++			decoded_text_len += qp_decode_q_encoding
++                                ((guchar *)(decoded_text  + decoded_text_len), text_begin_p + 1,
+ 				 eword_end_p - (text_begin_p + 1));
+ 		} else {
++                        convert_str(decoded_text, cur_charset, outbuf);
++                        decoded_text = NULL;
++                        decoded_text_len = 0;
++                        cur_charset = NULL;
+ 			g_string_append_len(outbuf, p, eword_end_p + 2 - p);
+-			p = eword_end_p + 2;
+-			continue;
+-		}
++                }
+ 
+-		/* convert to UTF-8 */
+-		conv_str = conv_codeset_strdup(decoded_text, charset, NULL);
+-		if (!conv_str)
+-			conv_str = conv_utf8todisp(decoded_text, NULL);
+-		g_string_append(outbuf, conv_str);
+-		g_free(conv_str);
+-
+-		g_free(decoded_text);
+-
+-		p = eword_end_p + 2;
++                p = eword_end_p + 2;
+ 	}
++        convert_str(decoded_text, cur_charset, outbuf);
++
++        if(cur_charset != NULL) {
++            g_free(cur_charset);
++        }
+ 
+ 	out_str = outbuf->str;
+ 	out_len = outbuf->len;
+-- 
+2.32.1 (Apple Git-133)
+
