@@ -1,0 +1,24 @@
+From 54066e3705a61fde7c511966c35d3770b16060fa Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 14 Jun 2022 18:15:22 +0700
+Subject: [PATCH 16/16] Enable Oniguruma feature
+
+---
+ makeosx.sh | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/makeosx.sh b/makeosx.sh
+index 92ae1ed..623c8a4 100755
+--- a/makeosx.sh
++++ b/makeosx.sh
+@@ -1,6 +1,7 @@
+ #!/bin/sh
+ 
+ ./configure --prefix=$HOME/gtk/inst \
++  --enable-oniguruma \
+   --with-localedir=Contents/Resources/share/locale \
+   --with-themedir=Contents/Resources/share/icons \
+   && make \
+-- 
+2.32.1 (Apple Git-133)
+

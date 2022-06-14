@@ -1,7 +1,7 @@
 From 86904ab955c1d0d40b851bb28b25c3167b9eab61 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 5 Jan 2021 07:04:57 +0700
-Subject: [PATCH 04/15] Fix linking with modern gtkmacintegration
+Subject: [PATCH 04/16] Fix linking with modern gtkmacintegration
 
 ---
  src/Makefile.in | 2 +-

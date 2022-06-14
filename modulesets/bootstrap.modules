@@ -334,6 +334,7 @@
       <dep package="meta-gtk-osx-themes"/>
       <dep package="openssl"/>
       <dep package="compface"/>
+      <dep package="oniguruma"/>
       <!-- Broken -->
       <!--<dep package="gtkspell"/>-->
     </dependencies>
@@ -350,6 +351,10 @@
       <patch file="compface-patch-Makefile.in.patch" strip="0"/>
       <patch file="compface-implicit.patch" strip="0"/>
     </branch>
+  </autotools>
+
+  <autotools id="oniguruma" autogen-sh="configure" autogenargs="--disable-static --enable-shared">
+    <branch repo="github-tarball" module="kkos/oniguruma/releases/download/v${version}/onig-${version}.tar.gz" version="6.9.8"/>
   </autotools>
 
   <autotools id="enchant" autogen-sh="configure" autogenargs="--disable-static --enable-relocatable --with-applespell --without-hunspell --without-nuspell --without-aspell --without-hspell --without-voikko --without-zemberek">
