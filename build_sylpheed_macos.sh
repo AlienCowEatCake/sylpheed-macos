@@ -148,12 +148,14 @@ find "${HOME}/Desktop/Sylpheed.app/Contents/Resources/lib" -type f \( -name '*.s
 do
     lipo "${item}" "$(echo "${item}" | sed "s|^${HOME}/Desktop/Sylpheed.app|${HOME}/Desktop/Sylpheed_arm64.app|")"  -create -output "${item##*/}"
     mv "${item##*/}" "${item}"
+    chmod 755 "${item}"
 done
 find "${HOME}/Desktop/Sylpheed.app/Contents/MacOS" -type f -print0 | while IFS= read -r -d '' item
 do
     if [ "${item##*/}_" != "${BUNDLE_EXECUTABLE}_" ]; then
         lipo "${item}" "$(echo "${item}" | sed "s|^${HOME}/Desktop/Sylpheed.app|${HOME}/Desktop/Sylpheed_arm64.app|")"  -create -output "${item##*/}"
         mv "${item##*/}" "${item}"
+        chmod 755 "${item}"
     fi
 done
 

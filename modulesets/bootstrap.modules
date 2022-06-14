@@ -50,11 +50,11 @@
     </dependencies>
   </metamodule>
 
-  <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc">
+  <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
     <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.5"/>
   </autotools>
 
-  <autotools id="gettext" autogen-sh="configure">
+  <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-static">
     <branch repo="ftp.gnu.org" module="gettext/gettext-0.21.tar.gz" version="0.21"/>
   </autotools>
 
@@ -96,14 +96,14 @@
     <branch repo="launchpad" module="intltool/trunk/${version}/+download/intltool-${version}.tar.gz" version="0.51.0"/>
   </autotools>
 
-  <autotools id="libxml2" autogen-sh="configure">
+  <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
     <branch module="libxml2/2.9/libxml2-${version}.tar.xz" version="2.9.14"/>
     <after>
       <dep package="xz"/>
     </after>
   </autotools>
 
-  <autotools id="libxslt" autogen-sh="configure">
+  <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
     <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.35"/>
     <after>
       <dep package="xz"/>
@@ -111,30 +111,30 @@
   </autotools>
 
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
-  <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir">
+  <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir --disable-static">
     <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.2"/>
   </autotools>
 
-  <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared">
+  <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
     <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.37"/>
   </autotools>
 
-  <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook">
+  <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
     <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_4_8/expat-2.4.8.tar.bz2" version="2.4.8"/>
   </autotools>
 
-  <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx">
+  <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx --disable-static">
     <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.40.0"/>
     <after>
       <dep package="libpng"/>
     </after>
   </autotools>
 
-  <autotools id="libtasn1" autogen-sh="configure">
+  <autotools id="libtasn1" autogen-sh="configure" autogenargs="--disable-static">
     <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz" version="4.18.0"/>
   </autotools>
 
-  <autotools id="libjpeg" autogen-sh="configure">
+  <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-static">
     <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9e" checkoutdir="jpeg-${version}"/>
   </autotools>
 
@@ -154,7 +154,7 @@
     </dependencies>
   </metamodule>
 
-  <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x">
+  <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x --disable-static">
     <branch version="4.4.0" module="libtiff/tiff-4.4.0.tar.gz" repo="libtiff">
       <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
@@ -176,11 +176,11 @@
     </after>
   </metamodule>
 
-  <autotools id="libpcre" autogen-sh="configure" autogenargs="--enable-unicode-properties --enable-newline-is-any --enable-jit">
+  <autotools id="libpcre" autogen-sh="configure" autogenargs="--enable-unicode-properties --enable-newline-is-any --enable-jit --disable-static">
     <branch repo="sourceforge" module="pcre/pcre-8.45.tar.bz2" version="8.45"/>
   </autotools>
 
-  <meson id="glib" mesonargs="-Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
+  <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
     <branch module="glib/2.72/glib-2.72.2.tar.xz" version="2.72.2"/>
     <dependencies>
       <dep package="libffi"/>
@@ -188,7 +188,7 @@
     </dependencies>
   </meson>
 
-  <meson id="cairo" mesonargs="-Dfontconfig=disabled -Dfreetype=disabled">
+  <meson id="cairo" mesonargs="--buildtype=release -Dfontconfig=disabled -Dfreetype=disabled">
     <branch module="1.17.6/cairo-1.17.6.tar.bz2" version="1.17.6" repo="cairographics-temp">
       <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
       <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/9 -->
@@ -214,18 +214,18 @@
     </dependencies>
   </meson>
 
-  <meson id="harfbuzz" mesonargs="-Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
+  <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
     <branch repo="github-tarball" version="4.3.0" module="harfbuzz/harfbuzz/releases/download/4.3.0/harfbuzz-4.3.0.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
   </meson>
 
-  <meson id="fribidi" mesonargs="-Ddocs=false -Dtests=false">
+  <meson id="fribidi" mesonargs="--buildtype=release -Ddocs=false -Dtests=false">
     <branch module="fribidi/fribidi/releases/download/v1.0.12/fribidi-1.0.12.tar.xz" repo="github-tarball" version="1.0.12"/>
   </meson>
 
-  <meson id="pango" mesonargs="-Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
+  <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
     <branch version="1.50.7" module="pango/1.50/pango-1.50.7.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
@@ -238,7 +238,7 @@
     </after>
   </meson>
 
-  <meson id="atk" mesonargs="-Dintrospection=false">
+  <meson id="atk" mesonargs="--buildtype=release -Dintrospection=false">
     <branch module="atk/2.38/atk-2.38.0.tar.xz" version="2.38.0"/>
     <after>
       <dep package="glib"/>
@@ -246,7 +246,7 @@
     </after>
   </meson>
 
-  <meson id="gdk-pixbuf" mesonargs="-Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
+  <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
     <branch module="gdk-pixbuf/2.42/gdk-pixbuf-2.42.8.tar.xz" version="2.42.8">
       <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
@@ -356,7 +356,7 @@
     <branch repo="github-tarball" module="kkos/oniguruma/releases/download/v${version}/onig-${version}.tar.gz" version="6.9.8"/>
   </autotools>
 
-  <autotools id="gtkspell" autogen-sh="configure" autogenargs="--disable-gtk-doc" supports-non-srcdir-builds="no">
+  <autotools id="gtkspell" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-static --enable-shared" supports-non-srcdir-builds="no">
     <branch repo="sourceforge" module="gtkspell/gtkspell-${version}.tar.gz" version="2.0.16">
       <!-- https://github.com/macports/macports-ports/blob/master/x11/gtkspell2/Portfile -->
       <patch file="gtkspell-patch-Makefile.in.diff" strip="0"/>
