@@ -38,6 +38,24 @@ Libs: -lz
 Cflags:
 EOF
 
+mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
+cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
+clang "${SOURCE_DIR}/enchant/enchant.m" -O2 -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
+    -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch arm64 -framework AppKit -framework Foundation \
+    -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
+    -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
+cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
+prefix=${HOME}/gtk/inst
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+
+Name: libenchant
+Description: A spell checking library
+Version: 2.3.3
+Libs: -L\${libdir} -lenchant-2
+Cflags: -I\${includedir}/enchant-2
+EOF
+
 cp -a ~/.config/jhbuildrc-custom ~/.config/jhbuildrc-custom.bak
 cat << EOF > ~/.config/jhbuildrc-custom
 use_local_modulesets = True
@@ -88,6 +106,24 @@ Version: 1.2.11
 Requires:
 Libs: -lz
 Cflags:
+EOF
+
+mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
+cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
+clang "${SOURCE_DIR}/enchant/enchant.m" -O2 -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
+    -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -framework AppKit -framework Foundation \
+    -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
+    -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
+cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
+prefix=${HOME}/gtk/inst
+libdir=\${prefix}/lib
+includedir=\${prefix}/include
+
+Name: libenchant
+Description: A spell checking library
+Version: 2.3.3
+Libs: -L\${libdir} -lenchant-2
+Cflags: -I\${includedir}/enchant-2
 EOF
 
 cat << EOF > ~/.config/jhbuildrc-custom

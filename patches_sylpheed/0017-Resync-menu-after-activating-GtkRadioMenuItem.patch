@@ -1,0 +1,41 @@
+From 200587cbd44bdd9cb6a6e7c0e807a0be37b61bd7 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Wed, 15 Jun 2022 02:49:42 +0700
+Subject: [PATCH 17/17] Resync menu after activating GtkRadioMenuItem
+
+See also:
+  * https://code.launchpad.net/~suv-lp/inkscape/osxmenu
+  * https://gitlab.gnome.org/GNOME/gtk-mac-integration/-/issues/13
+  * https://github.com/techee/geany/commit/a122953c7b202b6feb59d6ec4f102edf46a16391
+---
+ src/compose.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/compose.c b/src/compose.c
+index e96bf71..3ddc95d 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -6387,6 +6387,9 @@ static void compose_change_spell_lang_menu(Compose *compose, const gchar *lang)
+ 		if (dict && !g_ascii_strcasecmp(dict, lang)) {
+ 			gtk_check_menu_item_set_active
+ 				(GTK_CHECK_MENU_ITEM(cur_item->data), TRUE);
++#ifdef GTKOSXAPPLICATION
++			gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
+ 			return;
+ 		}
+ 	}
+@@ -8421,6 +8424,10 @@ static void compose_set_spell_lang_cb(GtkWidget *widget,
+ 	if (speller != NULL)
+ 		gtkspell_set_language(speller, dict, NULL);
+ 
++#ifdef GTKOSXAPPLICATION
++	gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
++
+ 	debug_print("Spell lang set to \"%s\"\n", dict);
+ }
+ #endif /* USE_GTKSPELL */
+-- 
+2.32.1 (Apple Git-133)
+

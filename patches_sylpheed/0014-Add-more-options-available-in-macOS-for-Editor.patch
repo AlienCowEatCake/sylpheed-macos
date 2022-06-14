@@ -1,7 +1,7 @@
 From e0e0e1db829e96e3b27465a57571020d4a0ac354 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 13 Jun 2022 07:27:28 +0700
-Subject: [PATCH 14/16] Add more options available in macOS for Editor
+Subject: [PATCH 14/17] Add more options available in macOS for Editor
 
 ---
  src/prefs_common_dialog.c | 14 ++++++++++++++

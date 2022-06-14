@@ -1,7 +1,7 @@
 From 748ab27d621244e401ec9cdd86b82d595f2c27d9 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 12 Jun 2022 03:41:00 +0700
-Subject: [PATCH 13/16] Add more options available in macOS for Web browser
+Subject: [PATCH 13/17] Add more options available in macOS for Web browser
 
 ---
  src/prefs_common_dialog.c | 13 +++++++++++++

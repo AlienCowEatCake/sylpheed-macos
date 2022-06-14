@@ -335,8 +335,7 @@
       <dep package="openssl"/>
       <dep package="compface"/>
       <dep package="oniguruma"/>
-      <!-- Broken -->
-      <!--<dep package="gtkspell"/>-->
+      <dep package="gtkspell"/>
     </dependencies>
   </metamodule>
 
@@ -357,10 +356,6 @@
     <branch repo="github-tarball" module="kkos/oniguruma/releases/download/v${version}/onig-${version}.tar.gz" version="6.9.8"/>
   </autotools>
 
-  <autotools id="enchant" autogen-sh="configure" autogenargs="--disable-static --enable-relocatable --with-applespell --without-hunspell --without-nuspell --without-aspell --without-hspell --without-voikko --without-zemberek">
-    <branch repo="github-tarball" module="AbiWord/enchant/releases/download/v${version}/enchant-${version}.tar.gz" version="2.3.3"/>
-  </autotools>
-
   <autotools id="gtkspell" autogen-sh="configure" autogenargs="--disable-gtk-doc" supports-non-srcdir-builds="no">
     <branch repo="sourceforge" module="gtkspell/gtkspell-${version}.tar.gz" version="2.0.16">
       <!-- https://github.com/macports/macports-ports/blob/master/x11/gtkspell2/Portfile -->
@@ -371,7 +366,6 @@
       <patch file="gtkspell-enchant-2-configure.patch" strip="1"/>
     </branch>
     <dependencies>
-      <dep package="enchant"/>
       <dep package="gtk+-2.0"/>
     </dependencies>
   </autotools>

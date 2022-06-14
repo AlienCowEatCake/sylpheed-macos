@@ -1,7 +1,7 @@
 From cd20d5eea8611f949fcb9eccb11e7f7299a69840 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 5 Jan 2021 07:05:29 +0700
-Subject: [PATCH 05/16] Update Info.plist strings
+Subject: [PATCH 05/17] Update Info.plist strings
 
 ---
  macosx/bundle/Info-sylpheed.plist | 8 ++++----

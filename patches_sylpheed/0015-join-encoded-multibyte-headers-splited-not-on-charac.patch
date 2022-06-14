@@ -1,7 +1,7 @@
 From 4c2862c1eb43cda09b3a23d5859982da14de50e9 Mon Sep 17 00:00:00 2001
 From: Sergey Pinaev <dfo@antex.ru>
 Date: Tue, 14 Jun 2022 17:08:31 +0700
-Subject: [PATCH 15/16] join encoded multibyte headers splited not on character
+Subject: [PATCH 15/17] join encoded multibyte headers splited not on character
  boundary
 
 https://www.sraoss.jp/pipermail/sylpheed/2019-October/006809.html
