@@ -1,7 +1,7 @@
-From 416a0005ab6a2b9a709d05281025e3581d612989 Mon Sep 17 00:00:00 2001
+From 54add68aecec4351f1e148241366ccf2d659e784 Mon Sep 17 00:00:00 2001
 From: Suyuan Chang <suyuan@cloudmosa.com>
 Date: Sun, 27 Jan 2019 22:56:54 -0800
-Subject: [PATCH] quartz-font: Add support for color emoji glyphs.
+Subject: [PATCH 1/9] quartz-font: Add support for color emoji glyphs.
 
 Treat the macOS system font 'Apple Color Emoji' as color glyphs and
 use color surface to render it.
@@ -12,7 +12,7 @@ Issue 150
  1 file changed, 183 insertions(+), 46 deletions(-)
 
 diff --git a/src/cairo-quartz-font.c b/src/cairo-quartz-font.c
-index 8cb71434f..eb21ac171 100644
+index 77a9d6a55..69a3e7547 100644
 --- a/src/cairo-quartz-font.c
 +++ b/src/cairo-quartz-font.c
 @@ -89,6 +89,11 @@ typedef const struct __CTFontDescriptor *CTFontDescriptorRef;
@@ -370,12 +370,12 @@ index 8cb71434f..eb21ac171 100644
      _cairo_scaled_glyph_set_surface (scaled_glyph, &font->base, surface);
  
 +    if (is_color_glyph)
-+        _cairo_scaled_glyph_set_color_surface (scaled_glyph, &font->base, surface);
++        _cairo_scaled_glyph_set_color_surface (scaled_glyph, &font->base, surface, FALSE);
 +
      return status;
  }
  
-@@ -808,6 +931,16 @@ _cairo_quartz_load_truetype_table (void	            *abstract_font,
+@@ -809,6 +932,16 @@ _cairo_quartz_load_truetype_table (void	            *abstract_font,
      return CAIRO_STATUS_SUCCESS;
  }
  
@@ -392,7 +392,7 @@ index 8cb71434f..eb21ac171 100644
  static const cairo_scaled_font_backend_t _cairo_quartz_scaled_font_backend = {
      CAIRO_FONT_TYPE_QUARTZ,
      _cairo_quartz_scaled_font_fini,
-@@ -816,6 +949,10 @@ static const cairo_scaled_font_backend_t _cairo_quartz_scaled_font_backend = {
+@@ -817,6 +950,10 @@ static const cairo_scaled_font_backend_t _cairo_quartz_scaled_font_backend = {
      _cairo_quartz_ucs4_to_index,
      _cairo_quartz_load_truetype_table,
      NULL, /* map_glyphs_to_unicode */

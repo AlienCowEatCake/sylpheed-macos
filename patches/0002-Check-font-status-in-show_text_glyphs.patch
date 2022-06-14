@@ -1,0 +1,39 @@
+From 4bbb1705f9247409baf0c7a948232402beeea332 Mon Sep 17 00:00:00 2001
+From: Adrian Johnson <ajohnson@redneon.com>
+Date: Tue, 5 Apr 2022 17:38:13 +0930
+Subject: [PATCH 2/9] Check font status in show_text_glyphs
+
+to prevent asserting in _cairo_scaled_font_freeze_cache()
+
+(cherry picked from commit 0e284245d7712b3a3c115a68f18c46d6df838284)
+---
+ src/cairo-surface.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/cairo-surface.c b/src/cairo-surface.c
+index 2fc265a2c..809a2739c 100644
+--- a/src/cairo-surface.c
++++ b/src/cairo-surface.c
+@@ -2840,7 +2840,7 @@ _cairo_surface_show_text_glyphs (cairo_surface_t	    *surface,
+ 				 int			     num_clusters,
+ 				 cairo_text_cluster_flags_t  cluster_flags,
+ 				 cairo_scaled_font_t	    *scaled_font,
+-				 const cairo_clip_t		*clip)
++				 const cairo_clip_t	    *clip)
+ {
+     cairo_int_status_t status;
+     char *utf8_copy = NULL;
+@@ -2861,6 +2861,10 @@ _cairo_surface_show_text_glyphs (cairo_surface_t	    *surface,
+     if (unlikely (status))
+ 	return status;
+ 
++    status = cairo_scaled_font_status (scaled_font);
++    if (unlikely (status))
++	return status;
++
+     if (nothing_to_do (surface, op, source))
+ 	return CAIRO_STATUS_SUCCESS;
+ 
+-- 
+2.32.1 (Apple Git-133)
+
