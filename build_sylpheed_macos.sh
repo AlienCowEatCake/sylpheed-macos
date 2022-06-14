@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 SOURCE_DIR="$(cd "$(dirname "${0}")" && pwd)"
-#SOURCE_DIR="/Users/peter/Desktop/sylpheed-macos"
+#SOURCE_DIR="${HOME}/Desktop/sylpheed-macos"
 APP_CERT="Developer ID Application: Petr Zhigalov (48535TNTA7)"
 NOTARIZE_USERNAME="peter.zhigalov@gmail.com"
 NOTARIZE_PASSWORD="@keychain:Notarize: ${NOTARIZE_USERNAME}"
