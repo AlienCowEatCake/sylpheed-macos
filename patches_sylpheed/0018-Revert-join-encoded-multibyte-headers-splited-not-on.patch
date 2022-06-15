@@ -1,0 +1,167 @@
+From 781fc904c01a4badba9967e03e0e6aa4e3f5fe0d Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Thu, 16 Jun 2022 05:49:33 +0700
+Subject: [PATCH 18/18] Revert "join encoded multibyte headers splited not on
+ character boundary"
+
+This reverts commit 0acb56d13a0bede705c331bc10f8e290a39c4295.
+
+See https://github.com/AlienCowEatCake/sylpheed-macos/issues/2#issuecomment-1157029378
+
+This patch breaks decoding attachment filenames in some cases.
+
+Example (gmail, `encoded_str` in `unmime_header`):
+`=?UTF-8?B?0JbQuNCz0LDQu9C+0LIg0J8u0KEu?= - =?UTF-8?B?0JfQsNC/?= =?UTF-8?B?0L7Qu9C90LXQvdC90YvQtSDQtNC+0LrRg9C80LXQvdGC0YsucGRm?=`
+
+Also, example of header with original issue (`encoded_str` in `unmime_header`):
+`=?utf-8?B?0KHQutC40LTQutC4INC00L4gNzAlINC00LvRjyDQsNC60YPQuyDRiNC+0L/Q?= =?utf-8?B?uNC90LPQsCE=?=`
+---
+ libsylph/unmime.c | 84 ++++++++++++++---------------------------------
+ 1 file changed, 24 insertions(+), 60 deletions(-)
+
+diff --git a/libsylph/unmime.c b/libsylph/unmime.c
+index 5d59db9..34a3d73 100644
+--- a/libsylph/unmime.c
++++ b/libsylph/unmime.c
+@@ -34,64 +34,41 @@
+ 
+ /* Decodes headers based on RFC2045 and RFC2047. */
+ 
+-void convert_str(gchar *decoded_text, gchar *charset, GString *outbuf) {
+-        if(charset != NULL && decoded_text != NULL) {
+-                gchar *conv_str = conv_codeset_strdup(decoded_text, charset, NULL);
+-
+-		if (!conv_str)
+-			conv_str = conv_utf8todisp(decoded_text, NULL);
+-		g_string_append(outbuf, conv_str);
+-		g_free(conv_str);
+-                g_free(decoded_text);
+-        }
+-}
+-
+ gchar *unmime_header(const gchar *encoded_str)
+ {
+ 	const gchar *p = encoded_str;
+ 	const gchar *eword_begin_p, *encoding_begin_p, *text_begin_p,
+ 		    *eword_end_p;
+ 	gchar charset[32];
+-        char *cur_charset = NULL;
+ 	gchar encoding;
+ 	gchar *conv_str;
+ 	GString *outbuf;
+ 	gchar *out_str;
+ 	gsize out_len;
+-        gchar *decoded_text = NULL;
+-        gint decoded_text_len = 0;
+-        
+ 
+ 	outbuf = g_string_sized_new(strlen(encoded_str) * 2);
+ 
+ 	while (*p != '\0') {
++		gchar *decoded_text = NULL;
+ 		gint len;
+ 
+ 		eword_begin_p = strstr(p, ENCODED_WORD_BEGIN);
+ 		if (!eword_begin_p) {
+-                        convert_str(decoded_text, cur_charset, outbuf);
+-                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+ 		encoding_begin_p = strchr(eword_begin_p + 2, '?');
+ 		if (!encoding_begin_p) {
+-                        convert_str(decoded_text, cur_charset, outbuf);
+-                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+ 		text_begin_p = strchr(encoding_begin_p + 1, '?');
+ 		if (!text_begin_p) {
+-                        convert_str(decoded_text, cur_charset, outbuf);
+-                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+ 		eword_end_p = strstr(text_begin_p + 1, ENCODED_WORD_END);
+ 		if (!eword_end_p) {
+-                        convert_str(decoded_text, cur_charset, outbuf);
+-                        decoded_text = NULL;
+ 			g_string_append(outbuf, p);
+ 			break;
+ 		}
+@@ -119,49 +96,36 @@ gchar *unmime_header(const gchar *encoded_str)
+ 		charset[len] = '\0';
+ 		encoding = g_ascii_toupper(*(encoding_begin_p + 1));
+ 
+-                if(cur_charset != NULL && strcmp(cur_charset, charset) != 0) {
+-                    /* convert previous part */
+-                    convert_str(decoded_text, cur_charset, outbuf);
+-                    decoded_text = NULL;
+-                    decoded_text_len = 0;
+-                    g_free(cur_charset);
+-                    cur_charset = NULL;
+-                }
+-
+-                if(cur_charset == NULL) {
+-                    cur_charset = g_strdup(charset);
+-                }
+-                
+ 		if (encoding == 'B') {
+-			decoded_text = g_realloc
+-                                (decoded_text,
+-                                 decoded_text_len + eword_end_p - (text_begin_p + 1) + 1);
+-			decoded_text_len += base64_decode((guchar *)(decoded_text + decoded_text_len),
+-				text_begin_p + 1,
+-                                eword_end_p - (text_begin_p + 1));
+-			decoded_text[decoded_text_len] = '\0';
++			decoded_text = g_malloc
++				(eword_end_p - (text_begin_p + 1) + 1);
++			len = base64_decode((guchar *)decoded_text,
++					    text_begin_p + 1,
++					    eword_end_p - (text_begin_p + 1));
++			decoded_text[len] = '\0';
+ 		} else if (encoding == 'Q') {
+-			decoded_text = g_realloc
+-                                (decoded_text,
+-				 decoded_text_len + eword_end_p - (text_begin_p + 1) + 1);
+-			decoded_text_len += qp_decode_q_encoding
+-                                ((guchar *)(decoded_text  + decoded_text_len), text_begin_p + 1,
++			decoded_text = g_malloc
++				(eword_end_p - (text_begin_p + 1) + 1);
++			len = qp_decode_q_encoding
++				((guchar *)decoded_text, text_begin_p + 1,
+ 				 eword_end_p - (text_begin_p + 1));
+ 		} else {
+-                        convert_str(decoded_text, cur_charset, outbuf);
+-                        decoded_text = NULL;
+-                        decoded_text_len = 0;
+-                        cur_charset = NULL;
+ 			g_string_append_len(outbuf, p, eword_end_p + 2 - p);
+-                }
++			p = eword_end_p + 2;
++			continue;
++		}
+ 
+-                p = eword_end_p + 2;
+-	}
+-        convert_str(decoded_text, cur_charset, outbuf);
++		/* convert to UTF-8 */
++		conv_str = conv_codeset_strdup(decoded_text, charset, NULL);
++		if (!conv_str)
++			conv_str = conv_utf8todisp(decoded_text, NULL);
++		g_string_append(outbuf, conv_str);
++		g_free(conv_str);
++
++		g_free(decoded_text);
+ 
+-        if(cur_charset != NULL) {
+-            g_free(cur_charset);
+-        }
++		p = eword_end_p + 2;
++	}
+ 
+ 	out_str = outbuf->str;
+ 	out_len = outbuf->len;
+-- 
+2.32.1 (Apple Git-133)
+
