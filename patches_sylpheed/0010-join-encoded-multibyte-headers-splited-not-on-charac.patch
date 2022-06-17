@@ -1,8 +1,10 @@
-From 4c2862c1eb43cda09b3a23d5859982da14de50e9 Mon Sep 17 00:00:00 2001
-From: Sergey Pinaev <dfo@antex.ru>
-Date: Tue, 14 Jun 2022 17:08:31 +0700
-Subject: [PATCH 15/17] join encoded multibyte headers splited not on character
+From 4d18aac2665f2033b1dcf0e644c46a9e037c31be Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 18 Jun 2022 01:38:20 +0700
+Subject: [PATCH 10/12] join encoded multibyte headers splited not on character
  boundary
+
+================================================================================
 
 https://www.sraoss.jp/pipermail/sylpheed/2019-October/006809.html
 
@@ -29,15 +31,61 @@ Type: text/x-diff
 Size: 4831 bytes
 Desc: not available
 URL: <http://www.sraoss.jp/pipermail/sylpheed/attachments/20191031/52570c0b/attachment.bin>
+
+================================================================================
+
+https://github.com/AlienCowEatCake/sylpheed-macos/issues/2#issuecomment-1157029378
+
+This patch breaks decoding attachment filenames in some cases.
+
+Example (gmail, encoded_str in unmime_header):
+=?UTF-8?B?0JbQuNCz0LDQu9C+0LIg0J8u0KEu?= - =?UTF-8?B?0JfQsNC/?= =?UTF-8?B?0L7Qu9C90LXQvdC90YvQtSDQtNC+0LrRg9C80LXQvdGC0YsucGRm?=
+
+Also, example of header with original issue (encoded_str in unmime_header):
+=?utf-8?B?0KHQutC40LTQutC4INC00L4gNzAlINC00LvRjyDQsNC60YPQuyDRiNC+0L/Q?= =?utf-8?B?uNC90LPQsCE=?=
+
+================================================================================
+
+https://github.com/AlienCowEatCake/sylpheed-macos/issues/2#issuecomment-1159133506
+
+It seems that this patch fixes original patch (fixes memory leak also):
+```
+ZGlmZiAtLWdpdCBhL2xpYnN5bHBoL3VubWltZS5jIGIvbGlic3lscGgvdW5taW1lLmMKaW5k
+ZXggNWQ1OWRiOS4uMTFlNjI1ZiAxMDA2NDQKLS0tIGEvbGlic3lscGgvdW5taW1lLmMKKysr
+IGIvbGlic3lscGgvdW5taW1lLmMKQEAgLTEwNSw2ICsxMDUsMTMgQEAgZ2NoYXIgKnVubWlt
+ZV9oZWFkZXIoY29uc3QgZ2NoYXIgKmVuY29kZWRfc3RyKQogCiAgICAgICAgICAgICAgICAg
+ICAgICAgIGZvciAoc3AgPSBwOyBzcCA8IGV3b3JkX2JlZ2luX3A7IHNwKyspIHsKICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWdfYXNjaWlfaXNzcGFjZSgqc3ApKSB7
+CisKKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjb252ZXJ0X3N0
+cihkZWNvZGVkX3RleHQsIGN1cl9jaGFyc2V0LCBvdXRidWYpOworICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGRlY29kZWRfdGV4dCA9IE5VTEw7CisgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZGVjb2RlZF90ZXh0X2xlbiA9IDA7
+CisgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZ19mcmVlKGN1cl9j
+aGFyc2V0KTsKKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBjdXJf
+Y2hhcnNldCA9IE5VTEw7CisKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGdfc3RyaW5nX2FwcGVuZF9sZW4KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgKG91dGJ1ZiwgcCwgZXdvcmRfYmVnaW5fcCAtIHApOwogICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcCA9IGV3b3JkX2JlZ2luX3A7
+CkBAIC0xNTEsNiArMTU4LDcgQEAgZ2NoYXIgKnVubWltZV9oZWFkZXIoY29uc3QgZ2NoYXIg
+KmVuY29kZWRfc3RyKQogICAgICAgICAgICAgICAgICAgICAgICAgY29udmVydF9zdHIoZGVj
+b2RlZF90ZXh0LCBjdXJfY2hhcnNldCwgb3V0YnVmKTsKICAgICAgICAgICAgICAgICAgICAg
+ICAgIGRlY29kZWRfdGV4dCA9IE5VTEw7CiAgICAgICAgICAgICAgICAgICAgICAgICBkZWNv
+ZGVkX3RleHRfbGVuID0gMDsKKyAgICAgICAgICAgICAgICAgICAgICAgIGdfZnJlZShjdXJf
+Y2hhcnNldCk7CiAgICAgICAgICAgICAgICAgICAgICAgICBjdXJfY2hhcnNldCA9IE5VTEw7
+CiAgICAgICAgICAgICAgICAgICAgICAgIGdfc3RyaW5nX2FwcGVuZF9sZW4ob3V0YnVmLCBw
+LCBld29yZF9lbmRfcCArIDIgLSBwKTsKICAgICAgICAgICAgICAgICB9Cg==
+```
+
+================================================================================
 ---
- libsylph/unmime.c | 84 +++++++++++++++++++++++++++++++++--------------
- 1 file changed, 60 insertions(+), 24 deletions(-)
+ libsylph/unmime.c | 91 ++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 67 insertions(+), 24 deletions(-)
 
 diff --git a/libsylph/unmime.c b/libsylph/unmime.c
-index 34a3d73..5d59db9 100644
+index 34a3d73..97bd08e 100644
 --- a/libsylph/unmime.c
 +++ b/libsylph/unmime.c
-@@ -34,41 +34,64 @@
+@@ -34,41 +34,63 @@
  
  /* Decodes headers based on RFC2045 and RFC2047. */
  
@@ -67,7 +115,6 @@ index 34a3d73..5d59db9 100644
  	gsize out_len;
 +        gchar *decoded_text = NULL;
 +        gint decoded_text_len = 0;
-+        
  
  	outbuf = g_string_sized_new(strlen(encoded_str) * 2);
  
@@ -103,7 +150,21 @@ index 34a3d73..5d59db9 100644
  			g_string_append(outbuf, p);
  			break;
  		}
-@@ -96,36 +119,49 @@ gchar *unmime_header(const gchar *encoded_str)
+@@ -82,6 +104,13 @@ gchar *unmime_header(const gchar *encoded_str)
+ 
+ 			for (sp = p; sp < eword_begin_p; sp++) {
+ 				if (!g_ascii_isspace(*sp)) {
++
++                                        convert_str(decoded_text, cur_charset, outbuf);
++                                        decoded_text = NULL;
++                                        decoded_text_len = 0;
++                                        g_free(cur_charset);
++                                        cur_charset = NULL;
++
+ 					g_string_append_len
+ 						(outbuf, p, eword_begin_p - p);
+ 					p = eword_begin_p;
+@@ -96,36 +125,50 @@ gchar *unmime_header(const gchar *encoded_str)
  		charset[len] = '\0';
  		encoding = g_ascii_toupper(*(encoding_begin_p + 1));
  
@@ -119,7 +180,7 @@ index 34a3d73..5d59db9 100644
 +                if(cur_charset == NULL) {
 +                    cur_charset = g_strdup(charset);
 +                }
-+                
++
  		if (encoding == 'B') {
 -			decoded_text = g_malloc
 -				(eword_end_p - (text_begin_p + 1) + 1);
@@ -149,6 +210,7 @@ index 34a3d73..5d59db9 100644
 +                        convert_str(decoded_text, cur_charset, outbuf);
 +                        decoded_text = NULL;
 +                        decoded_text_len = 0;
++                        g_free(cur_charset);
 +                        cur_charset = NULL;
  			g_string_append_len(outbuf, p, eword_end_p + 2 - p);
 -			p = eword_end_p + 2;

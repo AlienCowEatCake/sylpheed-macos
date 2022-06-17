@@ -1,15 +1,46 @@
-From c4ed6e5c879ab5b128e40b5532df2638854a558e Mon Sep 17 00:00:00 2001
+From 2370b59f5dbfe27b410e35faa4d8421de7c965fd Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 21:16:39 +0700
-Subject: [PATCH 01/17] Update macos bundle project for latest GTK+
+Subject: [PATCH 01/12] Update macos bundle project for latest GTK+
 
 ---
- macosx/bundle/launcher.sh     | 14 ++++++++------
- macosx/bundle/sylpheed.bundle |  2 ++
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ macosx/bundle/Info-sylpheed.plist |  8 ++++----
+ macosx/bundle/launcher.sh         | 16 +++++++++-------
+ macosx/bundle/sylpheed.bundle     |  2 ++
+ 3 files changed, 15 insertions(+), 11 deletions(-)
 
+diff --git a/macosx/bundle/Info-sylpheed.plist b/macosx/bundle/Info-sylpheed.plist
+index 43e5fbf..bee70db 100644
+--- a/macosx/bundle/Info-sylpheed.plist
++++ b/macosx/bundle/Info-sylpheed.plist
+@@ -7,7 +7,7 @@
+     <key>CFBundleExecutable</key>
+     <string>Sylpheed</string>
+     <key>CFBundleGetInfoString</key>
+-    <string>3.5.0beta1, (C) 1999-2014 Sylpheed Development Team http://sylpheed.sraoss.jp</string>
++    <string>3.7.0, (C) 1999-2018 Sylpheed Development Team http://sylpheed.sraoss.jp</string>
+     <key>CFBundleIconFile</key>
+     <string>sylpheed.icns</string>
+     <key>CFBundleIdentifier</key>
+@@ -17,13 +17,13 @@
+     <key>CFBundlePackageType</key>
+     <string>APPL</string>
+     <key>CFBundleShortVersionString</key>
+-    <string>3.4.99</string>
++    <string>3.7.0</string>
+     <key>CFBundleSignature</key>
+     <string>????</string>
+     <key>CFBundleVersion</key>
+-    <string>3.4.99</string>
++    <string>3.7.0</string>
+     <key>NSHumanReadableCopyright</key>
+-    <string>Copyright 1999-2014 Sylpheed Development Team</string>
++    <string>Copyright 1999-2018 Sylpheed Development Team</string>
+     <key>LSMinimumSystemVersion</key>
+     <string>10.6</string>
+ </dict>
 diff --git a/macosx/bundle/launcher.sh b/macosx/bundle/launcher.sh
-index 67f5051..668a79b 100755
+index 67f5051..dea2322 100755
 --- a/macosx/bundle/launcher.sh
 +++ b/macosx/bundle/launcher.sh
 @@ -22,7 +22,6 @@ bundle_bin="$bundle_res"/bin
@@ -39,6 +70,15 @@ index 67f5051..668a79b 100755
  I18NDIR="$bundle_data/locale"
  # Set the locale-related variables appropriately:
  unset LANG LC_MESSAGES LC_MONETARY LC_COLLATE
+@@ -76,7 +78,7 @@ unset APPLELANGUAGES L
+ 
+ # If we didn't get a language from the language list, try the Collation preference, in case it's the only setting that exists.
+ APPLECOLLATION=`defaults read .GlobalPreferences AppleCollationOrder`
+-if test -z ${LANG} -a -n $APPLECOLLATION; then
++if test -z ${LANG} -a -n "$APPLECOLLATION"; then
+     if test -f "$I18NDIR/${APPLECOLLATION:0:2}/LC_MESSAGES/$APP.mo"; then
+ 	export LANG=${APPLECOLLATION:0:2}
+     fi
 @@ -98,7 +100,7 @@ elif test -z $LANG -a -f "$I18NDIR/${APPLELOCALE:0:2}/LC_MESSAGES/$APP.mo"; then
      export LANG="${APPLELOCALE:0:2}"
  fi

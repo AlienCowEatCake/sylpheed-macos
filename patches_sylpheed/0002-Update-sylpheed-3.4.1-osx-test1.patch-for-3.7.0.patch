@@ -1,7 +1,7 @@
-From 506068e51c6a94fc044c57f71a76a64e44d2bcb2 Mon Sep 17 00:00:00 2001
+From 46c31110ed8baa8f4c6f5f7af097d7181658f0ee Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 22:15:56 +0700
-Subject: [PATCH 03/17] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
+Subject: [PATCH 02/12] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
 
 ---
  po/ja.po          | 729 +++++++++++++++++++++++-----------------------
@@ -1997,14 +1997,14 @@ index 00edae3..18693f1 100644
  msgid "/_Configuration/_Common preferences..."
  msgstr ""
 diff --git a/src/Makefile.in b/src/Makefile.in
-index 4708707..277935e 100644
+index 4708707..57e529b 100644
 --- a/src/Makefile.in
 +++ b/src/Makefile.in
 @@ -641,6 +641,7 @@ sylpheed_LDADD = \
  	$(LDAP_LIBS) \
  	$(LIBICONV) \
  	$(SYLPHEED_LIBS) \
-+	-lgtkmacintegration \
++	-lgtkmacintegration-gtk2 \
  	libsylpheed-plugin-0.la \
  	../libsylph/libsylph-0.la \
  	$(SYLPHEED_RES)
