@@ -1,0 +1,86 @@
+From 855e95816b42035309728b76d18ff3fe7df9c55f Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 18 Jun 2022 04:47:15 +0700
+Subject: [PATCH 13/13] Fix conflicting hotkeys
+
+---
+ src/addressbook.c | 4 ++--
+ src/compose.c     | 6 +++---
+ src/mainwindow.c  | 8 ++++----
+ 3 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/src/addressbook.c b/src/addressbook.c
+index e2768b4..dcc9094 100644
+--- a/src/addressbook.c
++++ b/src/addressbook.c
+@@ -433,8 +433,8 @@ static GtkItemFactoryEntry addressbook_entries[] =
+ 	{N_("/_File/_Close"),		"<meta>W",	close_cb, 0, NULL},
+ 
+ 	{N_("/_Edit"),			NULL,		NULL, 0, "<Branch>"},
+-	{N_("/_Edit/_Copy"),		"<meta>C",	addressbook_copy_address_cb,    0, NULL},
+-	{N_("/_Edit/_Paste"),		"<meta>V",	addressbook_paste_address_cb,    0, NULL},
++	{N_("/_Edit/_Copy"),		NULL,		addressbook_copy_address_cb,    0, NULL},
++	{N_("/_Edit/_Paste"),		NULL,		addressbook_paste_address_cb,    0, NULL},
+ 
+ 	{N_("/_Address"),		NULL,		NULL, 0, "<Branch>"},
+ 	{N_("/_Address/New _Address"),	"<meta>N",	addressbook_new_address_cb,     0, NULL},
+diff --git a/src/compose.c b/src/compose.c
+index 3ddc95d..5db243e 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -608,9 +608,9 @@ static GtkItemFactoryEntry compose_entries[] =
+ 	{N_("/_Edit/_Undo"),		"<meta>Z", compose_undo_cb, 0, NULL},
+ 	{N_("/_Edit/_Redo"),		"<meta>Y", compose_redo_cb, 0, NULL},
+ 	{N_("/_Edit/---"),		NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Edit/Cu_t"),		"<meta>X", compose_cut_cb,    0, NULL},
+-	{N_("/_Edit/_Copy"),		"<meta>C", compose_copy_cb,   0, NULL},
+-	{N_("/_Edit/_Paste"),		"<meta>V", compose_paste_cb,  0, NULL},
++	{N_("/_Edit/Cu_t"),		NULL, compose_cut_cb,    0, NULL},
++	{N_("/_Edit/_Copy"),		NULL, compose_copy_cb,   0, NULL},
++	{N_("/_Edit/_Paste"),		NULL, compose_paste_cb,  0, NULL},
+ 	{N_("/_Edit/Paste as _quotation"),
+ 					NULL, compose_paste_as_quote_cb, 0, NULL},
+ 	{N_("/_Edit/Select _all"),	"<meta>A", compose_allsel_cb, 0, NULL},
+diff --git a/src/mainwindow.c b/src/mainwindow.c
+index 9521b88..118f88a 100644
+--- a/src/mainwindow.c
++++ b/src/mainwindow.c
+@@ -604,7 +604,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ #endif
+ 
+ 	{N_("/_Edit"),				NULL, NULL, 0, "<Branch>"},
+-	{N_("/_Edit/_Copy"),			"<meta>C", copy_cb, 0, NULL},
++	{N_("/_Edit/_Copy"),			NULL, copy_cb, 0, NULL},
+ 	{N_("/_Edit/Select _all"),		"<meta>A", allsel_cb, 0, NULL},
+ 	{N_("/_Edit/Select _thread"),		NULL, select_thread_cb, 0, NULL},
+ 	{N_("/_Edit/---"),			NULL, NULL, 0, "<Separator>"},
+@@ -618,7 +618,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_View/Show or hi_de/_Folder tree"),
+ 						NULL, toggle_folder_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/Show or hi_de/_Message view"),
+-						"<meta>V", toggle_message_cb, 0, "<ToggleItem>"},
++						"<control>V", toggle_message_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/Show or hi_de/_Toolbar"),
+ 						NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_View/Show or hi_de/_Toolbar/Icon _and text"),
+@@ -799,7 +799,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/Open in new _window"),	"<meta><alt>N", open_msg_cb, 0, NULL},
+ 	{N_("/_View/Mess_age source"),		"<meta>U", view_source_cb, 0, NULL},
+-	{N_("/_View/All _headers"),	"<meta>H", show_all_header_cb, 0, "<ToggleItem>"},
++	{N_("/_View/All _headers"),	"<control>H", show_all_header_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/_Update summary"),		"<meta><alt>U", update_summary_cb,  0, NULL},
+ 
+@@ -884,7 +884,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_Tools/C_oncatenate separated messages"),
+ 						NULL, concat_partial_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Tools/E_xecute marked process"),	"<meta>X", execute_summary_cb, 0, NULL},
++	{N_("/_Tools/E_xecute marked process"),	"<control>X", execute_summary_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Op_en configuration folder"),
+ 						NULL, open_config_folder_cb, 0, NULL},
+-- 
+2.32.1 (Apple Git-133)
+

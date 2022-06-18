@@ -1,7 +1,7 @@
 From 330d7a64720e8c4d9fec0a98931cdd8ecad1f41f Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Fri, 10 Jun 2022 23:49:41 +0700
-Subject: [PATCH 08/12] Use native macOS notifications
+Subject: [PATCH 08/13] Use native macOS notifications
 
 ---
  macosx/bundle/Info-sylpheed.plist |   4 +-

@@ -1,7 +1,7 @@
 From cc5c0ac399ced66aeebe8efd5a40ac7e22a5c790 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 14 Jun 2022 18:15:22 +0700
-Subject: [PATCH 11/12] Enable Oniguruma feature
+Subject: [PATCH 11/13] Enable Oniguruma feature
 
 ---
  makeosx.sh | 1 +

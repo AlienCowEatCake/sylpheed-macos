@@ -1,7 +1,7 @@
 From 2370b59f5dbfe27b410e35faa4d8421de7c965fd Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 21:16:39 +0700
-Subject: [PATCH 01/12] Update macos bundle project for latest GTK+
+Subject: [PATCH 01/13] Update macos bundle project for latest GTK+
 
 ---
  macosx/bundle/Info-sylpheed.plist |  8 ++++----
