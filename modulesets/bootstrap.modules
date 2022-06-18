@@ -18,6 +18,7 @@
   <repository type="tarball" name="github-tarball" href="https://github.com/"/>
   <repository type="tarball" name="openssl" href="https://www.openssl.org/source/"/>
   <repository type="tarball" name="compface" href="http://ftp.xemacs.org/pub/xemacs/aux/"/>
+  <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
   <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
   <repository type="system" name="system"/>
 
@@ -336,6 +337,7 @@
       <dep package="compface"/>
       <dep package="oniguruma"/>
       <dep package="gtkspell"/>
+      <dep package="sqlite"/>
     </dependencies>
   </metamodule>
 
@@ -368,6 +370,10 @@
     <dependencies>
       <dep package="gtk+-2.0"/>
     </dependencies>
+  </autotools>
+
+  <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3380500.tar.gz" version="3.38.5"/>
   </autotools>
 
 </moduleset>

@@ -1,7 +1,7 @@
 From 855e95816b42035309728b76d18ff3fe7df9c55f Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 04:47:15 +0700
-Subject: [PATCH 13/13] Fix conflicting hotkeys
+Subject: [PATCH 13/14] Fix conflicting hotkeys
 
 ---
  src/addressbook.c | 4 ++--

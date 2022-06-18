@@ -1,0 +1,27 @@
+From c9ddbb627f796c2eadc83f4560ab6b39933ef08b Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 18 Jun 2022 15:34:47 +0700
+Subject: [PATCH] Change default base dir for macOS
+
+---
+ lib/filter-utils.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/lib/filter-utils.c b/lib/filter-utils.c
+index 1fceea5..22cba47 100644
+--- a/lib/filter-utils.c
++++ b/lib/filter-utils.c
+@@ -148,6 +148,10 @@ const char *xfilter_utils_get_default_base_dir(void)
+ 		default_base_dir = g_strconcat(parent, G_DIR_SEPARATOR_S,
+ #ifdef G_OS_WIN32
+ 					       "SylFilter"
++#elif defined(__APPLE__)
++					       "Library", G_DIR_SEPARATOR_S,
++					       "Application Support", G_DIR_SEPARATOR_S,
++					       "SylFilter"
+ #else
+ 					       ".sylfilter"
+ #endif
+-- 
+2.32.1 (Apple Git-133)
+

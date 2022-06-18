@@ -71,8 +71,30 @@ tar -xvpf sylpheed-3.7.0.tar.bz2
 cd sylpheed-3.7.0
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 jhbuild run ./makeosx.sh
+cd ..
+
+curl -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
+tar -xvpf sylfilter-0.8.tar.gz
+cd sylfilter-0.8
+find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
+jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --disable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
+jhbuild run clang \
+    -O2 -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
+    lib/*.c lib/filters/*.c src/*.c \
+    -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed \
+    -lsylph-0.1 $(pkg-config --cflags glib-2.0 sqlite3) $(pkg-config --libs glib-2.0 sqlite3) \
+    -o "${HOME}/gtk/inst/bin/sylfilter"
+strip "${HOME}/gtk/inst/bin/sylfilter"
+cd ..
+
+cd sylpheed-3.7.0
 cd macosx/bundle
+sed -i '' 's|\(</main-binary>\)|\1\n  <binary>${prefix}/bin/sylfilter</binary>|' sylpheed.bundle
 jhbuild run gtk-mac-bundler sylpheed.bundle
+mv "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin/sylfilter" "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/"
+if [ ! "$(ls -A "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin")" ] ; then
+    rm -rf "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin"
+fi
 cd ../../..
 mv "${HOME}/Desktop/Sylpheed.app" "${HOME}/Desktop/Sylpheed_arm64.app"
 
@@ -83,6 +105,7 @@ rm -rf \
     "${HOME}/.new_local" \
     "${HOME}/gtk" \
     "${HOME}/Source" \
+    "sylfilter-0.8" \
     "sylpheed-3.7.0"
 
 cd gtk-osx
@@ -139,8 +162,29 @@ tar -xvpf sylpheed-3.7.0.tar.bz2
 cd sylpheed-3.7.0
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 arch -x86_64 jhbuild run ./makeosx.sh
+cd ..
+
+tar -xvpf sylfilter-0.8.tar.gz
+cd sylfilter-0.8
+find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
+arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --disable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
+arch -x86_64 jhbuild run clang \
+    -O2 -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
+    lib/*.c lib/filters/*.c src/*.c \
+    -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed \
+    -lsylph-0.1 $(pkg-config --cflags glib-2.0 sqlite3) $(pkg-config --libs glib-2.0 sqlite3) \
+    -o "${HOME}/gtk/inst/bin/sylfilter"
+arch -x86_64 strip "${HOME}/gtk/inst/bin/sylfilter"
+cd ..
+
+cd sylpheed-3.7.0
 cd macosx/bundle
+sed -i '' 's|\(</main-binary>\)|\1\n  <binary>${prefix}/bin/sylfilter</binary>|' sylpheed.bundle
 arch -x86_64 jhbuild run gtk-mac-bundler sylpheed.bundle
+mv "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin/sylfilter" "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/"
+if [ ! "$(ls -A "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin")" ] ; then
+    rm -rf "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin"
+fi
 cd ../../..
 
 BUNDLE_EXECUTABLE="$(plutil -extract CFBundleExecutable xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
@@ -173,9 +217,11 @@ rm -rf \
     "${HOME}/.new_local" \
     "${HOME}/gtk" \
     "${HOME}/Source" \
+    "sylfilter-0.8" \
     "sylpheed-3.7.0" \
     "gtk-osx" \
     "gtk-mac-bundler" \
+    "sylfilter-0.8.tar.gz" \
     "sylpheed-3.7.0.tar.bz2" \
     "${HOME}/.config/jhbuildrc" \
     "${HOME}/.config/jhbuildrc-custom" \

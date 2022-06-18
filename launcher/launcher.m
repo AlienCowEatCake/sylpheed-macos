@@ -4,6 +4,13 @@
 #include <stdlib.h>
 #import <Foundation/Foundation.h>
 
+static NSString * path() {
+    const char * pathEnv = getenv("PATH");
+    if(pathEnv)
+        return [NSString stringWithUTF8String:pathEnv];
+    return @"/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+}
+
 static NSString * substr(NSString * str, NSUInteger from, NSUInteger len) {
     if([str length] <= from)
         return @"";
@@ -20,10 +27,14 @@ static BOOL exist(NSString * path) {
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
         NSBundle * bundle = [NSBundle mainBundle];
-        NSString * bundleRes = [bundle resourcePath];
+        NSString * bundleExec = [[[[NSBundle mainBundle] executablePath] stringByStandardizingPath] stringByDeletingLastPathComponent];
+        NSString * bundleRes = [[bundle resourcePath] stringByStandardizingPath];
+        NSString * bundleBin = [bundleRes stringByAppendingPathComponent:@"bin"];
         NSString * bundleLib = [bundleRes stringByAppendingPathComponent:@"lib"];
         NSString * bundleData = [bundleRes stringByAppendingPathComponent:@"share"];
         NSString * bundleEtc = [bundleRes stringByAppendingPathComponent:@"etc"];
+
+        setenv("PATH", [[NSString stringWithFormat:@"%@:%@:%@", bundleExec, bundleBin, path()] UTF8String], 1);
 
         setenv("XDG_CONFIG_DIRS", [[bundleEtc stringByAppendingPathComponent:@"xdg"] UTF8String], 0);
         setenv("XDG_DATA_DIRS", [bundleData UTF8String], 0);

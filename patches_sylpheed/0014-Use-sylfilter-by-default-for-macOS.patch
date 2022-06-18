@@ -1,0 +1,25 @@
+From a241179ddc6a6d98896038f2292effd4477ff260 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 18 Jun 2022 17:01:46 +0700
+Subject: [PATCH 14/14] Use sylfilter by default for macOS
+
+---
+ libsylph/prefs_common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libsylph/prefs_common.c b/libsylph/prefs_common.c
+index 59dc6a2..247d6f5 100644
+--- a/libsylph/prefs_common.c
++++ b/libsylph/prefs_common.c
+@@ -377,7 +377,7 @@ static PrefParam param[] = {
+ 
+ 	/* Junk mail */
+ 	{"enable_junk", "FALSE", &prefs_common.enable_junk, P_BOOL},
+-#ifdef G_OS_WIN32
++#if defined(G_OS_WIN32) || defined(__APPLE__)
+ 	{"junk_learn_command", "sylfilter -j",
+ 	 &prefs_common.junk_learncmd, P_STRING},
+ 	{"nojunk_learn_command", "sylfilter -c",
+-- 
+2.32.1 (Apple Git-133)
+

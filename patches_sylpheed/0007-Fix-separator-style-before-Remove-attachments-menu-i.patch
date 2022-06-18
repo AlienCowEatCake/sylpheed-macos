@@ -1,7 +1,7 @@
 From d0d118e81c82ab5d459d4c132e144963e9c01448 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 7 Jun 2022 06:47:29 +0700
-Subject: [PATCH 07/13] Fix separator style before 'Remove attachments' menu
+Subject: [PATCH 07/14] Fix separator style before 'Remove attachments' menu
  item
 
 ---
