@@ -1,7 +1,7 @@
-From a241179ddc6a6d98896038f2292effd4477ff260 Mon Sep 17 00:00:00 2001
+From e209bf7bbd1ea4b87f57e5d3da6a9de8015903d2 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 17:01:46 +0700
-Subject: [PATCH 14/14] Use sylfilter by default for macOS
+Subject: [PATCH 14/16] Use sylfilter by default for macOS
 
 ---
  libsylph/prefs_common.c | 2 +-

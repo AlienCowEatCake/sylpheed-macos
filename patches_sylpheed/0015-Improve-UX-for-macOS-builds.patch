@@ -1,0 +1,186 @@
+From be9513801f246a6784869a1d0cf17f559207e27e Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 16 Jul 2022 03:07:10 +0700
+Subject: [PATCH 15/16] Improve UX for macOS builds
+
+---
+ libsylph/defs.h           |  6 +++++-
+ libsylph/prefs_common.c   |  2 +-
+ src/Makefile.in           |  1 +
+ src/gtkutils.c            |  8 ++++++++
+ src/mainwindow.c          | 16 +++++++++++++++-
+ src/prefs_common_dialog.c | 10 ++++++++++
+ 6 files changed, 40 insertions(+), 3 deletions(-)
+
+diff --git a/libsylph/defs.h b/libsylph/defs.h
+index 9e3f82b..fcb690d 100644
+--- a/libsylph/defs.h
++++ b/libsylph/defs.h
+@@ -129,6 +129,10 @@
+ #define SESSION_TIMEOUT_INTERVAL	60	/* sec */
+ #define MAX_HISTORY_SIZE		16
+ 
+-#define DEFAULT_MESSAGE_FONT	"Monospace 12"
++#ifdef __APPLE__
++#  define DEFAULT_MESSAGE_FONT	"Monaco 12"	/* "Menlo 12" has annoying flicker */
++#else
++#  define DEFAULT_MESSAGE_FONT	"Monospace 12"
++#endif
+ 
+ #endif /* __DEFS_H__ */
+diff --git a/libsylph/prefs_common.c b/libsylph/prefs_common.c
+index 247d6f5..ae0fd5b 100644
+--- a/libsylph/prefs_common.c
++++ b/libsylph/prefs_common.c
+@@ -447,7 +447,7 @@ static PrefParam param[] = {
+ 
+ 	{"show_trayicon", "TRUE", &prefs_common.show_trayicon, P_BOOL},
+ 	{"minimize_to_tray", "FALSE", &prefs_common.minimize_to_tray, P_BOOL},
+-#ifdef G_OS_WIN32
++#if defined(G_OS_WIN32) || defined(__APPLE__)
+ 	{"toggle_window_on_trayicon_click", "FALSE",
+ #else
+ 	{"toggle_window_on_trayicon_click", "TRUE",
+diff --git a/src/Makefile.in b/src/Makefile.in
+index 042f814..aedae12 100644
+--- a/src/Makefile.in
++++ b/src/Makefile.in
+@@ -643,6 +643,7 @@ sylpheed_LDADD = \
+ 	$(LIBICONV) \
+ 	$(SYLPHEED_LIBS) \
+ 	-lgtkmacintegration-gtk2 \
++	-framework AppKit \
+ 	-framework Foundation \
+ 	libsylpheed-plugin-0.la \
+ 	../libsylph/libsylph-0.la \
+diff --git a/src/gtkutils.c b/src/gtkutils.c
+index 5f49969..3e53130 100644
+--- a/src/gtkutils.c
++++ b/src/gtkutils.c
+@@ -34,6 +34,10 @@
+ #  include <pango/pangowin32.h>
+ #endif
+ 
++#if defined(__OBJC__) && defined(__APPLE__)
++#  include <AppKit/AppKit.h>
++#endif
++
+ #include "gtkutils.h"
+ #include "utils.h"
+ #include "codeconv.h"
+@@ -1016,6 +1020,10 @@ void gtkut_window_popup(GtkWidget *window)
+ #ifdef G_OS_WIN32
+ 	/* ensure that the window is displayed at the top */
+ 	gdk_window_show(window->window);
++#elif defined(__OBJC__) && defined(__APPLE__)
++	/* ensure that the window is displayed at the top */
++	gdk_window_show(window->window);
++	[[NSApplication sharedApplication] activateIgnoringOtherApps:YES];
+ #endif
+ }
+ 
+diff --git a/src/mainwindow.c b/src/mainwindow.c
+index 654ec0b..833094a 100644
+--- a/src/mainwindow.c
++++ b/src/mainwindow.c
+@@ -54,6 +54,14 @@
+ #include <gtkmacintegration/gtkosxapplication.h>
+ #endif
+ 
++#if defined(__OBJC__) && defined(__APPLE__)
++#define FolderClass FolderClass_
++#define FolderType FolderType_
++#include <AppKit/AppKit.h>
++#undef FolderType
++#undef FolderClass
++#endif
++
+ #include "main.h"
+ #include "mainwindow.h"
+ #include "folderview.h"
+@@ -3250,8 +3258,14 @@ static gint main_window_close_cb(GtkWidget *widget, GdkEventAny *event,
+ {
+ 	MainWindow *mainwin = (MainWindow *)data;
+ 
+-	if (mainwin->lock_count == 0)
++	if (mainwin->lock_count == 0) {
++#if defined(__OBJC__) && defined(__APPLE__)
++		debug_print("main_window_close_cb: hide application\n");
++		[[NSApplication sharedApplication] hide:nil];
++#else
+ 		app_exit_cb(data, 0, widget);
++#endif
++	}
+ 
+ 	return TRUE;
+ }
+diff --git a/src/prefs_common_dialog.c b/src/prefs_common_dialog.c
+index 7c8788f..3ccfcbd 100644
+--- a/src/prefs_common_dialog.c
++++ b/src/prefs_common_dialog.c
+@@ -229,8 +229,10 @@ static struct Interface {
+ 	GtkWidget *checkbtn_comply_gnome_hig;
+ #endif
+ 	GtkWidget *checkbtn_show_trayicon;
++#ifndef __APPLE__
+ 	GtkWidget *checkbtn_minimize_to_tray;
+ 	GtkWidget *checkbtn_tray_toggle_window;
++#endif
+ } iface;
+ 
+ static struct Other {
+@@ -583,11 +585,13 @@ static PrefsUIData ui_data[] = {
+ #endif
+ 	{"show_trayicon", &iface.checkbtn_show_trayicon,
+ 	 prefs_set_data_from_toggle, prefs_set_toggle},
++#ifndef __APPLE__
+ 	{"minimize_to_tray", &iface.checkbtn_minimize_to_tray,
+ 	 prefs_set_data_from_toggle, prefs_set_toggle},
+ 	{"toggle_window_on_trayicon_click",
+ 	 &iface.checkbtn_tray_toggle_window,
+ 	 prefs_set_data_from_toggle, prefs_set_toggle},
++#endif
+ 
+ 	/* Other */
+ 	{"receive_dialog_mode", &other.optmenu_recvdialog,
+@@ -2607,8 +2611,10 @@ static void prefs_details_create(void)
+ 	GtkWidget *checkbtn_comply_gnome_hig;
+ #endif
+ 	GtkWidget *checkbtn_show_trayicon;
++#ifndef __APPLE__
+ 	GtkWidget *checkbtn_minimize_to_tray;
+ 	GtkWidget *checkbtn_tray_toggle_window;
++#endif
+ 
+ 	GtkWidget *button_keybind;
+ 
+@@ -2704,6 +2710,7 @@ static void prefs_details_create(void)
+ #endif
+ 	PACK_CHECK_BUTTON (vbox2, checkbtn_show_trayicon,
+ 			   _("Display tray icon"));
++#ifndef __APPLE__
+ 	PACK_CHECK_BUTTON (vbox2, checkbtn_minimize_to_tray,
+ 			   _("Minimize to tray icon"));
+ 	PACK_CHECK_BUTTON (vbox2, checkbtn_tray_toggle_window,
+@@ -2712,6 +2719,7 @@ static void prefs_details_create(void)
+ 				checkbtn_minimize_to_tray);
+ 	SET_TOGGLE_SENSITIVITY (checkbtn_show_trayicon,
+ 				checkbtn_tray_toggle_window);
++#endif
+ 
+ 	hbox1 = gtk_hbox_new (FALSE, 8);
+ 	gtk_widget_show (hbox1);
+@@ -2759,8 +2767,10 @@ static void prefs_details_create(void)
+ 	iface.checkbtn_comply_gnome_hig  = checkbtn_comply_gnome_hig;
+ #endif
+ 	iface.checkbtn_show_trayicon      = checkbtn_show_trayicon;
++#ifndef __APPLE__
+ 	iface.checkbtn_minimize_to_tray   = checkbtn_minimize_to_tray;
+ 	iface.checkbtn_tray_toggle_window = checkbtn_tray_toggle_window;
++#endif
+ }
+ 
+ static GtkWidget *prefs_other_create(void)
+-- 
+2.32.1 (Apple Git-133)
+

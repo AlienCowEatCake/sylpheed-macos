@@ -1,0 +1,448 @@
+From 31daa46d102a4c50448a2451373f6c5328ae71e0 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 18 Jun 2022 04:47:15 +0700
+Subject: [PATCH 13/16] Fix conflicting and broken hotkeys
+
+---
+ src/addressbook.c |  56 +++++++++++++++++++++++++
+ src/compose.c     |  28 +++++++++++--
+ src/gtkutils.c    | 104 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/gtkutils.h    |   9 ++++
+ src/mainwindow.c  |  44 ++++++++++++++++++--
+ 5 files changed, 234 insertions(+), 7 deletions(-)
+
+diff --git a/src/addressbook.c b/src/addressbook.c
+index e2768b4..ffa0a26 100644
+--- a/src/addressbook.c
++++ b/src/addressbook.c
+@@ -279,6 +279,20 @@ static void addressbook_copy_address_cb		(gpointer	 data,
+ static void addressbook_paste_address_cb	(gpointer	 data,
+ 						 guint		 action,
+ 						 GtkWidget	*widget);
++#ifdef GTKOSXAPPLICATION
++static void addressbook_cut_cb			(gpointer	 data,
++						 guint		 action,
++						 GtkWidget	*widget);
++static void addressbook_copy_cb			(gpointer	 data,
++						 guint		 action,
++						 GtkWidget	*widget);
++static void addressbook_paste_cb		(gpointer	 data,
++						 guint		 action,
++						 GtkWidget	*widget);
++static void addressbook_allsel_cb		(gpointer	 data,
++						 guint		 action,
++						 GtkWidget	*widget);
++#endif
+ 
+ static void close_cb				(gpointer	 data,
+ 						 guint		 action,
+@@ -433,8 +447,15 @@ static GtkItemFactoryEntry addressbook_entries[] =
+ 	{N_("/_File/_Close"),		"<meta>W",	close_cb, 0, NULL},
+ 
+ 	{N_("/_Edit"),			NULL,		NULL, 0, "<Branch>"},
++#ifdef GTKOSXAPPLICATION
++	{N_("/_Edit/Cu_t"),		"<meta>X",	addressbook_cut_cb,             0, NULL},
++	{N_("/_Edit/_Copy"),		"<meta>C",	addressbook_copy_cb,            0, NULL},
++	{N_("/_Edit/_Paste"),		"<meta>V",	addressbook_paste_cb,           0, NULL},
++	{N_("/_Edit/Select _all"),	"<meta>A",	addressbook_allsel_cb,          0, NULL},
++#else
+ 	{N_("/_Edit/_Copy"),		"<meta>C",	addressbook_copy_address_cb,    0, NULL},
+ 	{N_("/_Edit/_Paste"),		"<meta>V",	addressbook_paste_address_cb,    0, NULL},
++#endif
+ 
+ 	{N_("/_Address"),		NULL,		NULL, 0, "<Branch>"},
+ 	{N_("/_Address/New _Address"),	"<meta>N",	addressbook_new_address_cb,     0, NULL},
+@@ -1524,8 +1545,10 @@ static void addressbook_menuitem_set_sensitive(void)
+ 	menu_set_sensitive(addrbook.menu_factory, "/File/Edit", canEditTree);
+ 	menu_set_sensitive(addrbook.menu_factory, "/File/Delete", canEditTree);
+ 
++#ifndef GTKOSXAPPLICATION
+ 	menu_set_sensitive(addrbook.menu_factory, "/Edit/Copy",   canCopy);
+ 	menu_set_sensitive(addrbook.menu_factory, "/Edit/Paste",  canPaste);
++#endif
+ 
+ 	menu_set_sensitive(addrbook.menu_factory, "/Tools/Export to CSV file", canEditTree);
+ 
+@@ -2835,6 +2858,39 @@ static void addressbook_paste_address_cb(gpointer data, guint action,
+ 	addressbook_modified();
+ }
+ 
++#ifdef GTKOSXAPPLICATION
++static gboolean addressbook_is_active_window(void)
++{
++	return gtkut_is_active_window(GTK_WINDOW(addrbook.window));
++}
++
++static void addressbook_cut_cb(gpointer data, guint action,
++			       GtkWidget *widget)
++{
++	gtkut_default_cut();
++}
++
++static void addressbook_copy_cb(gpointer data, guint action,
++				GtkWidget *widget)
++{
++	if (!gtkut_default_copy() && addressbook_is_active_window())
++		addressbook_copy_address_cb(data, action, widget);
++}
++
++static void addressbook_paste_cb(gpointer data, guint action,
++				 GtkWidget *widget)
++{
++	if (!gtkut_default_paste() && addressbook_is_active_window())
++		addressbook_paste_address_cb(data, action, widget);
++}
++
++static void addressbook_allsel_cb(gpointer data, guint action,
++				  GtkWidget *widget)
++{
++	gtkut_default_allsel();
++}
++#endif
++
+ static void close_cb(gpointer data, guint action, GtkWidget *widget)
+ {
+ 	addressbook_close();
+diff --git a/src/compose.c b/src/compose.c
+index 3ddc95d..b5f6edf 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -7984,11 +7984,14 @@ static void compose_redo_cb(Compose *compose)
+ 
+ static void compose_cut_cb(Compose *compose)
+ {
+-	if (compose->focused_editable &&
++	GtkWindow *active_window = gtkut_get_active_window();
++	if (active_window == GTK_WINDOW(compose->window) &&
++	    compose->focused_editable &&
+ 	    GTK_WIDGET_HAS_FOCUS(compose->focused_editable)) {
+ 		if (GTK_IS_EDITABLE(compose->focused_editable)) {
+ 			gtk_editable_cut_clipboard
+ 				(GTK_EDITABLE(compose->focused_editable));
++			return;
+ 		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
+ 			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
+ 			GtkTextBuffer *buffer;
+@@ -7998,17 +8001,22 @@ static void compose_cut_cb(Compose *compose)
+ 			clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+ 
+ 			gtk_text_buffer_cut_clipboard(buffer, clipboard, TRUE);
++			return;
+ 		}
+ 	}
++	gtkut_default_cut();
+ }
+ 
+ static void compose_copy_cb(Compose *compose)
+ {
+-	if (compose->focused_editable &&
++	GtkWindow *active_window = gtkut_get_active_window();
++	if (active_window == GTK_WINDOW(compose->window) &&
++	    compose->focused_editable &&
+ 	    GTK_WIDGET_HAS_FOCUS(compose->focused_editable)) {
+ 		if (GTK_IS_EDITABLE(compose->focused_editable)) {
+ 			gtk_editable_copy_clipboard
+ 				(GTK_EDITABLE(compose->focused_editable));
++			return;
+ 		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
+ 			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
+ 			GtkTextBuffer *buffer;
+@@ -8018,17 +8026,22 @@ static void compose_copy_cb(Compose *compose)
+ 			clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
+ 
+ 			gtk_text_buffer_copy_clipboard(buffer, clipboard);
++			return;
+ 		}
+ 	}
++	gtkut_default_copy();
+ }
+ 
+ static void compose_paste_cb(Compose *compose)
+ {
+-	if (compose->focused_editable &&
++	GtkWindow *active_window = gtkut_get_active_window();
++	if (active_window == GTK_WINDOW(compose->window) &&
++	    compose->focused_editable &&
+ 	    GTK_WIDGET_HAS_FOCUS(compose->focused_editable)) {
+ 		if (GTK_IS_EDITABLE(compose->focused_editable)) {
+ 			gtk_editable_paste_clipboard
+ 				(GTK_EDITABLE(compose->focused_editable));
++			return;
+ 		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
+ 			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
+ 			GtkTextBuffer *buffer;
+@@ -8043,8 +8056,10 @@ static void compose_paste_cb(Compose *compose)
+ 							NULL, TRUE);
+ 
+ 			gtk_text_view_scroll_mark_onscreen(text, mark);
++			return;
+ 		}
+ 	}
++	gtkut_default_paste();
+ }
+ 
+ static void compose_paste_as_quote_cb(Compose *compose)
+@@ -8076,12 +8091,15 @@ static void compose_paste_as_quote_cb(Compose *compose)
+ 
+ static void compose_allsel_cb(Compose *compose)
+ {
+-	if (compose->focused_editable &&
++	GtkWindow *active_window = gtkut_get_active_window();
++	if (active_window == GTK_WINDOW(compose->window) &&
++	    compose->focused_editable &&
+ 	    GTK_WIDGET_HAS_FOCUS(compose->focused_editable)) {
+ 		if (GTK_IS_EDITABLE(compose->focused_editable)) {
+ 			gtk_editable_select_region
+ 				(GTK_EDITABLE(compose->focused_editable),
+ 				 0, -1);
++			return;
+ 		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
+ 			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
+ 			GtkTextBuffer *buffer;
+@@ -8093,8 +8111,10 @@ static void compose_allsel_cb(Compose *compose)
+ 			gtk_text_buffer_get_end_iter(buffer, &iter);
+ 			gtk_text_buffer_move_mark_by_name
+ 				(buffer, "selection_bound", &iter);
++			return;
+ 		}
+ 	}
++	gtkut_default_allsel();
+ }
+ 
+ static void compose_grab_focus_cb(GtkWidget *widget, Compose *compose)
+diff --git a/src/gtkutils.c b/src/gtkutils.c
+index b1a488a..5f49969 100644
+--- a/src/gtkutils.c
++++ b/src/gtkutils.c
+@@ -1117,3 +1117,107 @@ void gtkut_events_flush(void)
+ {
+ 	GTK_EVENTS_FLUSH();
+ }
++
++GtkWindow *gtkut_get_active_window(void)
++{
++	GList *window_list, *cur;
++	GtkWindow *active_window = NULL;
++
++	window_list = gtk_window_list_toplevels();
++	for (cur = window_list; cur != NULL; cur = cur->next) {
++		GtkWindow *window = GTK_WINDOW(cur->data);
++		if (GTK_WIDGET_VISIBLE(GTK_WIDGET(window)) &&
++		    gtk_window_is_active(window)) {
++			active_window = window;
++			break;
++		}
++	}
++	g_list_free(window_list);
++
++	return active_window;
++}
++
++GtkWidget *gtkut_get_focus_widget(void)
++{
++	GtkWindow *window = gtkut_get_active_window();
++	if (window) {
++		return gtk_window_get_focus(window);
++	}
++	return NULL;
++}
++
++gboolean gtkut_is_active_window(GtkWindow *window)
++{
++	GtkWindow *active_window = gtkut_get_active_window();
++	if (!active_window) {
++		return FALSE;
++	}
++	if (window == active_window) {
++		return TRUE;
++	}
++	return FALSE;
++}
++
++gboolean gtkut_default_cut(void)
++{
++	GtkWidget *focus_widget = gtkut_get_focus_widget();
++	if (focus_widget) {
++		if (GTK_IS_LABEL(focus_widget) &&
++		    gtk_label_get_selectable(GTK_LABEL(focus_widget))) {
++			g_signal_emit_by_name(focus_widget, "copy-clipboard", NULL);
++			return TRUE;
++		} else if (GTK_IS_ENTRY(focus_widget) ||
++		           GTK_IS_TEXT_VIEW(focus_widget)) {
++			g_signal_emit_by_name(focus_widget, "cut-clipboard", NULL);
++			return TRUE;
++		}
++	}
++	return FALSE;
++}
++
++gboolean gtkut_default_copy(void)
++{
++	GtkWidget *focus_widget = gtkut_get_focus_widget();
++	if (focus_widget) {
++		if ((GTK_IS_LABEL(focus_widget) &&
++		     gtk_label_get_selectable(GTK_LABEL(focus_widget))) ||
++		    GTK_IS_ENTRY(focus_widget) ||
++		    GTK_IS_TEXT_VIEW(focus_widget)) {
++			g_signal_emit_by_name(focus_widget, "copy-clipboard", NULL);
++			return TRUE;
++		}
++	}
++	return FALSE;
++}
++
++gboolean gtkut_default_paste(void)
++{
++	GtkWidget *focus_widget = gtkut_get_focus_widget();
++	if (focus_widget) {
++		if (GTK_IS_ENTRY(focus_widget) ||
++		    GTK_IS_TEXT_VIEW(focus_widget)) {
++			g_signal_emit_by_name(focus_widget, "paste-clipboard", NULL);
++			return TRUE;
++		}
++	}
++	return FALSE;
++}
++
++gboolean gtkut_default_allsel(void)
++{
++	GtkWidget *focus_widget = gtkut_get_focus_widget();
++	if (focus_widget) {
++		if (GTK_IS_LABEL(focus_widget) &&
++		    gtk_label_get_selectable(GTK_LABEL(focus_widget))) {
++			gtk_label_select_region(GTK_LABEL(focus_widget), 0, -1);
++			return TRUE;
++		} else if (GTK_IS_EDITABLE(focus_widget)) {
++			gtk_editable_select_region(GTK_EDITABLE(focus_widget), 0, -1);
++			return TRUE;
++		} else if (GTK_IS_TEXT_VIEW(focus_widget)) {
++			g_signal_emit_by_name(focus_widget, "select-all", TRUE, NULL);
++			return TRUE;
++		}
++	}
++	return FALSE;
++}
+diff --git a/src/gtkutils.h b/src/gtkutils.h
+index 1872e67..a47f56d 100644
+--- a/src/gtkutils.h
++++ b/src/gtkutils.h
+@@ -235,4 +235,13 @@ void gtkut_widget_init			(void);
+ 
+ void gtkut_events_flush			(void);
+ 
++GtkWindow *gtkut_get_active_window	(void);
++GtkWidget *gtkut_get_focus_widget	(void);
++gboolean gtkut_is_active_window		(GtkWindow	*window);
++
++gboolean gtkut_default_cut		(void);
++gboolean gtkut_default_copy		(void);
++gboolean gtkut_default_paste		(void);
++gboolean gtkut_default_allsel		(void);
++
+ #endif /* __GTKUTILS_H__ */
+diff --git a/src/mainwindow.c b/src/mainwindow.c
+index 9521b88..654ec0b 100644
+--- a/src/mainwindow.c
++++ b/src/mainwindow.c
+@@ -496,9 +496,19 @@ static void goto_folder_cb	 (MainWindow	*mainwin,
+ 				  guint		 action,
+ 				  GtkWidget	*widget);
+ 
++#ifdef GTKOSXAPPLICATION
++static void cut_cb		 (MainWindow	*mainwin,
++				  guint		 action,
++				  GtkWidget	*widget);
++#endif
+ static void copy_cb		 (MainWindow	*mainwin,
+ 				  guint		 action,
+ 				  GtkWidget	*widget);
++#ifdef GTKOSXAPPLICATION
++static void paste_cb		 (MainWindow	*mainwin,
++				  guint		 action,
++				  GtkWidget	*widget);
++#endif
+ static void allsel_cb		 (MainWindow	*mainwin,
+ 				  guint		 action,
+ 				  GtkWidget	*widget);
+@@ -604,7 +614,13 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ #endif
+ 
+ 	{N_("/_Edit"),				NULL, NULL, 0, "<Branch>"},
++#ifdef GTKOSXAPPLICATION
++	{N_("/_Edit/Cu_t"),			"<meta>X", cut_cb, 0, NULL},
++#endif
+ 	{N_("/_Edit/_Copy"),			"<meta>C", copy_cb, 0, NULL},
++#ifdef GTKOSXAPPLICATION
++	{N_("/_Edit/_Paste"),			"<meta>V", paste_cb, 0, NULL},
++#endif
+ 	{N_("/_Edit/Select _all"),		"<meta>A", allsel_cb, 0, NULL},
+ 	{N_("/_Edit/Select _thread"),		NULL, select_thread_cb, 0, NULL},
+ 	{N_("/_Edit/---"),			NULL, NULL, 0, "<Separator>"},
+@@ -618,7 +634,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_View/Show or hi_de/_Folder tree"),
+ 						NULL, toggle_folder_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/Show or hi_de/_Message view"),
+-						"<meta>V", toggle_message_cb, 0, "<ToggleItem>"},
++						"<control>V", toggle_message_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/Show or hi_de/_Toolbar"),
+ 						NULL, NULL, 0, "<Branch>"},
+ 	{N_("/_View/Show or hi_de/_Toolbar/Icon _and text"),
+@@ -799,7 +815,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/Open in new _window"),	"<meta><alt>N", open_msg_cb, 0, NULL},
+ 	{N_("/_View/Mess_age source"),		"<meta>U", view_source_cb, 0, NULL},
+-	{N_("/_View/All _headers"),	"<meta>H", show_all_header_cb, 0, "<ToggleItem>"},
++	{N_("/_View/All _headers"),	"<control>H", show_all_header_cb, 0, "<ToggleItem>"},
+ 	{N_("/_View/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_View/_Update summary"),		"<meta><alt>U", update_summary_cb,  0, NULL},
+ 
+@@ -884,7 +900,7 @@ static GtkItemFactoryEntry mainwin_entries[] =
+ 	{N_("/_Tools/C_oncatenate separated messages"),
+ 						NULL, concat_partial_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+-	{N_("/_Tools/E_xecute marked process"),	"<meta>X", execute_summary_cb, 0, NULL},
++	{N_("/_Tools/E_xecute marked process"),	"<control>X", execute_summary_cb, 0, NULL},
+ 	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
+ 	{N_("/_Tools/Op_en configuration folder"),
+ 						NULL, open_config_folder_cb, 0, NULL},
+@@ -4030,15 +4046,37 @@ static void goto_folder_cb(MainWindow *mainwin, guint action,
+ 		folderview_select(mainwin->folderview, to_folder);
+ }
+ 
++#ifdef GTKOSXAPPLICATION
++static void cut_cb(MainWindow *mainwin, guint action, GtkWidget *widget)
++{
++	gtkut_default_cut();
++}
++#endif
++
+ static void copy_cb(MainWindow *mainwin, guint action, GtkWidget *widget)
+ {
++#ifdef GTKOSXAPPLICATION
++	if (gtkut_default_copy())
++		return;
++#endif
+ 	messageview_copy_clipboard(mainwin->messageview);
+ }
+ 
++#ifdef GTKOSXAPPLICATION
++static void paste_cb(MainWindow *mainwin, guint action, GtkWidget *widget)
++{
++	gtkut_default_paste();
++}
++#endif
++
+ static void allsel_cb(MainWindow *mainwin, guint action, GtkWidget *widget)
+ {
+ 	MessageView *msgview = mainwin->messageview;
+ 
++#ifdef GTKOSXAPPLICATION
++	if (gtkut_default_allsel())
++		return;
++#endif
+ 	if (GTK_WIDGET_HAS_FOCUS(mainwin->summaryview->treeview))
+ 		summary_select_all(mainwin->summaryview);
+ 	else if (GTK_WIDGET_HAS_FOCUS(mainwin->summaryview->qsearch->entry))
+-- 
+2.32.1 (Apple Git-133)
+

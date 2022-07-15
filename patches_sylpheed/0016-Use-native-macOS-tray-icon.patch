@@ -1,0 +1,291 @@
+From 090238acb5c744048056ff576f4e47dc350e2843 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sat, 16 Jul 2022 03:07:49 +0700
+Subject: [PATCH 16/16] Use native macOS tray icon
+
+---
+ src/trayicon.c | 245 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/trayicon.h |   4 +
+ 2 files changed, 248 insertions(+), 1 deletion(-)
+
+diff --git a/src/trayicon.c b/src/trayicon.c
+index ef56dc1..d5e6ff7 100644
+--- a/src/trayicon.c
++++ b/src/trayicon.c
+@@ -43,7 +43,250 @@
+ #include "compose.h"
+ #include "prefs_common.h"
+ 
+-#if GTK_CHECK_VERSION(2, 10, 0) || defined(GDK_WINDOWING_X11)
++#if defined(__OBJC__) && defined(__APPLE__)
++
++#define FolderClass FolderClass_
++#define FolderType FolderType_
++#import <Foundation/Foundation.h>
++#import <AppKit/AppKit.h>
++#undef FolderType
++#undef FolderClass
++
++#define TRAYICON_IMAGE		STOCK_PIXMAP_SYLPHEED
++#define TRAYICON_NEW_IMAGE	STOCK_PIXMAP_SYLPHEED_NEWMAIL
++
++@interface TrayIconDelegate : NSObject
++@property MainWindow *mainwin;
++- (void)trayicon_present:(id)sender;
++- (void)trayicon_inc:(id)sender;
++- (void)trayicon_inc_all:(id)sender;
++- (void)trayicon_send:(id)sender;
++- (void)trayicon_compose:(id)sender;
++- (void)trayicon_app_exit:(id)sender;
++@end
++
++@implementation TrayIconDelegate : NSObject
++@synthesize mainwin;
++
++-(id)initWithMainWindow:(MainWindow *)mainwin
++{
++	if (self = [super init]) {
++		[self setMainwin:mainwin];
++	}
++	return self;
++}
++
++- (void)trayicon_present:(id)sender
++{
++	main_window_popup([self mainwin]);
++}
++
++- (void)trayicon_inc:(id)sender
++{
++	if (!inc_is_active() && !gtkut_window_modal_exist())
++		inc_mail([self mainwin]);
++}
++
++- (void)trayicon_inc_all:(id)sender
++{
++	if (!inc_is_active() && !gtkut_window_modal_exist())
++		inc_all_account_mail([self mainwin], FALSE);
++}
++
++- (void)trayicon_send:(id)sender
++{
++	if (!gtkut_window_modal_exist())
++		main_window_send_queue([self mainwin]);
++}
++
++- (void)trayicon_compose:(id)sender
++{
++	if (!gtkut_window_modal_exist())
++		compose_new(NULL, NULL, NULL, NULL);
++}
++
++- (void)trayicon_app_exit:(id)sender
++{
++	if ([self mainwin]->lock_count == 0 && !gtkut_window_modal_exist())
++		app_will_exit(FALSE);
++}
++@end
++
++struct _TrayIcon
++{
++	NSStatusItem *status_item;
++	TrayIconDelegate *delegate;
++};
++
++static TrayIcon trayicon;
++static gboolean on_notify = FALSE;
++static gboolean default_tooltip = FALSE;
++
++static NSString *formatMenuTitle(const char *str)
++{
++	NSString *title = [NSString stringWithUTF8String:str];
++	title = [title stringByReplacingOccurrencesOfString:@"_" withString:@""];
++	return title;
++}
++
++TrayIcon *trayicon_create(MainWindow *mainwin)
++{
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	NSStatusItem *status_item;
++	status_item = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
++	[status_item retain];
++	[status_item setHighlightMode:YES];
++	[status_item setVisible:NO];
++
++	TrayIconDelegate *delegate = [[TrayIconDelegate alloc] initWithMainWindow:mainwin];
++
++	NSMenu *menu = [[NSMenu alloc] init];
++	NSMenuItem *item = nil;
++
++	item = [menu addItemWithTitle:formatMenuTitle(_("_Display Sylpheed")) action:nil keyEquivalent:@""];
++	[item setTarget:delegate];
++	[item setAction:@selector(trayicon_present:)];
++
++	[menu addItem:[NSMenuItem separatorItem]];
++
++	item = [menu addItemWithTitle:formatMenuTitle(_("Get from _current account")) action:nil keyEquivalent:@""];
++	[item setTarget:delegate];
++	[item setAction:@selector(trayicon_inc:)];
++
++	item = [menu addItemWithTitle:formatMenuTitle(_("Get from _all accounts")) action:nil keyEquivalent:@""];
++	[item setTarget:delegate];
++	[item setAction:@selector(trayicon_inc_all:)];
++
++	item = [menu addItemWithTitle:formatMenuTitle(_("_Send queued messages")) action:nil keyEquivalent:@""];
++	[item setTarget:delegate];
++	[item setAction:@selector(trayicon_send:)];
++
++	[menu addItem:[NSMenuItem separatorItem]];
++
++	item = [menu addItemWithTitle:formatMenuTitle(_("Compose _new message")) action:nil keyEquivalent:@""];
++	[item setTarget:delegate];
++	[item setAction:@selector(trayicon_compose:)];
++
++	[menu addItem:[NSMenuItem separatorItem]];
++
++	item = [menu addItemWithTitle:formatMenuTitle(_("E_xit")) action:nil keyEquivalent:@""];
++	[item setTarget:delegate];
++	[item setAction:@selector(trayicon_app_exit:)];
++
++	[status_item setMenu:menu];
++
++	trayicon.status_item = status_item;
++	trayicon.delegate = delegate;
++	[pool release];
++
++	on_notify = FALSE;
++	default_tooltip = FALSE;
++	trayicon_set_stock_icon(TRAYICON_IMAGE);
++	trayicon_set_tooltip(NULL);
++
++	return &trayicon;
++}
++
++void trayicon_show(TrayIcon *tray_icon)
++{
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	if (tray_icon && tray_icon->status_item)
++		[tray_icon->status_item setVisible:YES];
++	[pool release];
++}
++
++void trayicon_hide(TrayIcon *tray_icon)
++{
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	if (tray_icon && tray_icon->status_item)
++		[tray_icon->status_item setVisible:NO];
++	[pool release];
++}
++
++void trayicon_destroy(TrayIcon *tray_icon)
++{
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	if (tray_icon && tray_icon->status_item) {
++		[tray_icon->status_item release];
++		tray_icon->status_item = nil;
++	}
++	if (tray_icon && tray_icon->delegate) {
++		[tray_icon->delegate release];
++		tray_icon->delegate = nil;
++	}
++	[pool release];
++}
++
++void trayicon_set_tooltip(const gchar *text)
++{
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	if (text) {
++		default_tooltip = FALSE;
++		[trayicon.status_item setToolTip:[NSString stringWithUTF8String:text]];
++	} else if (!default_tooltip) {
++		default_tooltip = TRUE;
++		[trayicon.status_item setToolTip:[NSString stringWithUTF8String:_("Sylpheed")]];
++	}
++	[pool release];
++}
++
++void trayicon_set_notify(gboolean enabled)
++{
++	if (enabled && !on_notify) {
++		trayicon_set_stock_icon(TRAYICON_NEW_IMAGE);
++		on_notify = TRUE;
++	} else if (!enabled && on_notify) {
++		trayicon_set_stock_icon(TRAYICON_IMAGE);
++		on_notify = FALSE;
++	}
++}
++
++void trayicon_set_stock_icon(StockPixmap icon)
++{
++	GdkPixbuf *pixbuf;
++	stock_pixbuf_gdk(NULL, icon, &pixbuf);
++	if (!pixbuf)
++		return;
++
++	const int n_channels = gdk_pixbuf_get_n_channels(pixbuf);
++	const gboolean has_alpha = gdk_pixbuf_get_has_alpha(pixbuf);
++	const int bits_per_sample = gdk_pixbuf_get_bits_per_sample(pixbuf);
++	const guchar* pixels = gdk_pixbuf_get_pixels(pixbuf);
++	const int width = gdk_pixbuf_get_width(pixbuf);
++	const int height = gdk_pixbuf_get_height(pixbuf);
++	const int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
++
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++
++	NSBitmapImageRep *bitmap_rep = [[[NSBitmapImageRep alloc]
++		initWithBitmapDataPlanes:(unsigned char **)(&pixels)
++		pixelsWide:(NSInteger)width
++		pixelsHigh:(NSInteger)height
++		bitsPerSample:(NSInteger)bits_per_sample
++		samplesPerPixel:(NSInteger)n_channels
++		hasAlpha:(BOOL)(!!has_alpha)
++		isPlanar:NO
++		colorSpaceName:NSCalibratedRGBColorSpace
++#if defined (AVAILABLE_MAC_OS_X_VERSION_10_14_AND_LATER)
++		bitmapFormat:NSBitmapFormatAlphaNonpremultiplied
++#else
++		bitmapFormat:NSAlphaNonpremultipliedBitmapFormat
++#endif
++		bytesPerRow:(NSInteger)rowstride
++		bitsPerPixel:(NSInteger)(bits_per_sample * n_channels)
++	] autorelease];
++	NSImage *image = [[[NSImage alloc]
++		initWithCGImage:[bitmap_rep CGImage]
++		size:NSMakeSize(22.0, 22.0)
++	] autorelease];
++
++	[trayicon.status_item setImage:image];
++	[trayicon.status_item setAlternateImage:image];
++
++	[pool release];
++}
++
++#elif GTK_CHECK_VERSION(2, 10, 0) || defined(GDK_WINDOWING_X11)
+ 
+ #if GTK_CHECK_VERSION(2, 10, 0)
+ #include <gtk/gtkstatusicon.h>
+diff --git a/src/trayicon.h b/src/trayicon.h
+index eea46af..c910ad6 100644
+--- a/src/trayicon.h
++++ b/src/trayicon.h
+@@ -33,6 +33,9 @@ typedef struct _TrayIcon	TrayIcon;
+ #include "mainwindow.h"
+ #include "stock_pixmap.h"
+ 
++#if defined(__OBJC__) && defined(__APPLE__)
++struct _TrayIcon;
++#else
+ struct _TrayIcon
+ {
+ #if GTK_CHECK_VERSION(2, 10, 0)
+@@ -41,6 +44,7 @@ struct _TrayIcon
+ 	GtkWidget *widget;
+ #endif
+ };
++#endif
+ 
+ TrayIcon *trayicon_create	(MainWindow	*mainwin);
+ void trayicon_show		(TrayIcon	*tray_icon);
+-- 
+2.32.1 (Apple Git-133)
+
