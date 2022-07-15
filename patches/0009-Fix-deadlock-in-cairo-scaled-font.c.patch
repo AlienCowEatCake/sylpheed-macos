@@ -1,7 +1,7 @@
-From a2af073404701dd5651ba635fb626b928e02b90a Mon Sep 17 00:00:00 2001
+From 7a1d689610fc0a8e27459694a365d15bf41eb835 Mon Sep 17 00:00:00 2001
 From: Adrian Johnson <ajohnson@redneon.com>
 Date: Sat, 28 May 2022 07:14:52 +0930
-Subject: [PATCH 9/9] Fix deadlock in cairo-scaled-font.c
+Subject: [PATCH 09/10] Fix deadlock in cairo-scaled-font.c
 
 A user font glyph containing a font can cause deadlock in
 _cairo_scaled_glyph_fini due to the destroy recording surface while

@@ -182,7 +182,7 @@
   </autotools>
 
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
-    <branch module="glib/2.72/glib-2.72.2.tar.xz" version="2.72.2"/>
+    <branch module="glib/2.72/glib-2.72.3.tar.xz" version="2.72.3"/>
     <dependencies>
       <dep package="libffi"/>
       <dep package="libpcre"/>
@@ -208,6 +208,8 @@
       <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/329 -->
       <patch file="0008-Fix-deadlock-in-cairo-scaled-font.c.patch" strip="1"/>
       <patch file="0009-Fix-deadlock-in-cairo-scaled-font.c.patch" strip="1"/>
+      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/337 -->
+      <patch file="0010-quartz-Avoid-reading-beyond-the-end-of-image-surface.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="pixman"/>
@@ -216,7 +218,7 @@
   </meson>
 
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="4.3.0" module="harfbuzz/harfbuzz/releases/download/4.3.0/harfbuzz-4.3.0.tar.xz"/>
+    <branch repo="github-tarball" version="4.4.1" module="harfbuzz/harfbuzz/releases/download/4.4.1/harfbuzz-4.4.1.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -227,7 +229,7 @@
   </meson>
 
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.50.7" module="pango/1.50/pango-1.50.7.tar.xz"/>
+    <branch version="1.50.8" module="pango/1.50/pango-1.50.8.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -343,7 +345,10 @@
 
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-1.1.1o.tar.gz" version="1.1.1o" repo="openssl"/>
+    <branch module="openssl-1.1.1q.tar.gz" version="1.1.1q" repo="openssl">
+        <!-- https://github.com/openssl/openssl/pull/18719 -->
+        <patch file="openssl-fix-missing-header.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <autotools id="compface" autogen-sh="configure" supports-non-srcdir-builds="no">
@@ -373,7 +378,7 @@
   </autotools>
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3380500.tar.gz" version="3.38.5"/>
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3390100.tar.gz" version="3.39.1"/>
   </autotools>
 
 </moduleset>

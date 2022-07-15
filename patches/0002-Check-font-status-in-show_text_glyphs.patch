@@ -1,7 +1,7 @@
-From 4bbb1705f9247409baf0c7a948232402beeea332 Mon Sep 17 00:00:00 2001
+From 3825561ef06b1ba7b614ad49bbedd4d7f05b59b3 Mon Sep 17 00:00:00 2001
 From: Adrian Johnson <ajohnson@redneon.com>
 Date: Tue, 5 Apr 2022 17:38:13 +0930
-Subject: [PATCH 2/9] Check font status in show_text_glyphs
+Subject: [PATCH 02/10] Check font status in show_text_glyphs
 
 to prevent asserting in _cairo_scaled_font_freeze_cache()
 

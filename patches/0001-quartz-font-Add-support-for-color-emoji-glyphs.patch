@@ -1,7 +1,7 @@
-From 54add68aecec4351f1e148241366ccf2d659e784 Mon Sep 17 00:00:00 2001
+From 6a07c0ab69f630aea1282b3a285fb30cbe4c5564 Mon Sep 17 00:00:00 2001
 From: Suyuan Chang <suyuan@cloudmosa.com>
 Date: Sun, 27 Jan 2019 22:56:54 -0800
-Subject: [PATCH 1/9] quartz-font: Add support for color emoji glyphs.
+Subject: [PATCH 01/10] quartz-font: Add support for color emoji glyphs.
 
 Treat the macOS system font 'Apple Color Emoji' as color glyphs and
 use color surface to render it.

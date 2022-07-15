@@ -1,7 +1,7 @@
-From 0279943104094aa7aef00aa30f3052569360ece1 Mon Sep 17 00:00:00 2001
+From 589a39678e24ad72e8f6d45920f939e9788cae34 Mon Sep 17 00:00:00 2001
 From: Feysh INC <opensource@feysh.com>
 Date: Fri, 22 Apr 2022 21:24:09 +0800
-Subject: [PATCH 5/9] Fix a use after free in
+Subject: [PATCH 05/10] Fix a use after free in
  _cairo_svg_surface_create_for_stream_internal
 
 When `_cairo_svg_surface_create_for_document()` failed, it will free the

@@ -1,7 +1,7 @@
-From 98b85ae5704b3e5cbbeb5f9ea4fd06ff1862a9ef Mon Sep 17 00:00:00 2001
+From f53dc4f559575acd6643d11f3f7f3d6875627aaf Mon Sep 17 00:00:00 2001
 From: Feysh INC <opensource@feysh.com>
 Date: Fri, 22 Apr 2022 16:43:59 +0800
-Subject: [PATCH 3/9] Fix a double free in _cairo_mono_scan_converter_create
+Subject: [PATCH 03/10] Fix a double free in _cairo_mono_scan_converter_create
 
 When `_mono_scan_converter_init` failed,
 `self->converter->polygon` will be freed by `polygon_fini()`. However,

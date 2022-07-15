@@ -1,7 +1,7 @@
-From b9ed20e5d2df31f29f360c8c253a21e713cfce5f Mon Sep 17 00:00:00 2001
+From b6f7719ce43d143b996a07571e65849771ade971 Mon Sep 17 00:00:00 2001
 From: John Ralls <jralls@ceridwen.us>
 Date: Sat, 23 Apr 2022 16:38:01 -0700
-Subject: [PATCH 7/9] [quartz] Destroy local copy of snapshot after attaching
+Subject: [PATCH 07/10] [quartz] Destroy local copy of snapshot after attaching
  it.
 
 Because cairo_surface_snapshot_attach refs the snapshot.
