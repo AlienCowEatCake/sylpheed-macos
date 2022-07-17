@@ -1,16 +1,17 @@
-From be9513801f246a6784869a1d0cf17f559207e27e Mon Sep 17 00:00:00 2001
+From cac20cb417dec5eb67e3ad075248a2866e978229 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:10 +0700
 Subject: [PATCH 15/16] Improve UX for macOS builds
 
 ---
- libsylph/defs.h           |  6 +++++-
- libsylph/prefs_common.c   |  2 +-
- src/Makefile.in           |  1 +
- src/gtkutils.c            |  8 ++++++++
- src/mainwindow.c          | 16 +++++++++++++++-
- src/prefs_common_dialog.c | 10 ++++++++++
- 6 files changed, 40 insertions(+), 3 deletions(-)
+ libsylph/defs.h                   |  6 +++++-
+ libsylph/prefs_common.c           |  2 +-
+ macosx/bundle/Info-sylpheed.plist |  8 ++++++++
+ src/Makefile.in                   |  1 +
+ src/gtkutils.c                    |  8 ++++++++
+ src/mainwindow.c                  | 28 +++++++++++++++++++++++++++-
+ src/prefs_common_dialog.c         | 10 ++++++++++
+ 7 files changed, 60 insertions(+), 3 deletions(-)
 
 diff --git a/libsylph/defs.h b/libsylph/defs.h
 index 9e3f82b..fcb690d 100644
@@ -41,6 +42,24 @@ index 247d6f5..ae0fd5b 100644
  	{"toggle_window_on_trayicon_click", "FALSE",
  #else
  	{"toggle_window_on_trayicon_click", "TRUE",
+diff --git a/macosx/bundle/Info-sylpheed.plist b/macosx/bundle/Info-sylpheed.plist
+index 9d8dfca..1beca3d 100644
+--- a/macosx/bundle/Info-sylpheed.plist
++++ b/macosx/bundle/Info-sylpheed.plist
+@@ -28,5 +28,13 @@
+     <string>10.8</string>
+     <key>NSUserNotificationAlertStyle</key>
+     <string>alert</string>
++    <key>CFBundleDisplayName</key>
++    <string>Sylpheed</string>
++    <key>CFBundleName</key>
++    <string>Sylpheed</string>
++    <key>LSApplicationCategoryType</key>
++    <string>public.app-category.productivity</string>
++    <key>NSPrincipalClass</key>
++    <string>NSApplication</string>
+ </dict>
+ </plist>
 diff --git a/src/Makefile.in b/src/Makefile.in
 index 042f814..aedae12 100644
 --- a/src/Makefile.in
@@ -80,7 +99,7 @@ index 5f49969..3e53130 100644
  }
  
 diff --git a/src/mainwindow.c b/src/mainwindow.c
-index 654ec0b..833094a 100644
+index 654ec0b..c5935f3 100644
 --- a/src/mainwindow.c
 +++ b/src/mainwindow.c
 @@ -54,6 +54,14 @@
@@ -98,7 +117,26 @@ index 654ec0b..833094a 100644
  #include "main.h"
  #include "mainwindow.h"
  #include "folderview.h"
-@@ -3250,8 +3258,14 @@ static gint main_window_close_cb(GtkWidget *widget, GdkEventAny *event,
+@@ -1240,6 +1248,18 @@ MainWindow *main_window_create(SeparateType type)
+ 	action_update_mainwin_menu(ifactory, mainwin);
+ #endif
+ 
++#if defined(__OBJC__) && defined(__APPLE__)
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	/* Remove (disable) the "Start Dictation..." menu item from the "Edit" menu */
++	[[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NSDisabledDictationMenuItem"];
++#if defined (AVAILABLE_MAC_OS_X_VERSION_10_12_AND_LATER)
++	/* Remove (don't allow) the "Show Tab Bar" menu item from the "View" menu, if supported */
++	if ([NSWindow respondsToSelector:@selector(allowsAutomaticWindowTabbing)])
++		NSWindow.allowsAutomaticWindowTabbing = NO;
++#endif
++	[pool release];
++#endif
++
+ #ifdef GTKOSXAPPLICATION
+ 	gtk_widget_hide(menubar);
+ 	gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
+@@ -3250,8 +3270,14 @@ static gint main_window_close_cb(GtkWidget *widget, GdkEventAny *event,
  {
  	MainWindow *mainwin = (MainWindow *)data;
  

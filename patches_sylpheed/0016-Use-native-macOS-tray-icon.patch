@@ -1,18 +1,18 @@
-From 090238acb5c744048056ff576f4e47dc350e2843 Mon Sep 17 00:00:00 2001
+From 2b81c42cb4526c8be033eb5f228b7e061fa51060 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:49 +0700
 Subject: [PATCH 16/16] Use native macOS tray icon
 
 ---
- src/trayicon.c | 245 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/trayicon.c | 344 ++++++++++++++++++++++++++++++++++++++++++++++++-
  src/trayicon.h |   4 +
- 2 files changed, 248 insertions(+), 1 deletion(-)
+ 2 files changed, 347 insertions(+), 1 deletion(-)
 
 diff --git a/src/trayicon.c b/src/trayicon.c
-index ef56dc1..d5e6ff7 100644
+index ef56dc1..f31e727 100644
 --- a/src/trayicon.c
 +++ b/src/trayicon.c
-@@ -43,7 +43,250 @@
+@@ -43,7 +43,349 @@
  #include "compose.h"
  #include "prefs_common.h"
  
@@ -29,8 +29,10 @@ index ef56dc1..d5e6ff7 100644
 +#define TRAYICON_IMAGE		STOCK_PIXMAP_SYLPHEED
 +#define TRAYICON_NEW_IMAGE	STOCK_PIXMAP_SYLPHEED_NEWMAIL
 +
++#define TRAYICON_NOTIFY_PERIOD	10000
++
 +@interface TrayIconDelegate : NSObject
-+@property MainWindow *mainwin;
++@property (assign) MainWindow *mainwin;
 +- (void)trayicon_present:(id)sender;
 +- (void)trayicon_inc:(id)sender;
 +- (void)trayicon_inc_all:(id)sender;
@@ -86,10 +88,71 @@ index ef56dc1..d5e6ff7 100644
 +}
 +@end
 +
++@interface TrayIconBlinker : NSObject
++@property (assign) NSStatusItem *statusItem;
++@property (retain) NSImage *image;
++@property (retain) NSTimer *timer;
++- (void)startBlinking;
++- (void)stopBlinking;
++- (void)timerFired:(NSTimer *)timer;
++@end
++
++@implementation TrayIconBlinker : NSObject
++@synthesize statusItem;
++@synthesize image;
++@synthesize timer;
++
++-(id)initWithStatusItem:(NSStatusItem *)statusItem
++{
++	if (self = [super init]) {
++		[self setStatusItem:statusItem];
++		[self setImage:nil];
++		[self setTimer:nil];
++	}
++	return self;
++}
++
++- (void)startBlinking
++{
++	if ([self timer])
++		return;
++
++	[self setTimer:[NSTimer
++		scheduledTimerWithTimeInterval:0.5
++		target:self
++		selector:@selector(timerFired:)
++		userInfo:nil
++		repeats:YES
++	]];
++}
++
++- (void)stopBlinking
++{
++	if (![self timer])
++		return;
++
++	[[self timer] invalidate];
++	[self setTimer:nil];
++
++	while ([self image])
++		[self timerFired:nil];
++}
++
++- (void)timerFired:(NSTimer *)timer
++{
++	NSImage *tmp = [self image];
++	[self setImage:[[self statusItem] image]];
++	if ([self image] && tmp)
++		tmp = nil;
++	[[self statusItem] setImage:tmp];
++}
++@end
++
 +struct _TrayIcon
 +{
 +	NSStatusItem *status_item;
 +	TrayIconDelegate *delegate;
++	TrayIconBlinker *blinker;
 +};
 +
 +static TrayIcon trayicon;
@@ -151,6 +214,7 @@ index ef56dc1..d5e6ff7 100644
 +
 +	trayicon.status_item = status_item;
 +	trayicon.delegate = delegate;
++	trayicon.blinker = [[TrayIconBlinker alloc] initWithStatusItem:status_item];
 +	[pool release];
 +
 +	on_notify = FALSE;
@@ -188,6 +252,11 @@ index ef56dc1..d5e6ff7 100644
 +		[tray_icon->delegate release];
 +		tray_icon->delegate = nil;
 +	}
++	if (tray_icon && tray_icon->blinker) {
++		[tray_icon->blinker stopBlinking];
++		[tray_icon->blinker release];
++		tray_icon->blinker = nil;
++	}
 +	[pool release];
 +}
 +
@@ -204,6 +273,28 @@ index ef56dc1..d5e6ff7 100644
 +	[pool release];
 +}
 +
++static void trayicon_set_blinking(gboolean blinking)
++{
++	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++	if (blinking)
++		[trayicon.blinker startBlinking];
++	else
++		[trayicon.blinker stopBlinking];
++	[pool release];
++}
++
++static guint notify_tag = 0;
++
++static gboolean notify_timeout_cb(gpointer data)
++{
++	gdk_threads_enter();
++	trayicon_set_blinking(FALSE);
++	notify_tag = 0;
++	gdk_threads_leave();
++
++	return FALSE;
++}
++
 +void trayicon_set_notify(gboolean enabled)
 +{
 +	if (enabled && !on_notify) {
@@ -212,6 +303,14 @@ index ef56dc1..d5e6ff7 100644
 +	} else if (!enabled && on_notify) {
 +		trayicon_set_stock_icon(TRAYICON_IMAGE);
 +		on_notify = FALSE;
++	}
++
++	if (enabled && notify_tag == 0) {
++		trayicon_set_blinking(enabled);
++		notify_tag = g_timeout_add(TRAYICON_NOTIFY_PERIOD, notify_timeout_cb, NULL);
++	} else if (!enabled && notify_tag > 0) {
++		g_source_remove(notify_tag);
++		notify_timeout_cb(NULL);
 +	}
 +}
 +
