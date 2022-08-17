@@ -52,7 +52,7 @@
   </metamodule>
 
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.5"/>
+    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.6"/>
   </autotools>
 
   <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-static">
@@ -218,7 +218,7 @@
   </meson>
 
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="4.4.1" module="harfbuzz/harfbuzz/releases/download/4.4.1/harfbuzz-4.4.1.tar.xz"/>
+    <branch repo="github-tarball" version="5.1.0" module="https://github.com/harfbuzz/harfbuzz/releases/download/5.1.0/harfbuzz-5.1.0.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -229,7 +229,7 @@
   </meson>
 
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.50.8" module="pango/1.50/pango-1.50.8.tar.xz"/>
+    <branch version="1.50.9" module="pango/1.50/pango-1.50.9.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -250,7 +250,7 @@
   </meson>
 
   <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
-    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-2.42.8.tar.xz" version="2.42.8">
+    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-2.42.9.tar.xz" version="2.42.9">
       <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
     <after>
@@ -378,7 +378,7 @@
   </autotools>
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3390100.tar.gz" version="3.39.1"/>
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3390200.tar.gz" version="3.39.2"/>
   </autotools>
 
 </moduleset>
