@@ -1,18 +1,18 @@
-From 2b81c42cb4526c8be033eb5f228b7e061fa51060 Mon Sep 17 00:00:00 2001
+From 173026a583a948ff7d35e37369ad76eae3f1203c Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:49 +0700
 Subject: [PATCH 16/16] Use native macOS tray icon
 
 ---
- src/trayicon.c | 344 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ src/trayicon.c | 356 ++++++++++++++++++++++++++++++++++++++++++++++++-
  src/trayicon.h |   4 +
- 2 files changed, 347 insertions(+), 1 deletion(-)
+ 2 files changed, 359 insertions(+), 1 deletion(-)
 
 diff --git a/src/trayicon.c b/src/trayicon.c
-index ef56dc1..f31e727 100644
+index ef56dc1..78adb15 100644
 --- a/src/trayicon.c
 +++ b/src/trayicon.c
-@@ -43,7 +43,349 @@
+@@ -43,7 +43,361 @@
  #include "compose.h"
  #include "prefs_common.h"
  
@@ -173,7 +173,11 @@ index ef56dc1..f31e727 100644
 +	status_item = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
 +	[status_item retain];
 +	[status_item setHighlightMode:YES];
-+	[status_item setVisible:NO];
++#if defined (AVAILABLE_MAC_OS_X_VERSION_10_12_AND_LATER)
++	if (@available(macOS 10.12, *)) {
++		[status_item setVisible:NO];
++	}
++#endif
 +
 +	TrayIconDelegate *delegate = [[TrayIconDelegate alloc] initWithMainWindow:mainwin];
 +
@@ -227,18 +231,26 @@ index ef56dc1..f31e727 100644
 +
 +void trayicon_show(TrayIcon *tray_icon)
 +{
-+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-+	if (tray_icon && tray_icon->status_item)
-+		[tray_icon->status_item setVisible:YES];
-+	[pool release];
++#if defined (AVAILABLE_MAC_OS_X_VERSION_10_12_AND_LATER)
++	if (@available(macOS 10.12, *)) {
++		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++		if (tray_icon && tray_icon->status_item)
++			[tray_icon->status_item setVisible:YES];
++		[pool release];
++	}
++#endif
 +}
 +
 +void trayicon_hide(TrayIcon *tray_icon)
 +{
-+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-+	if (tray_icon && tray_icon->status_item)
-+		[tray_icon->status_item setVisible:NO];
-+	[pool release];
++#if defined (AVAILABLE_MAC_OS_X_VERSION_10_12_AND_LATER)
++	if (@available(macOS 10.12, *)) {
++		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
++		if (tray_icon && tray_icon->status_item)
++			[tray_icon->status_item setVisible:NO];
++		[pool release];
++	}
++#endif
 +}
 +
 +void trayicon_destroy(TrayIcon *tray_icon)
