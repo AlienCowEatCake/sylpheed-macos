@@ -1,7 +1,7 @@
-From d1f7fad5ff81476e7d767fde903f17f839e53903 Mon Sep 17 00:00:00 2001
+From aa2a1be7730e033b5c8409ac4ed626a423a8b5cc Mon Sep 17 00:00:00 2001
 From: Adrian Johnson <ajohnson@redneon.com>
 Date: Fri, 27 May 2022 21:36:31 +0930
-Subject: [PATCH 08/10] Fix deadlock in cairo-scaled-font.c
+Subject: [PATCH 08/14] Fix deadlock in cairo-scaled-font.c
 
 When cairo_scaled_glyph_page_cache needs to remove entries,
 cairo-cache calls _cairo_hash_table_random_entry() with the predicate
@@ -128,5 +128,5 @@ index 3d6df8a41..ef70b4790 100755
  
  static cairo_status_t
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

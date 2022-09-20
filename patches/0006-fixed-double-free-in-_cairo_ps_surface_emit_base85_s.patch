@@ -1,7 +1,7 @@
-From 65b0175f297347713a6438bab6569e48cde00e04 Mon Sep 17 00:00:00 2001
+From 1b76fffbc8078458de77989e1cdcf5a3c42a7f04 Mon Sep 17 00:00:00 2001
 From: Ayman El Didi <ayman@eldidi.org>
 Date: Wed, 20 Apr 2022 15:11:14 -0600
-Subject: [PATCH 06/10] fixed double free in
+Subject: [PATCH 06/14] fixed double free in
  _cairo_ps_surface_emit_base85_string
 
 When taking the CAIRO_PS_COMPRESS_DEFLATE branch of the switch
@@ -62,5 +62,5 @@ index 41f635d56..35e6396c8 100644
  	    break;
      }
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

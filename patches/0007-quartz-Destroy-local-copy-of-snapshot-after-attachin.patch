@@ -1,7 +1,7 @@
-From b6f7719ce43d143b996a07571e65849771ade971 Mon Sep 17 00:00:00 2001
+From fa5af788173933022641e783b5bfc081f750ebb5 Mon Sep 17 00:00:00 2001
 From: John Ralls <jralls@ceridwen.us>
 Date: Sat, 23 Apr 2022 16:38:01 -0700
-Subject: [PATCH 07/10] [quartz] Destroy local copy of snapshot after attaching
+Subject: [PATCH 07/14] [quartz] Destroy local copy of snapshot after attaching
  it.
 
 Because cairo_surface_snapshot_attach refs the snapshot.
@@ -26,5 +26,5 @@ index 5681918c4..fa6d9b1c9 100644
  
      return CGImageRetain (((cairo_quartz_snapshot_t*)snapshot)->image);
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

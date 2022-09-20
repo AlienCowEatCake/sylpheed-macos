@@ -98,14 +98,14 @@
   </autotools>
 
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.9/libxml2-${version}.tar.xz" version="2.9.14"/>
+    <branch module="libxml2/2.10/libxml2-${version}.tar.xz" version="2.10.2"/>
     <after>
       <dep package="xz"/>
     </after>
   </autotools>
 
   <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.35"/>
+    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.37"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -113,11 +113,11 @@
 
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir --disable-static">
-    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.2"/>
+    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.3"/>
   </autotools>
 
   <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.37"/>
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.38"/>
   </autotools>
 
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
@@ -132,7 +132,7 @@
   </autotools>
 
   <autotools id="libtasn1" autogen-sh="configure" autogenargs="--disable-static">
-    <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz" version="4.18.0"/>
+    <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz" version="4.19.0"/>
   </autotools>
 
   <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-static">
@@ -177,15 +177,17 @@
     </after>
   </metamodule>
 
-  <autotools id="libpcre" autogen-sh="configure" autogenargs="--enable-unicode-properties --enable-newline-is-any --enable-jit --disable-static">
-    <branch repo="sourceforge" module="pcre/pcre-8.45.tar.bz2" version="8.45"/>
+  <autotools id="libpcre2" autogen-sh="configure" autogenargs="--enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit --disable-static">
+    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.40">
+      <patch file="0001-PCRE2-remove-unneeded-macOS-version-check.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
-    <branch module="glib/2.72/glib-2.72.3.tar.xz" version="2.72.3"/>
+    <branch module="glib/2.74/glib-2.74.0.tar.xz" version="2.74.0"/>
     <dependencies>
       <dep package="libffi"/>
-      <dep package="libpcre"/>
+      <dep package="libpcre2"/>
     </dependencies>
   </meson>
 
@@ -210,6 +212,14 @@
       <patch file="0009-Fix-deadlock-in-cairo-scaled-font.c.patch" strip="1"/>
       <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/337 -->
       <patch file="0010-quartz-Avoid-reading-beyond-the-end-of-image-surface.patch" strip="1"/>
+      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/342 -->
+      <patch file="0011-Fix-build-with-newer-binutils-dev-installed.patch" strip="1"/>
+      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/340 -->
+      <patch file="0012-Fix-issue-579.patch" strip="1"/>
+      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/355 -->
+      <patch file="0013-Check-for-scaled_font-cache_frozen-in-glyph_page_can.patch" strip="1"/>
+      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/356 -->
+      <patch file="0014-Make-cairo_scaled_font_t-mutex-recursive.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="pixman"/>
@@ -218,7 +228,7 @@
   </meson>
 
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="5.1.0" module="https://github.com/harfbuzz/harfbuzz/releases/download/5.1.0/harfbuzz-5.1.0.tar.xz"/>
+    <branch repo="github-tarball" version="5.2.0" module="https://github.com/harfbuzz/harfbuzz/releases/download/5.2.0/harfbuzz-5.2.0.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -229,7 +239,7 @@
   </meson>
 
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.50.9" module="pango/1.50/pango-1.50.9.tar.xz"/>
+    <branch version="1.50.10" module="pango/1.50/pango-1.50.10.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -378,7 +388,7 @@
   </autotools>
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3390200.tar.gz" version="3.39.2"/>
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3390300.tar.gz" version="3.39.3"/>
   </autotools>
 
 </moduleset>

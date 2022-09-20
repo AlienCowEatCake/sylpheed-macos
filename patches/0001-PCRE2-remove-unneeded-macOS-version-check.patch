@@ -1,0 +1,28 @@
+From af11089244154e613cf3c265cee152216be40516 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 20 Sep 2022 23:28:42 +0700
+Subject: [PATCH] PCRE2: remove unneeded macOS version check
+
+---
+ src/sljit/sljitExecAllocator.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/sljit/sljitExecAllocator.c b/src/sljit/sljitExecAllocator.c
+index 92d940d..30b23d5 100644
+--- a/src/sljit/sljitExecAllocator.c
++++ b/src/sljit/sljitExecAllocator.c
+@@ -150,11 +150,7 @@ static SLJIT_INLINE int get_map_jit_flag()
+ 
+ static SLJIT_INLINE void apple_update_wx_flags(sljit_s32 enable_exec)
+ {
+-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 110000
+ 	pthread_jit_write_protect_np(enable_exec);
+-#else
+-#error "Must target Big Sur or newer"
+-#endif /* BigSur */
+ }
+ #endif /* SLJIT_CONFIG_X86 */
+ #else /* !TARGET_OS_OSX */
+-- 
+2.37.0 (Apple Git-136)
+

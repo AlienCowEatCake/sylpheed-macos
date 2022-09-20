@@ -1,7 +1,7 @@
-From 3825561ef06b1ba7b614ad49bbedd4d7f05b59b3 Mon Sep 17 00:00:00 2001
+From c9ec5842cbe959a491a717d0a11d90ba84549402 Mon Sep 17 00:00:00 2001
 From: Adrian Johnson <ajohnson@redneon.com>
 Date: Tue, 5 Apr 2022 17:38:13 +0930
-Subject: [PATCH 02/10] Check font status in show_text_glyphs
+Subject: [PATCH 02/14] Check font status in show_text_glyphs
 
 to prevent asserting in _cairo_scaled_font_freeze_cache()
 
@@ -35,5 +35,5 @@ index 2fc265a2c..809a2739c 100644
  	return CAIRO_STATUS_SUCCESS;
  
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

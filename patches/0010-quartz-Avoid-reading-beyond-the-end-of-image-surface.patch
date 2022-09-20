@@ -1,7 +1,7 @@
-From f007412eb3f95e6e7e489d53301f23dfa92621a1 Mon Sep 17 00:00:00 2001
+From cfc0c80347015d215a4f27d6774c490fa60f5bb9 Mon Sep 17 00:00:00 2001
 From: Jeff Muizelaar <jrmuizel@gmail.com>
 Date: Wed, 29 Jun 2022 11:41:47 -0400
-Subject: [PATCH 10/10] quartz: Avoid reading beyond the end of image surfaces.
+Subject: [PATCH 10/14] quartz: Avoid reading beyond the end of image surfaces.
 
 The last row of data may have less than stride bytes so make sure we
 only copy what we need.
@@ -30,5 +30,5 @@ index fa6d9b1c9..14feb0f41 100644
  					   image_surface->width,
  					   image_surface->height,
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

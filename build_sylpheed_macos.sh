@@ -9,7 +9,7 @@ NOTARIZE_ASC_PROVIDER="${APP_CERT: -11:10}"
 
 export MACOSX_DEPLOYMENT_TARGET="10.9"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
-export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig"
+export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/3.10.2/lib/pkgconfig"
 
 git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
 cd gtk-osx

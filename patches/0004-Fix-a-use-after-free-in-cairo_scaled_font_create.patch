@@ -1,7 +1,7 @@
-From 39d4ffa1361171ba00f177ce3a8c16359794f9d1 Mon Sep 17 00:00:00 2001
+From f1c94449f79e240a56c2513d074c800c11a2a90d Mon Sep 17 00:00:00 2001
 From: Feysh INC <opensource@feysh.com>
 Date: Fri, 22 Apr 2022 17:09:47 +0800
-Subject: [PATCH 04/10] Fix a use after free in cairo_scaled_font_create
+Subject: [PATCH 04/14] Fix a use after free in cairo_scaled_font_create
 
 When `font_face` is freed by `cairo_font_face_destroy()` at line 1,150,
 the following call `_cairo_font_face_set_error (font_face, status)`
@@ -37,5 +37,5 @@ index e0b586589..3d6df8a41 100755
      }
      /* Or did we encounter an error whilst constructing the scaled font? */
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 
