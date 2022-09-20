@@ -1,7 +1,7 @@
-From 5f3c862c7f14060617775bf92f9bd0de190a6997 Mon Sep 17 00:00:00 2001
+From c68218bd98ee041a97148f0b2e84a0cc3d46c93e Mon Sep 17 00:00:00 2001
 From: Laurent Bigonville <bigon@debian.org>
 Date: Mon, 13 Jun 2022 18:35:28 +0700
-Subject: [PATCH 06/16] Switch to enchant-2
+Subject: [PATCH 06/18] Switch to enchant-2
 
 ---
  configure     | 4 ++--
@@ -10,10 +10,10 @@ Subject: [PATCH 06/16] Switch to enchant-2
  3 files changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/configure b/configure
-index 6984cce..559a576 100755
+index 1fcfa9e..33948e1 100755
 --- a/configure
 +++ b/configure
-@@ -16307,9 +16307,9 @@ $as_echo "yes" >&6; }
+@@ -17015,9 +17015,9 @@ $as_echo "yes" >&6; }
  
  $as_echo "#define USE_ENCHANT 1" >>confdefs.h
  
@@ -26,7 +26,7 @@ index 6984cce..559a576 100755
  				LIBS="$LIBS `$PKG_CONFIG --libs dbus-glib-1`"
  			fi
 diff --git a/configure.ac b/configure.ac
-index 090177d..0a81b0e 100644
+index 80cbb4a..2a0c2c9 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -319,10 +319,10 @@ if test "$ac_cv_enable_gtkspell" = yes; then
@@ -56,5 +56,5 @@ index d2b2976..e96bf71 100644
  #  include <aspell.h>
  #endif
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

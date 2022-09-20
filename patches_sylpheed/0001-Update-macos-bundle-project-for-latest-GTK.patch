@@ -1,7 +1,7 @@
-From a2170a871e7f5dddec8a00d3276b55a1547e1b16 Mon Sep 17 00:00:00 2001
+From 8bd293098b980e16a54640b73eb98735b8901ccc Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 21:16:39 +0700
-Subject: [PATCH 01/16] Update macos bundle project for latest GTK+
+Subject: [PATCH 01/18] Update macos bundle project for latest GTK+
 
 ---
  macosx/bundle/Info-sylpheed.plist |  8 ++++----
@@ -10,7 +10,7 @@ Subject: [PATCH 01/16] Update macos bundle project for latest GTK+
  3 files changed, 15 insertions(+), 11 deletions(-)
 
 diff --git a/macosx/bundle/Info-sylpheed.plist b/macosx/bundle/Info-sylpheed.plist
-index 43e5fbf..bee70db 100644
+index 43e5fbf..855cc62 100644
 --- a/macosx/bundle/Info-sylpheed.plist
 +++ b/macosx/bundle/Info-sylpheed.plist
 @@ -7,7 +7,7 @@
@@ -18,7 +18,7 @@ index 43e5fbf..bee70db 100644
      <string>Sylpheed</string>
      <key>CFBundleGetInfoString</key>
 -    <string>3.5.0beta1, (C) 1999-2014 Sylpheed Development Team http://sylpheed.sraoss.jp</string>
-+    <string>3.7.0, (C) 1999-2018 Sylpheed Development Team http://sylpheed.sraoss.jp</string>
++    <string>3.8.0beta1, (C) 1999-2022 Sylpheed Development Team http://sylpheed.sraoss.jp</string>
      <key>CFBundleIconFile</key>
      <string>sylpheed.icns</string>
      <key>CFBundleIdentifier</key>
@@ -27,15 +27,15 @@ index 43e5fbf..bee70db 100644
      <string>APPL</string>
      <key>CFBundleShortVersionString</key>
 -    <string>3.4.99</string>
-+    <string>3.7.0</string>
++    <string>3.8.0</string>
      <key>CFBundleSignature</key>
      <string>????</string>
      <key>CFBundleVersion</key>
 -    <string>3.4.99</string>
-+    <string>3.7.0</string>
++    <string>3.8.0</string>
      <key>NSHumanReadableCopyright</key>
 -    <string>Copyright 1999-2014 Sylpheed Development Team</string>
-+    <string>Copyright 1999-2018 Sylpheed Development Team</string>
++    <string>Copyright 1999-2022 Sylpheed Development Team</string>
      <key>LSMinimumSystemVersion</key>
      <string>10.6</string>
  </dict>
@@ -114,5 +114,5 @@ index e741404..0bcba75 100644
    <binary>
       ${prefix}/lib/sylpheed/plugins/*.so
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

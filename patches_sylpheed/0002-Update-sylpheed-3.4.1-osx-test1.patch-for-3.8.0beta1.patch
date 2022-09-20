@@ -1,7 +1,7 @@
-From 3f3e00f5157abc8455c41a12431b0e1aef10aab2 Mon Sep 17 00:00:00 2001
+From 7e31dda890e6886ce76846e5938ac22e42ef7795 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 22:15:56 +0700
-Subject: [PATCH 02/16] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
+Subject: [PATCH 02/18] Update sylpheed-3.4.1-osx-test1.patch for 3.8.0beta1
 
 ---
  po/ja.po          | 729 +++++++++++++++++++++++-----------------------
@@ -15,7 +15,7 @@ Subject: [PATCH 02/16] Update sylpheed-3.4.1-osx-test1.patch for 3.7.0
  8 files changed, 575 insertions(+), 433 deletions(-)
 
 diff --git a/po/ja.po b/po/ja.po
-index b482f61..c3626ee 100644
+index 74bf92c..3c4265b 100644
 --- a/po/ja.po
 +++ b/po/ja.po
 @@ -715,7 +715,7 @@ msgstr "編集"
@@ -644,7 +644,7 @@ index b482f61..c3626ee 100644
  
  #: src/editaddress.c:161
  msgid "Add New Person"
-@@ -2458,67 +2458,67 @@ msgstr "フォルダ `%s' を作成できません。"
+@@ -2459,67 +2459,67 @@ msgstr "フォルダ `%s' を作成できません。"
  
  #: src/folderview.c:254 src/folderview.c:278
  msgid "/Create _new folder..."
@@ -728,7 +728,7 @@ index b482f61..c3626ee 100644
  
  #: src/folderview.c:343
  msgid "Creating folder view...\n"
-@@ -2943,7 +2943,7 @@ msgstr "新着メッセージを受信中"
+@@ -2944,7 +2944,7 @@ msgstr "新着メッセージを受信中"
  
  #: src/inc.c:699
  msgid "Cancel _all"
@@ -737,7 +737,7 @@ index b482f61..c3626ee 100644
  
  #: src/inc.c:745
  msgid "Standby"
-@@ -3340,538 +3340,537 @@ msgstr ""
+@@ -3341,538 +3341,537 @@ msgstr ""
  
  #: src/mainwindow.c:559
  msgid "/_File/_Folder"
@@ -1408,7 +1408,7 @@ index b482f61..c3626ee 100644
  
  #: src/mainwindow.c:877
  msgid "/_Tools/Op_en configuration folder"
-@@ -3883,103 +3882,107 @@ msgstr "/ツール(_T)/添付ファイルフォルダを開く(_T)"
+@@ -3884,103 +3883,107 @@ msgstr "/ツール(_T)/添付ファイルフォルダを開く(_T)"
  
  #: src/mainwindow.c:881
  msgid "/_Tools/_Log window"
@@ -1541,7 +1541,7 @@ index b482f61..c3626ee 100644
  
  #: src/mainwindow.c:966
  msgid "Creating main window...\n"
-@@ -4060,51 +4063,51 @@ msgstr "Sylpheed - メッセージビュー"
+@@ -4061,51 +4064,51 @@ msgstr "Sylpheed - メッセージビュー"
  
  #: src/mainwindow.c:2607 src/mimeview.c:142 src/summaryview.c:438
  msgid "/_Reply"
@@ -1605,7 +1605,7 @@ index b482f61..c3626ee 100644
  
  #: src/mainwindow.c:3116
  msgid "You are offline. Click the icon to go online."
-@@ -4253,7 +4256,7 @@ msgstr "検索完了"
+@@ -4254,7 +4257,7 @@ msgstr "検索完了"
  
  #: src/messageview.c:301
  msgid "/_Tools/Add sender to address boo_k"
@@ -1614,7 +1614,7 @@ index b482f61..c3626ee 100644
  
  #: src/messageview.c:343
  msgid "Creating message view...\n"
-@@ -4273,7 +4276,7 @@ msgstr "添付リストビューに切り替える"
+@@ -4274,7 +4277,7 @@ msgstr "添付リストビューに切り替える"
  
  #: src/messageview.c:417
  msgid "Save _all attachments..."
@@ -1623,7 +1623,7 @@ index b482f61..c3626ee 100644
  
  #: src/messageview.c:481
  msgid "Message View - Sylpheed"
-@@ -4294,43 +4297,43 @@ msgstr "ファイル `%s' を保存できません。"
+@@ -4295,43 +4298,43 @@ msgstr "ファイル `%s' を保存できません。"
  
  #: src/mimeview.c:136
  msgid "/Open _with..."
@@ -1677,7 +1677,7 @@ index b482f61..c3626ee 100644
  
  #: src/mimeview.c:180
  msgid "Creating MIME view...\n"
-@@ -4346,15 +4349,15 @@ msgstr "添付ファイルに対する操作を選択してください:\n"
+@@ -4347,15 +4350,15 @@ msgstr "添付ファイルに対する操作を選択してください:\n"
  
  #: src/mimeview.c:659 src/textview.c:847
  msgid "Open _with..."
@@ -1696,7 +1696,7 @@ index b482f61..c3626ee 100644
  
  #: src/mimeview.c:713
  msgid ""
-@@ -4366,7 +4369,7 @@ msgstr ""
+@@ -4367,7 +4370,7 @@ msgstr ""
  
  #: src/mimeview.c:719
  msgid "_Check signature"
@@ -1705,7 +1705,7 @@ index b482f61..c3626ee 100644
  
  #: src/mimeview.c:1015 src/mimeview.c:1111 src/mimeview.c:1141
  #: src/mimeview.c:1161 src/mimeview.c:1213 src/mimeview.c:1340
-@@ -4425,7 +4428,7 @@ msgstr "プラグインの管理"
+@@ -4426,7 +4429,7 @@ msgstr "プラグインの管理"
  
  #: src/plugin_manager.c:142
  msgid "Check for _update"
@@ -1714,7 +1714,7 @@ index b482f61..c3626ee 100644
  
  #: src/plugin_manager.c:193
  msgid "Plug-in information"
-@@ -6867,7 +6870,7 @@ msgstr "印刷(_P)..."
+@@ -6869,7 +6872,7 @@ msgstr "印刷(_P)..."
  
  #: src/query_search.c:526
  msgid "_Save as search folder"
@@ -1723,7 +1723,7 @@ index b482f61..c3626ee 100644
  
  #: src/query_search.c:661
  #, c-format
-@@ -6984,23 +6987,23 @@ msgstr "署名検証エラー"
+@@ -6986,23 +6989,23 @@ msgstr "署名検証エラー"
  
  #: src/rpop3.c:247
  msgid "_File"
@@ -1752,7 +1752,7 @@ index b482f61..c3626ee 100644
  
  #: src/rpop3.c:357
  #, c-format
-@@ -7558,15 +7561,15 @@ msgstr "この証明書を受け入れますか?"
+@@ -7561,15 +7564,15 @@ msgstr "この証明書を受け入れますか?"
  
  #: src/sslmanager.c:190 src/sslmanager.c:198
  msgid "_Reject"
@@ -1771,7 +1771,7 @@ index b482f61..c3626ee 100644
  
  #: src/subscribedialog.c:203
  msgid "Subscribe to newsgroup"
-@@ -7623,99 +7626,99 @@ msgstr "%d ニュースグループを受信 (%s 受信)"
+@@ -7626,99 +7629,99 @@ msgstr "%d ニュースグループを受信 (%s 受信)"
  
  #: src/summaryview.c:439
  msgid "/Repl_y to"
@@ -1895,7 +1895,7 @@ index b482f61..c3626ee 100644
  
  #: src/summaryview.c:513
  msgid "Creating summary view...\n"
-@@ -7749,7 +7752,7 @@ msgstr "サーバに接続できませんでした。"
+@@ -7752,7 +7755,7 @@ msgstr "サーバに接続できませんでした。"
  
  #: src/summaryview.c:1626
  msgid "_Search again"
@@ -1904,7 +1904,7 @@ index b482f61..c3626ee 100644
  
  #: src/summaryview.c:1648 src/summaryview.c:1657
  msgid "No more unread messages"
-@@ -7975,7 +7978,7 @@ msgstr "このメッセージは暗号化されていますが、復号できま
+@@ -7978,7 +7981,7 @@ msgstr "このメッセージは暗号化されていますが、復号できま
  
  #: src/textview.c:859
  msgid "_Copy file name"
@@ -1913,7 +1913,7 @@ index b482f61..c3626ee 100644
  
  #: src/textview.c:1201
  msgid "This message can't be displayed.\n"
-@@ -7991,31 +7994,31 @@ msgstr ""
+@@ -7994,31 +7997,31 @@ msgstr ""
  
  #: src/textview.c:2477
  msgid "Sa_ve this image as..."
@@ -1952,7 +1952,7 @@ index b482f61..c3626ee 100644
  
  #: src/textview.c:2716
  #, c-format
-@@ -8036,23 +8039,23 @@ msgstr "偽装URLの警告"
+@@ -8039,23 +8042,23 @@ msgstr "偽装URLの警告"
  
  #: src/trayicon.c:141
  msgid "_Display Sylpheed"
@@ -1982,10 +1982,10 @@ index b482f61..c3626ee 100644
  #: src/trayicon.c:200 src/trayicon.c:300
  msgid "Sylpheed"
 diff --git a/po/sylpheed.pot b/po/sylpheed.pot
-index 00edae3..18693f1 100644
+index c485763..58936c3 100644
 --- a/po/sylpheed.pot
 +++ b/po/sylpheed.pot
-@@ -3764,6 +3764,10 @@ msgstr ""
+@@ -3765,6 +3765,10 @@ msgstr ""
  msgid "/_Configuration"
  msgstr ""
  
@@ -1997,10 +1997,10 @@ index 00edae3..18693f1 100644
  msgid "/_Configuration/_Common preferences..."
  msgstr ""
 diff --git a/src/Makefile.in b/src/Makefile.in
-index 4708707..57e529b 100644
+index b15e0e4..9ca20fe 100644
 --- a/src/Makefile.in
 +++ b/src/Makefile.in
-@@ -641,6 +641,7 @@ sylpheed_LDADD = \
+@@ -664,6 +664,7 @@ sylpheed_LDADD = \
  	$(LDAP_LIBS) \
  	$(LIBICONV) \
  	$(SYLPHEED_LIBS) \
@@ -2623,5 +2623,5 @@ index 571671f..31ffa73 100644
  	rpop3_window.treeview = treeview;
  	rpop3_window.store = store;
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

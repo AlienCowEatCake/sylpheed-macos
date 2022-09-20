@@ -1,7 +1,7 @@
-From 1d87c343b9ae0bc27df066a409702d2a4a9b0a0a Mon Sep 17 00:00:00 2001
+From c49704a6a13e153911d54c3ecfba4846770accdc Mon Sep 17 00:00:00 2001
 From: Darren Salt <linux@youmustbejoking.demon.co.uk>
 Date: Sun, 28 Jan 2018 18:20:19 +0900
-Subject: [PATCH 04/16] escape '^From ' lines for not breaking GPG MIME
+Subject: [PATCH 04/18] escape '^From ' lines for not breaking GPG MIME
  signatures
 
 ---
@@ -27,5 +27,5 @@ index adcdb05..adee4bc 100644
  			if (IS_LBREAK(inp + 1)) {
  				SOFT_LBREAK_IF_REQUIRED(3);
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

@@ -1,7 +1,7 @@
-From 99e75582ada96aa6d91c7348a8bbc9ebda4f54e7 Mon Sep 17 00:00:00 2001
+From eba053a7a7e87520804178ee764948dfcff2f5ab Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 14 Jun 2022 18:15:22 +0700
-Subject: [PATCH 11/16] Enable Oniguruma feature
+Subject: [PATCH 12/18] Enable Oniguruma feature
 
 ---
  makeosx.sh | 1 +
@@ -20,5 +20,5 @@ index 92ae1ed..623c8a4 100755
    --with-themedir=Contents/Resources/share/icons \
    && make \
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

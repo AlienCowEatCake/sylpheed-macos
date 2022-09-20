@@ -66,9 +66,9 @@ EOF
 
 jhbuild bootstrap
 
-curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.7/sylpheed-3.7.0.tar.bz2
-tar -xvpf sylpheed-3.7.0.tar.bz2
-cd sylpheed-3.7.0
+curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz2
+tar -xvpf sylpheed-3.8.0beta1.tar.bz2
+cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 jhbuild run ./makeosx.sh
 cd ..
@@ -87,11 +87,12 @@ jhbuild run clang \
 strip "${HOME}/gtk/inst/bin/sylfilter"
 cd ..
 
-cd sylpheed-3.7.0
+cd sylpheed-3.8.0beta1
 cd macosx/bundle
 sed -i '' 's|\(</main-binary>\)|\1\n  <binary>${prefix}/bin/sylfilter</binary>|' sylpheed.bundle
 jhbuild run gtk-mac-bundler sylpheed.bundle
 mv "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin/sylfilter" "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/"
+mv "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin/syl-auth-helper" "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/"
 if [ ! "$(ls -A "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin")" ] ; then
     rm -rf "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin"
 fi
@@ -106,7 +107,7 @@ rm -rf \
     "${HOME}/gtk" \
     "${HOME}/Source" \
     "sylfilter-0.8" \
-    "sylpheed-3.7.0"
+    "sylpheed-3.8.0beta1"
 
 cd gtk-osx
 arch -x86_64 ./gtk-osx-setup.sh
@@ -158,8 +159,8 @@ EOF
 
 arch -x86_64 jhbuild bootstrap
 
-tar -xvpf sylpheed-3.7.0.tar.bz2
-cd sylpheed-3.7.0
+tar -xvpf sylpheed-3.8.0beta1.tar.bz2
+cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 arch -x86_64 jhbuild run ./makeosx.sh
 cd ..
@@ -177,11 +178,12 @@ arch -x86_64 jhbuild run clang \
 arch -x86_64 strip "${HOME}/gtk/inst/bin/sylfilter"
 cd ..
 
-cd sylpheed-3.7.0
+cd sylpheed-3.8.0beta1
 cd macosx/bundle
 sed -i '' 's|\(</main-binary>\)|\1\n  <binary>${prefix}/bin/sylfilter</binary>|' sylpheed.bundle
 arch -x86_64 jhbuild run gtk-mac-bundler sylpheed.bundle
 mv "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin/sylfilter" "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/"
+mv "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin/syl-auth-helper" "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/"
 if [ ! "$(ls -A "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin")" ] ; then
     rm -rf "${HOME}/Desktop/Sylpheed.app/Contents/Resources/bin"
 fi
@@ -203,7 +205,7 @@ do
     fi
 done
 
-cd sylpheed-3.7.0
+cd sylpheed-3.8.0beta1
 for i in en $(find po -name '*.po' | sed 's|.*/|| ; s|\..*|| ; s|@.*||' | sort | uniq)
 do
     mkdir -p "${HOME}/Desktop/Sylpheed.app/Contents/Resources/${i}.lproj"
@@ -218,11 +220,11 @@ rm -rf \
     "${HOME}/gtk" \
     "${HOME}/Source" \
     "sylfilter-0.8" \
-    "sylpheed-3.7.0" \
+    "sylpheed-3.8.0beta1" \
     "gtk-osx" \
     "gtk-mac-bundler" \
     "sylfilter-0.8.tar.gz" \
-    "sylpheed-3.7.0.tar.bz2" \
+    "sylpheed-3.8.0beta1.tar.bz2" \
     "${HOME}/.config/jhbuildrc" \
     "${HOME}/.config/jhbuildrc-custom" \
     "${HOME}/.config/pip" \
@@ -232,11 +234,13 @@ rm -rf \
 echo 'gtk-theme-name = "Clearlooks"' >> "${HOME}/Desktop/Sylpheed.app/Contents/Resources/etc/gtk-2.0/gtkrc"
 clang "${SOURCE_DIR}/launcher/launcher.m" -o "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/${BUNDLE_EXECUTABLE}" -framework Foundation -O2 -Weverything -fobjc-arc -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -arch arm64
 cp "${SOURCE_DIR}/misc/sylpheed.icns" "${HOME}/Desktop/Sylpheed.app/Contents/Resources/sylpheed.icns"
+cp "${SOURCE_DIR}/misc/oauth2.ini" "${HOME}/Desktop/Sylpheed.app/Contents/Resources/oauth2.ini"
 plutil -replace LSMinimumSystemVersion -string "${MACOSX_DEPLOYMENT_TARGET}" "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
 plutil -replace LSArchitecturePriority -json '["arm64","x86_64"]' "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
 
 BUNDLE_IDENTIFIER="$(plutil -extract CFBundleIdentifier xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
-BUNDLE_VERSION="$(plutil -extract CFBundleVersion xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
+#BUNDLE_VERSION="$(plutil -extract CFBundleVersion xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
+BUNDLE_VERSION="$(plutil -extract CFBundleGetInfoString xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p' | sed 's|[, ].*||')"
 INSTALL_DIR="${PWD}/Sylpheed"
 rm -rf "${INSTALL_DIR}"
 mkdir -p "${INSTALL_DIR}"

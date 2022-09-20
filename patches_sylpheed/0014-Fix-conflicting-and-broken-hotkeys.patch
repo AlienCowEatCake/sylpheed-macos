@@ -1,7 +1,7 @@
-From 31daa46d102a4c50448a2451373f6c5328ae71e0 Mon Sep 17 00:00:00 2001
+From 50b1032b70e62c4f483dc8242eaf80a9a8c646d3 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 04:47:15 +0700
-Subject: [PATCH 13/16] Fix conflicting and broken hotkeys
+Subject: [PATCH 14/18] Fix conflicting and broken hotkeys
 
 ---
  src/addressbook.c |  56 +++++++++++++++++++++++++
@@ -444,5 +444,5 @@ index 9521b88..654ec0b 100644
  		summary_select_all(mainwin->summaryview);
  	else if (GTK_WIDGET_HAS_FOCUS(mainwin->summaryview->qsearch->entry))
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

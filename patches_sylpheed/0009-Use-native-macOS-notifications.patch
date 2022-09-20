@@ -1,7 +1,7 @@
-From ae762783e14cec7fca8cdba36731e2a969228b93 Mon Sep 17 00:00:00 2001
+From c7ba009cd3d384600a35e9e55762432cd1c5a2f8 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Fri, 10 Jun 2022 23:49:41 +0700
-Subject: [PATCH 08/16] Use native macOS notifications
+Subject: [PATCH 09/18] Use native macOS notifications
 
 ---
  macosx/bundle/Info-sylpheed.plist |   4 +-
@@ -10,12 +10,12 @@ Subject: [PATCH 08/16] Use native macOS notifications
  3 files changed, 140 insertions(+), 1 deletion(-)
 
 diff --git a/macosx/bundle/Info-sylpheed.plist b/macosx/bundle/Info-sylpheed.plist
-index bee70db..9d8dfca 100644
+index 855cc62..2740384 100644
 --- a/macosx/bundle/Info-sylpheed.plist
 +++ b/macosx/bundle/Info-sylpheed.plist
 @@ -25,6 +25,8 @@
      <key>NSHumanReadableCopyright</key>
-     <string>Copyright 1999-2018 Sylpheed Development Team</string>
+     <string>Copyright 1999-2022 Sylpheed Development Team</string>
      <key>LSMinimumSystemVersion</key>
 -    <string>10.6</string>
 +    <string>10.8</string>
@@ -24,10 +24,10 @@ index bee70db..9d8dfca 100644
  </dict>
  </plist>
 diff --git a/src/Makefile.in b/src/Makefile.in
-index 57e529b..042f814 100644
+index 9ca20fe..2fab74d 100644
 --- a/src/Makefile.in
 +++ b/src/Makefile.in
-@@ -627,6 +627,7 @@ EXTRA_DIST = \
+@@ -650,6 +650,7 @@ EXTRA_DIST = \
  INCLUDES = \
  	-DG_LOG_DOMAIN=\"Sylpheed\" \
  	-I$(top_srcdir)/libsylph \
@@ -35,7 +35,7 @@ index 57e529b..042f814 100644
  	$(GTK_CFLAGS) \
  	$(GDK_PIXBUF_CFLAGS) \
  	$(GPGME_CFLAGS)
-@@ -642,6 +643,7 @@ sylpheed_LDADD = \
+@@ -665,6 +666,7 @@ sylpheed_LDADD = \
  	$(LIBICONV) \
  	$(SYLPHEED_LIBS) \
  	-lgtkmacintegration-gtk2 \
@@ -194,5 +194,5 @@ index 966c708..88103ea 100644
 +
 +#endif
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

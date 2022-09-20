@@ -1,0 +1,43 @@
+From 468abaf29e9dbd72ecceac8d6b2d47a57787d837 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Wed, 21 Sep 2022 01:12:10 +0700
+Subject: [PATCH 18/18] Improve syl-auth-helper for macOS
+
+---
+ macosx/bundle/sylpheed.bundle | 1 +
+ src/syl-auth-helper.c         | 7 ++++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/macosx/bundle/sylpheed.bundle b/macosx/bundle/sylpheed.bundle
+index 0bcba75..52ecadf 100644
+--- a/macosx/bundle/sylpheed.bundle
++++ b/macosx/bundle/sylpheed.bundle
+@@ -51,6 +51,7 @@
+   <plist>${project}/Info-sylpheed.plist</plist>
+ 
+   <main-binary>${prefix}/bin/sylpheed</main-binary>
++  <binary>${prefix}/bin/syl-auth-helper</binary>
+ 
+   <!-- Copy in GTK+ modules.  Note the ${gtkdir} macro, which expands
+        to the correct library subdirectory for the specified gtk
+diff --git a/src/syl-auth-helper.c b/src/syl-auth-helper.c
+index 9e38d8a..8355378 100644
+--- a/src/syl-auth-helper.c
++++ b/src/syl-auth-helper.c
+@@ -433,7 +433,12 @@ int main(int argc, char *argv[])
+ 	file = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "oauth2.ini", NULL);
+ 	if (!g_key_file_load_from_file(key_file, file, G_KEY_FILE_NONE, NULL)) {
+ 		g_free(file);
+-		file = g_strconcat(get_startup_dir(), G_DIR_SEPARATOR_S, "oauth2.ini", NULL);
++		file = g_strconcat(get_startup_dir(), G_DIR_SEPARATOR_S,
++#ifdef __APPLE__
++				   "Contents" G_DIR_SEPARATOR_S
++				   "Resources" G_DIR_SEPARATOR_S
++#endif
++				   "oauth2.ini", NULL);
+ 		if (!g_key_file_load_from_file(key_file, file, G_KEY_FILE_NONE, NULL)) {
+ 			g_free(file);
+ 			g_warning("oauth2.ini not found.");
+-- 
+2.37.0 (Apple Git-136)
+

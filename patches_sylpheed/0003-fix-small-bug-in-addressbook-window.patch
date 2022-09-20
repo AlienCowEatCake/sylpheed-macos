@@ -1,7 +1,7 @@
-From fdca7157656dadc25e152b550e5feeb9be8f6de0 Mon Sep 17 00:00:00 2001
+From 26533ae0d3f30a279e4320625ab964384db28b0c Mon Sep 17 00:00:00 2001
 From: Gustavo Noronha Silva <kov@debian.org>
 Date: Sun, 28 Jan 2018 18:20:19 +0900
-Subject: [PATCH 03/16] fix small bug in addressbook window
+Subject: [PATCH 03/18] fix small bug in addressbook window
 
 ---
  src/addressbook.c | 11 +++++++++++
@@ -30,5 +30,5 @@ index eaaa56a..e2768b4 100644
  		AddressObject *obj = node->data;
  		Compose *compose = addrbook.target_compose;
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

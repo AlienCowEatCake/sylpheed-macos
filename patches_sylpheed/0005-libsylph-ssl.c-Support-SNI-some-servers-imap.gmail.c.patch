@@ -1,7 +1,7 @@
-From 6c6631c4b95f7f5b74a1389ec424d87559102e57 Mon Sep 17 00:00:00 2001
+From e9cd951076820037390dd3fa21c11d08a8063334 Mon Sep 17 00:00:00 2001
 From: Antonio Ospite <ao2@ao2.it>
 Date: Fri, 24 Aug 2018 10:46:04 +0200
-Subject: [PATCH 05/16] libsylph/ssl.c: Support SNI, some servers
+Subject: [PATCH 05/18] libsylph/ssl.c: Support SNI, some servers
  (imap.gmail.com) seem to require it
 
 ---
@@ -24,5 +24,5 @@ index 8413925..264d66e 100644
  	while ((ret = SSL_connect(sockinfo->ssl)) != 1) {
  		err = SSL_get_error(sockinfo->ssl, ret);
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 

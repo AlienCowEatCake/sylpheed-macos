@@ -1,7 +1,7 @@
-From cac20cb417dec5eb67e3ad075248a2866e978229 Mon Sep 17 00:00:00 2001
+From 5b8d2f5b64da52746d0128400f0958f2b43f6139 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:10 +0700
-Subject: [PATCH 15/16] Improve UX for macOS builds
+Subject: [PATCH 16/18] Improve UX for macOS builds
 
 ---
  libsylph/defs.h                   |  6 +++++-
@@ -14,7 +14,7 @@ Subject: [PATCH 15/16] Improve UX for macOS builds
  7 files changed, 60 insertions(+), 3 deletions(-)
 
 diff --git a/libsylph/defs.h b/libsylph/defs.h
-index 9e3f82b..fcb690d 100644
+index 18f0c97..589c1df 100644
 --- a/libsylph/defs.h
 +++ b/libsylph/defs.h
 @@ -129,6 +129,10 @@
@@ -43,7 +43,7 @@ index 247d6f5..ae0fd5b 100644
  #else
  	{"toggle_window_on_trayicon_click", "TRUE",
 diff --git a/macosx/bundle/Info-sylpheed.plist b/macosx/bundle/Info-sylpheed.plist
-index 9d8dfca..1beca3d 100644
+index 2740384..49de38d 100644
 --- a/macosx/bundle/Info-sylpheed.plist
 +++ b/macosx/bundle/Info-sylpheed.plist
 @@ -28,5 +28,13 @@
@@ -61,10 +61,10 @@ index 9d8dfca..1beca3d 100644
  </dict>
  </plist>
 diff --git a/src/Makefile.in b/src/Makefile.in
-index 042f814..aedae12 100644
+index 2fab74d..555adf7 100644
 --- a/src/Makefile.in
 +++ b/src/Makefile.in
-@@ -643,6 +643,7 @@ sylpheed_LDADD = \
+@@ -666,6 +666,7 @@ sylpheed_LDADD = \
  	$(LIBICONV) \
  	$(SYLPHEED_LIBS) \
  	-lgtkmacintegration-gtk2 \
@@ -220,5 +220,5 @@ index 7c8788f..3ccfcbd 100644
  
  static GtkWidget *prefs_other_create(void)
 -- 
-2.32.1 (Apple Git-133)
+2.37.0 (Apple Git-136)
 
