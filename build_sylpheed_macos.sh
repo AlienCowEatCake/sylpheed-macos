@@ -234,7 +234,7 @@ rm -rf \
 echo 'gtk-theme-name = "Clearlooks"' >> "${HOME}/Desktop/Sylpheed.app/Contents/Resources/etc/gtk-2.0/gtkrc"
 clang "${SOURCE_DIR}/launcher/launcher.m" -o "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/${BUNDLE_EXECUTABLE}" -framework Foundation -O2 -Weverything -fobjc-arc -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -arch arm64
 cp "${SOURCE_DIR}/misc/sylpheed.icns" "${HOME}/Desktop/Sylpheed.app/Contents/Resources/sylpheed.icns"
-cp "${SOURCE_DIR}/misc/oauth2.ini" "${HOME}/Desktop/Sylpheed.app/Contents/Resources/oauth2.ini"
+base64 -d -i "${SOURCE_DIR}/misc/oauth2.ini.b64" -o "${HOME}/Desktop/Sylpheed.app/Contents/Resources/oauth2.ini"
 plutil -replace LSMinimumSystemVersion -string "${MACOSX_DEPLOYMENT_TARGET}" "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
 plutil -replace LSArchitecturePriority -json '["arm64","x86_64"]' "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
 
