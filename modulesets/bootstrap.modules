@@ -121,7 +121,7 @@
   </autotools>
 
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_4_8/expat-2.4.8.tar.bz2" version="2.4.8"/>
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_4_9/expat-${version}.tar.bz2" version="2.4.9"/>
   </autotools>
 
   <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx --disable-static">
