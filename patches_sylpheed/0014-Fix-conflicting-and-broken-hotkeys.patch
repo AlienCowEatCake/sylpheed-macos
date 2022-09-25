@@ -104,10 +104,10 @@ index e2768b4..ffa0a26 100644
  {
  	addressbook_close();
 diff --git a/src/compose.c b/src/compose.c
-index 3ddc95d..b5f6edf 100644
+index a927b00..ec7c818 100644
 --- a/src/compose.c
 +++ b/src/compose.c
-@@ -7984,11 +7984,14 @@ static void compose_redo_cb(Compose *compose)
+@@ -7988,11 +7988,14 @@ static void compose_redo_cb(Compose *compose)
  
  static void compose_cut_cb(Compose *compose)
  {
@@ -123,7 +123,7 @@ index 3ddc95d..b5f6edf 100644
  		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
  			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
  			GtkTextBuffer *buffer;
-@@ -7998,17 +8001,22 @@ static void compose_cut_cb(Compose *compose)
+@@ -8002,17 +8005,22 @@ static void compose_cut_cb(Compose *compose)
  			clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
  
  			gtk_text_buffer_cut_clipboard(buffer, clipboard, TRUE);
@@ -147,7 +147,7 @@ index 3ddc95d..b5f6edf 100644
  		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
  			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
  			GtkTextBuffer *buffer;
-@@ -8018,17 +8026,22 @@ static void compose_copy_cb(Compose *compose)
+@@ -8022,17 +8030,22 @@ static void compose_copy_cb(Compose *compose)
  			clipboard = gtk_clipboard_get(GDK_SELECTION_CLIPBOARD);
  
  			gtk_text_buffer_copy_clipboard(buffer, clipboard);
@@ -171,7 +171,7 @@ index 3ddc95d..b5f6edf 100644
  		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
  			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
  			GtkTextBuffer *buffer;
-@@ -8043,8 +8056,10 @@ static void compose_paste_cb(Compose *compose)
+@@ -8047,8 +8060,10 @@ static void compose_paste_cb(Compose *compose)
  							NULL, TRUE);
  
  			gtk_text_view_scroll_mark_onscreen(text, mark);
@@ -182,7 +182,7 @@ index 3ddc95d..b5f6edf 100644
  }
  
  static void compose_paste_as_quote_cb(Compose *compose)
-@@ -8076,12 +8091,15 @@ static void compose_paste_as_quote_cb(Compose *compose)
+@@ -8080,12 +8095,15 @@ static void compose_paste_as_quote_cb(Compose *compose)
  
  static void compose_allsel_cb(Compose *compose)
  {
@@ -199,7 +199,7 @@ index 3ddc95d..b5f6edf 100644
  		} else if (GTK_IS_TEXT_VIEW(compose->focused_editable)) {
  			GtkTextView *text = GTK_TEXT_VIEW(compose->text);
  			GtkTextBuffer *buffer;
-@@ -8093,8 +8111,10 @@ static void compose_allsel_cb(Compose *compose)
+@@ -8097,8 +8115,10 @@ static void compose_allsel_cb(Compose *compose)
  			gtk_text_buffer_get_end_iter(buffer, &iter);
  			gtk_text_buffer_move_mark_by_name
  				(buffer, "selection_bound", &iter);
@@ -341,7 +341,7 @@ index 1872e67..a47f56d 100644
 +
  #endif /* __GTKUTILS_H__ */
 diff --git a/src/mainwindow.c b/src/mainwindow.c
-index 9521b88..654ec0b 100644
+index 1dc54d1..1ed206c 100644
 --- a/src/mainwindow.c
 +++ b/src/mainwindow.c
 @@ -496,9 +496,19 @@ static void goto_folder_cb	 (MainWindow	*mainwin,
@@ -405,7 +405,7 @@ index 9521b88..654ec0b 100644
  	{N_("/_Tools/---"),			NULL, NULL, 0, "<Separator>"},
  	{N_("/_Tools/Op_en configuration folder"),
  						NULL, open_config_folder_cb, 0, NULL},
-@@ -4030,15 +4046,37 @@ static void goto_folder_cb(MainWindow *mainwin, guint action,
+@@ -4053,15 +4069,37 @@ static void goto_folder_cb(MainWindow *mainwin, guint action,
  		folderview_select(mainwin->folderview, to_folder);
  }
  

@@ -8,11 +8,13 @@ See also:
   * https://gitlab.gnome.org/GNOME/gtk-mac-integration/-/issues/13
   * https://github.com/techee/geany/commit/a122953c7b202b6feb59d6ec4f102edf46a16391
 ---
- src/compose.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ src/compose.c     | 13 ++++++++++++-
+ src/mainwindow.c  | 27 +++++++++++++++++++++++++--
+ src/messageview.c |  3 +++
+ 3 files changed, 40 insertions(+), 3 deletions(-)
 
 diff --git a/src/compose.c b/src/compose.c
-index e96bf71..3ddc95d 100644
+index e96bf71..a927b00 100644
 --- a/src/compose.c
 +++ b/src/compose.c
 @@ -6387,6 +6387,9 @@ static void compose_change_spell_lang_menu(Compose *compose, const gchar *lang)
@@ -25,7 +27,21 @@ index e96bf71..3ddc95d 100644
  			return;
  		}
  	}
-@@ -8421,6 +8424,10 @@ static void compose_set_spell_lang_cb(GtkWidget *widget,
+@@ -7920,8 +7923,12 @@ static void compose_set_encoding_cb(gpointer data, guint action,
+ {
+ 	Compose *compose = (Compose *)data;
+ 
+-	if (GTK_CHECK_MENU_ITEM(widget)->active)
++	if (GTK_CHECK_MENU_ITEM(widget)->active) {
+ 		compose->out_encoding = (CharSet)action;
++#ifdef GTKOSXAPPLICATION
++		gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
++	}
+ }
+ 
+ static void compose_address_cb(gpointer data, guint action, GtkWidget *widget)
+@@ -8421,6 +8428,10 @@ static void compose_set_spell_lang_cb(GtkWidget *widget,
  	if (speller != NULL)
  		gtkspell_set_language(speller, dict, NULL);
  
@@ -36,6 +52,96 @@ index e96bf71..3ddc95d 100644
  	debug_print("Spell lang set to \"%s\"\n", dict);
  }
  #endif /* USE_GTKSPELL */
+diff --git a/src/mainwindow.c b/src/mainwindow.c
+index 9521b88..1dc54d1 100644
+--- a/src/mainwindow.c
++++ b/src/mainwindow.c
+@@ -2364,6 +2364,10 @@ void main_window_set_menu_sensitive(MainWindow *mainwin)
+ #undef SET_CHECK_MENU_ACTIVE
+ 
+ 	main_window_menu_callback_unblock(mainwin);
++
++#ifdef GTKOSXAPPLICATION
++	gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
+ }
+ 
+ void main_window_popup(MainWindow *mainwin)
+@@ -3586,6 +3590,10 @@ static void toggle_toolbar_cb(MainWindow *mainwin, guint action,
+ 	prefs_common.toolbar_style = (ToolbarStyle)action;
+ 
+ 	main_window_set_toolbar_button_visibility(mainwin);
++
++#ifdef GTKOSXAPPLICATION
++	gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
+ }
+ 
+ static void toggle_searchbar_cb(MainWindow *mainwin, guint action,
+@@ -3624,8 +3632,12 @@ static void change_layout_cb(MainWindow *mainwin, guint action,
+ {
+ 	LayoutType type = action;
+ 
+-	if (GTK_CHECK_MENU_ITEM(widget)->active)
++	if (GTK_CHECK_MENU_ITEM(widget)->active) {
+ 		main_window_change_layout(mainwin, type, mainwin->type);
++#ifdef GTKOSXAPPLICATION
++		gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
++	}
+ }
+ 
+ static void separate_widget_cb(MainWindow *mainwin, guint action,
+@@ -3803,6 +3815,10 @@ static void set_charset_cb(MainWindow *mainwin, guint action,
+ 
+ 		summary_redisplay_msg(mainwin->summaryview);
+ 
++#ifdef GTKOSXAPPLICATION
++		gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
++
+ 		debug_print("forced charset: %s\n",
+ 			    str ? str : "Auto-Detect");
+ 	}
+@@ -3852,6 +3868,9 @@ static void sort_summary_cb(MainWindow *mainwin, guint action,
+ 		summary_sort(mainwin->summaryview, (FolderSortKey)action,
+ 			     GTK_CHECK_MENU_ITEM(menuitem)->active
+ 			     ? SORT_ASCENDING : SORT_DESCENDING);
++#ifdef GTKOSXAPPLICATION
++		gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
+ 	}
+ }
+ 
+@@ -3862,9 +3881,13 @@ static void sort_summary_type_cb(MainWindow *mainwin, guint action,
+ 
+ 	if (mainwin->menu_lock_count) return;
+ 
+-	if (GTK_CHECK_MENU_ITEM(widget)->active && item)
++	if (GTK_CHECK_MENU_ITEM(widget)->active && item) {
+ 		summary_sort(mainwin->summaryview,
+ 			     item->sort_key, (FolderSortType)action);
++#ifdef GTKOSXAPPLICATION
++		gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
++	}
+ }
+ 
+ static void attract_by_subject_cb(MainWindow *mainwin, guint action,
+diff --git a/src/messageview.c b/src/messageview.c
+index 6d75275..ba87bde 100644
+--- a/src/messageview.c
++++ b/src/messageview.c
+@@ -1120,6 +1120,9 @@ static void set_charset_cb(gpointer data, guint action, GtkWidget *widget)
+ 		if (messageview->msginfo)
+ 			messageview_show(messageview, messageview->msginfo,
+ 					 FALSE);
++#ifdef GTKOSXAPPLICATION
++		gtkosx_application_sync_menubar(gtkosx_application_get());
++#endif
+ 	}
+ }
+ 
 -- 
 2.37.0 (Apple Git-136)
 

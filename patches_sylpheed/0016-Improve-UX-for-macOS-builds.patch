@@ -99,7 +99,7 @@ index 5f49969..3e53130 100644
  }
  
 diff --git a/src/mainwindow.c b/src/mainwindow.c
-index 654ec0b..c5935f3 100644
+index 1ed206c..d65469f 100644
 --- a/src/mainwindow.c
 +++ b/src/mainwindow.c
 @@ -54,6 +54,14 @@
@@ -136,7 +136,7 @@ index 654ec0b..c5935f3 100644
  #ifdef GTKOSXAPPLICATION
  	gtk_widget_hide(menubar);
  	gtkosx_application_set_menu_bar(osxapp, GTK_MENU_SHELL(menubar));
-@@ -3250,8 +3270,14 @@ static gint main_window_close_cb(GtkWidget *widget, GdkEventAny *event,
+@@ -3254,8 +3274,14 @@ static gint main_window_close_cb(GtkWidget *widget, GdkEventAny *event,
  {
  	MainWindow *mainwin = (MainWindow *)data;
  
