@@ -1,0 +1,28 @@
+From 9f48523e5c41afb145349f4b7f4bbe9a0e520bf3 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 26 Sep 2022 09:18:50 +0700
+Subject: [PATCH] LIBPNG: add macOS 10.13 guard for inflateValidate
+
+---
+ pngrutil.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/pngrutil.c b/pngrutil.c
+index ca060dd..610272c 100644
+--- a/pngrutil.c
++++ b/pngrutil.c
+@@ -425,7 +425,10 @@ png_inflate_claim(png_structrp png_ptr, png_uint_32 owner)
+    defined(PNG_SET_OPTION_SUPPORTED) && defined(PNG_IGNORE_ADLER32)
+       if (((png_ptr->options >> PNG_IGNORE_ADLER32) & 3) == PNG_OPTION_ON)
+          /* Turn off validation of the ADLER32 checksum in IDAT chunks */
+-         ret = inflateValidate(&png_ptr->zstream, 0);
++         /* warning: 'inflateValidate' is only available on macOS 10.13 or newer [-Wunguarded-availability-new] */
++         if (__builtin_available(macOS 10.13, *)) {
++            ret = inflateValidate(&png_ptr->zstream, 0);
++         }
+ #endif
+ 
+       if (ret == Z_OK)
+-- 
+2.37.0 (Apple Git-136)
+

@@ -1,0 +1,27 @@
+From f641dccf2eebd527d5a6e8073d1b813766a43929 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 26 Sep 2022 08:59:50 +0700
+Subject: [PATCH] XZ: disable futimens
+
+---
+ config.h.in | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/config.h.in b/config.h.in
+index c8ba420..f95b12c 100644
+--- a/config.h.in
++++ b/config.h.in
+@@ -133,7 +133,10 @@
+ #undef HAVE_FCNTL_H
+ 
+ /* Define to 1 if you have the `futimens' function. */
++/*
++// warning: 'futimens' is only available on macOS 10.13 or newer [-Wunguarded-availability-new]
+ #undef HAVE_FUTIMENS
++*/
+ 
+ /* Define to 1 if you have the `futimes' function. */
+ #undef HAVE_FUTIMES
+-- 
+2.37.0 (Apple Git-136)
+
