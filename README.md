@@ -14,3 +14,4 @@ Though Sylpheed for Mac OS X is stable, please note that it has various issues b
 ## See also
 * https://sylpheed.sraoss.jp/en/
 * https://sylpheed.sraoss.jp/sylpheed/macosx/
+* https://github.com/AlienCowEatCake/sylpheed-windows
