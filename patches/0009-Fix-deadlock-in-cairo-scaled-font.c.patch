@@ -1,0 +1,130 @@
+From 3b1b3dfd6df5d37ef5df9aa719f7e79595558419 Mon Sep 17 00:00:00 2001
+From: Adrian Johnson <ajohnson@redneon.com>
+Date: Sat, 28 May 2022 07:14:52 +0930
+Subject: [PATCH 09/14] Fix deadlock in cairo-scaled-font.c
+
+A user font glyph containing a font can cause deadlock in
+_cairo_scaled_glyph_fini due to the destroy recording surface while
+holding _cairo_scaled_glyph_page_cache_mutex. When the font in the
+recording surface is removed from the page cache it will attempt to
+also acquire the _cairo_scaled_glyph_page_cache_mutex resulting in
+deadlock.
+
+Instead of destroying the recording surface in
+_cairo_scaled_glyph_page_cache_mutex, move it to an array in the
+scaled font and destroy it after the
+_cairo_scaled_glyph_page_cache_mutex is released.
+
+Fixes the font in user font case in #440
+
+(cherry picked from commit 76e0df566595a77e271de523b3d06f86f3e85813)
+---
+ src/cairo-scaled-font-private.h |  1 +
+ src/cairo-scaled-font.c         | 37 +++++++++++++++++++++++++++++++--
+ 2 files changed, 36 insertions(+), 2 deletions(-)
+
+diff --git a/src/cairo-scaled-font-private.h b/src/cairo-scaled-font-private.h
+index 3b2fe586d..34455372b 100644
+--- a/src/cairo-scaled-font-private.h
++++ b/src/cairo-scaled-font-private.h
+@@ -113,6 +113,7 @@ struct _cairo_scaled_font {
+     cairo_list_t glyph_pages;
+     cairo_bool_t cache_frozen;
+     cairo_bool_t global_cache_frozen;
++    cairo_array_t recording_surfaces_to_free; /* array of cairo_surface_t* */
+ 
+     cairo_list_t dev_privates;
+ 
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index ef70b4790..42fb55915 100755
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -39,6 +39,7 @@
+  */
+ 
+ #include "cairoint.h"
++#include "cairo-array-private.h"
+ #include "cairo-error-private.h"
+ #include "cairo-image-surface-private.h"
+ #include "cairo-list-inline.h"
+@@ -215,8 +216,17 @@ _cairo_scaled_glyph_fini (cairo_scaled_font_t *scaled_font,
+ 	_cairo_path_fixed_destroy (scaled_glyph->path);
+ 
+     if (scaled_glyph->recording_surface != NULL) {
+-	cairo_surface_finish (scaled_glyph->recording_surface);
+-	cairo_surface_destroy (scaled_glyph->recording_surface);
++	cairo_status_t status;
++
++	/* If the recording surface contains other fonts, destroying
++	 * it while holding _cairo_scaled_glyph_page_cache_mutex will
++	 * result in deadlock when the recording surface font is
++	 * destroyed. Instead, move the recording surface to a list of
++	 * surfaces to free and free it in
++	 * _cairo_scaled_font_thaw_cache() after
++	 * _cairo_scaled_glyph_page_cache_mutex is unlocked. */
++	status = _cairo_array_append (&scaled_font->recording_surfaces_to_free, &scaled_glyph->recording_surface);
++	assert (status == CAIRO_STATUS_SUCCESS);
+     }
+ 
+     if (scaled_glyph->color_surface != NULL)
+@@ -250,6 +260,7 @@ static const cairo_scaled_font_t _cairo_scaled_font_nil = {
+     { NULL, NULL },		/* pages */
+     FALSE,			/* cache_frozen */
+     FALSE,			/* global_cache_frozen */
++    { 0, 0, sizeof(cairo_surface_t*), NULL }, /* recording_surfaces_to_free */
+     { NULL, NULL },		/* privates */
+     NULL			/* backend */
+ };
+@@ -765,6 +776,7 @@ _cairo_scaled_font_init (cairo_scaled_font_t               *scaled_font,
+     cairo_list_init (&scaled_font->glyph_pages);
+     scaled_font->cache_frozen = FALSE;
+     scaled_font->global_cache_frozen = FALSE;
++    _cairo_array_init (&scaled_font->recording_surfaces_to_free, sizeof (cairo_surface_t *));
+ 
+     scaled_font->holdover = FALSE;
+     scaled_font->finished = FALSE;
+@@ -786,6 +798,22 @@ _cairo_scaled_font_init (cairo_scaled_font_t               *scaled_font,
+     return CAIRO_STATUS_SUCCESS;
+ }
+ 
++static void _cairo_scaled_font_free_recording_surfaces (cairo_scaled_font_t *scaled_font)
++{
++    int num_recording_surfaces;
++    cairo_surface_t *surface;
++
++    num_recording_surfaces = _cairo_array_num_elements (&scaled_font->recording_surfaces_to_free);
++    if (num_recording_surfaces > 0) {
++	for (int i = 0; i < num_recording_surfaces; i++) {
++	    _cairo_array_copy_element (&scaled_font->recording_surfaces_to_free, i, &surface);
++	    cairo_surface_finish (surface);
++	    cairo_surface_destroy (surface);
++	}
++	_cairo_array_truncate (&scaled_font->recording_surfaces_to_free, 0);
++    }
++}
++
+ void
+ _cairo_scaled_font_freeze_cache (cairo_scaled_font_t *scaled_font)
+ {
+@@ -808,6 +836,8 @@ _cairo_scaled_font_thaw_cache (cairo_scaled_font_t *scaled_font)
+ 	scaled_font->global_cache_frozen = FALSE;
+     }
+ 
++    _cairo_scaled_font_free_recording_surfaces (scaled_font);
++
+     scaled_font->cache_frozen = FALSE;
+     CAIRO_MUTEX_UNLOCK (scaled_font->mutex);
+ }
+@@ -889,6 +919,9 @@ _cairo_scaled_font_fini_internal (cairo_scaled_font_t *scaled_font)
+     cairo_font_face_destroy (scaled_font->font_face);
+     cairo_font_face_destroy (scaled_font->original_font_face);
+ 
++    _cairo_scaled_font_free_recording_surfaces (scaled_font);
++    _cairo_array_fini (&scaled_font->recording_surfaces_to_free);
++
+     CAIRO_MUTEX_FINI (scaled_font->mutex);
+ 
+     while (! cairo_list_is_empty (&scaled_font->dev_privates)) {
+-- 
+2.37.0 (Apple Git-136)
+

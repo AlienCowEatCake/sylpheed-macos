@@ -1,0 +1,43 @@
+From 74a56f83c3faea679bb6dc31026203253bddfa08 Mon Sep 17 00:00:00 2001
+From: Luca Bacci <luca.bacci982@gmail.com>
+Date: Mon, 5 Sep 2022 19:41:19 +0200
+Subject: [PATCH 14/14] Make cairo_scaled_font_t mutex recursive
+
+Since it can now happen to acquire it recursively,
+see https://gitlab.freedesktop.org/cairo/cairo/-/issues/587
+
+(cherry picked from commit 531ec8d02db7d3482c3fb65d33dbb50c71b86999)
+---
+ src/cairo-scaled-font-private.h | 2 +-
+ src/cairo-scaled-font.c         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/cairo-scaled-font-private.h b/src/cairo-scaled-font-private.h
+index 34455372b..97f69c557 100644
+--- a/src/cairo-scaled-font-private.h
++++ b/src/cairo-scaled-font-private.h
+@@ -107,7 +107,7 @@ struct _cairo_scaled_font {
+     cairo_font_extents_t fs_extents; /* font space */
+ 
+     /* The mutex protects modification to all subsequent fields. */
+-    cairo_mutex_t mutex;
++    cairo_recursive_mutex_t mutex;
+ 
+     cairo_hash_table_t *glyphs;
+     cairo_list_t glyph_pages;
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index 973d5469a..34e8383fd 100755
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -788,7 +788,7 @@ _cairo_scaled_font_init (cairo_scaled_font_t               *scaled_font,
+     cairo_font_face_reference (font_face);
+     scaled_font->original_font_face = NULL;
+ 
+-    CAIRO_MUTEX_INIT (scaled_font->mutex);
++    CAIRO_RECURSIVE_MUTEX_INIT (scaled_font->mutex);
+ 
+     cairo_list_init (&scaled_font->dev_privates);
+ 
+-- 
+2.37.0 (Apple Git-136)
+

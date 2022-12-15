@@ -1,0 +1,34 @@
+From cfc0c80347015d215a4f27d6774c490fa60f5bb9 Mon Sep 17 00:00:00 2001
+From: Jeff Muizelaar <jrmuizel@gmail.com>
+Date: Wed, 29 Jun 2022 11:41:47 -0400
+Subject: [PATCH 10/14] quartz: Avoid reading beyond the end of image surfaces.
+
+The last row of data may have less than stride bytes so make sure we
+only copy what we need.
+
+(cherry picked from commit cccc81ccba99600483621e02ae9438a4a5a3d024)
+---
+ src/cairo-quartz-surface.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/cairo-quartz-surface.c b/src/cairo-quartz-surface.c
+index fa6d9b1c9..14feb0f41 100644
+--- a/src/cairo-quartz-surface.c
++++ b/src/cairo-quartz-surface.c
+@@ -881,8 +881,12 @@ _cairo_surface_to_cgimage (cairo_surface_t       *source,
+ 	return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+     }
+ 
++    // The last row of data may have less than stride bytes so make sure we
++    // only copy the minimum amount required from that row.
+     memcpy (image_data, image_surface->data,
+-	    image_surface->height * image_surface->stride);
++	    (image_surface->height - 1) * image_surface->stride +
++	    cairo_format_stride_for_width (image_surface->format,
++					   image_surface->width));
+     *image_out = CairoQuartzCreateCGImage (image_surface->format,
+ 					   image_surface->width,
+ 					   image_surface->height,
+-- 
+2.37.0 (Apple Git-136)
+

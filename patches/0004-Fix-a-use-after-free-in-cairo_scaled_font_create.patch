@@ -1,0 +1,41 @@
+From f1c94449f79e240a56c2513d074c800c11a2a90d Mon Sep 17 00:00:00 2001
+From: Feysh INC <opensource@feysh.com>
+Date: Fri, 22 Apr 2022 17:09:47 +0800
+Subject: [PATCH 04/14] Fix a use after free in cairo_scaled_font_create
+
+When `font_face` is freed by `cairo_font_face_destroy()` at line 1,150,
+the following call `_cairo_font_face_set_error (font_face, status)`
+causes a use after free.
+
+We moved up the `_cairo_font_face_set_error (font_face, status)` before
+`cairo_font_face_destroy()` to avoid the use after free.
+
+Signed-off-by: Feysh INC <opensource@feysh.com>
+(cherry picked from commit fa8f456c2b7a061ca379a86931d5cc99b7edf42d)
+---
+ src/cairo-scaled-font.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/cairo-scaled-font.c b/src/cairo-scaled-font.c
+index e0b586589..3d6df8a41 100755
+--- a/src/cairo-scaled-font.c
++++ b/src/cairo-scaled-font.c
+@@ -1145,6 +1145,7 @@ cairo_scaled_font_create (cairo_font_face_t          *font_face,
+ 						     ctm, options, &scaled_font);
+     /* Did we leave the backend in an error state? */
+     if (unlikely (status)) {
++	status = _cairo_font_face_set_error (font_face, status);
+ 	_cairo_scaled_font_map_unlock ();
+ 	if (font_face != original_font_face)
+ 	    cairo_font_face_destroy (font_face);
+@@ -1152,7 +1153,6 @@ cairo_scaled_font_create (cairo_font_face_t          *font_face,
+ 	if (dead != NULL)
+ 	    cairo_scaled_font_destroy (dead);
+ 
+-	status = _cairo_font_face_set_error (font_face, status);
+ 	return _cairo_scaled_font_create_in_error (status);
+     }
+     /* Or did we encounter an error whilst constructing the scaled font? */
+-- 
+2.37.0 (Apple Git-136)
+

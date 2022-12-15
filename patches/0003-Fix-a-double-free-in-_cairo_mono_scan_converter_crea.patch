@@ -1,0 +1,36 @@
+From 072973e4be7baad2e76d07bac8ec306cf4e44505 Mon Sep 17 00:00:00 2001
+From: Feysh INC <opensource@feysh.com>
+Date: Fri, 22 Apr 2022 16:43:59 +0800
+Subject: [PATCH 03/14] Fix a double free in _cairo_mono_scan_converter_create
+
+When `_mono_scan_converter_init` failed,
+`self->converter->polygon` will be freed by `polygon_fini()`. However,
+the `bail` branch still called `polygon_fini()` to free
+`self->converter->polygon`.
+
+We remvoe the redundant `polygon_fini()` in `_mono_scan_converter_init`
+to avoid the double free.
+
+This fixes #557.
+
+Signed-off-by: Feysh INC <opensource@feysh.com>
+(cherry picked from commit 99cd4bb3bd51bc62a2c8b5f9f4b6eda7625f0b96)
+---
+ src/cairo-mono-scan-converter.c | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/src/cairo-mono-scan-converter.c b/src/cairo-mono-scan-converter.c
+index 891f435c9..69168bd5d 100644
+--- a/src/cairo-mono-scan-converter.c
++++ b/src/cairo-mono-scan-converter.c
+@@ -403,7 +403,6 @@ _mono_scan_converter_init(struct mono_scan_converter *c,
+ 	c->spans = _cairo_malloc_ab (max_num_spans,
+ 				     sizeof (cairo_half_open_span_t));
+ 	if (unlikely (c->spans == NULL)) {
+-	    polygon_fini (c->polygon);
+ 	    return _cairo_error (CAIRO_STATUS_NO_MEMORY);
+ 	}
+     } else
+-- 
+2.37.0 (Apple Git-136)
+
