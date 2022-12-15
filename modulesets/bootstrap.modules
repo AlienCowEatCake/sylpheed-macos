@@ -203,35 +203,7 @@
   </meson>
 
   <meson id="cairo" mesonargs="--buildtype=release -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch module="${version}/cairo-${version}.tar.bz2" version="1.17.6" repo="cairographics-temp">
-      <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/9 -->
-      <patch file="0001-quartz-font-Add-support-for-color-emoji-glyphs.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/307 -->
-      <patch file="0002-Check-font-status-in-show_text_glyphs.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/313 -->
-      <patch file="0003-Fix-a-double-free-in-_cairo_mono_scan_converter_crea.patch" strip="1"/>
-      <patch file="0004-Fix-a-use-after-free-in-cairo_scaled_font_create.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/315 -->
-      <patch file="0005-Fix-a-use-after-free-in-_cairo_svg_surface_create_fo.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/312 -->
-      <patch file="0006-fixed-double-free-in-_cairo_ps_surface_emit_base85_s.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/316 -->
-      <patch file="0007-quartz-Destroy-local-copy-of-snapshot-after-attachin.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/329 -->
-      <patch file="0008-Fix-deadlock-in-cairo-scaled-font.c.patch" strip="1"/>
-      <patch file="0009-Fix-deadlock-in-cairo-scaled-font.c.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/337 -->
-      <patch file="0010-quartz-Avoid-reading-beyond-the-end-of-image-surface.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/342 -->
-      <patch file="0011-Fix-build-with-newer-binutils-dev-installed.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/340 -->
-      <patch file="0012-Fix-issue-579.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/355 -->
-      <patch file="0013-Check-for-scaled_font-cache_frozen-in-glyph_page_can.patch" strip="1"/>
-      <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/356 -->
-      <patch file="0014-Make-cairo_scaled_font_t-mutex-recursive.patch" strip="1"/>
-    </branch>
+    <branch module="${version}/cairo-${version}.tar.bz2" version="12cd2bcbb260f4ed64a72b64bd2fdd593f683bbc" repo="cairographics-temp"/>
     <dependencies>
       <dep package="pixman"/>
       <dep package="meta-gtk-osx-bootstrap"/>
