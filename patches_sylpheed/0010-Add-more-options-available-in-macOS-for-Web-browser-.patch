@@ -1,7 +1,7 @@
-From 56259ab6c5e510eb0259aad49a50cb0c26d4f165 Mon Sep 17 00:00:00 2001
+From 26be46300366b5f4056f8b9b5032482083d072b4 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 12 Jun 2022 03:38:53 +0700
-Subject: [PATCH 10/18] Add more options available in macOS for Web browser and
+Subject: [PATCH 10/19] Add more options available in macOS for Web browser and
  Editor
 
 ---
@@ -79,5 +79,5 @@ index b46c9b7..7c8788f 100644
  			       "gedit %s",
  			       "kedit %s",
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 

@@ -1,7 +1,7 @@
-From 3a968b228904365c8209c4644388b9000cc1567a Mon Sep 17 00:00:00 2001
+From b262ecdfa1366a0409fe91acdb11db0662754f7c Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Wed, 15 Jun 2022 02:49:42 +0700
-Subject: [PATCH 13/18] Resync menu after activating GtkRadioMenuItem
+Subject: [PATCH 13/19] Resync menu after activating GtkRadioMenuItem
 
 See also:
   * https://code.launchpad.net/~suv-lp/inkscape/osxmenu
@@ -143,5 +143,5 @@ index 6d75275..ba87bde 100644
  }
  
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 

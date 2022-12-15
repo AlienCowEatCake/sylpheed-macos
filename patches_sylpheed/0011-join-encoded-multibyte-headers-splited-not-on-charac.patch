@@ -1,7 +1,7 @@
-From 2d82389e50b4eeea702962be8a6fbd9afda6e501 Mon Sep 17 00:00:00 2001
+From 06a7327d110bbafbd8cd4c830e1efba530dc6d19 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 01:38:20 +0700
-Subject: [PATCH 11/18] join encoded multibyte headers splited not on character
+Subject: [PATCH 11/19] join encoded multibyte headers splited not on character
  boundary
 
 ================================================================================
@@ -239,5 +239,5 @@ index 34a3d73..97bd08e 100644
  	out_str = outbuf->str;
  	out_len = outbuf->len;
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 

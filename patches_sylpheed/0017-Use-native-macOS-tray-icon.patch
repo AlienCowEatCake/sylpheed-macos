@@ -1,7 +1,7 @@
-From aaeca71b29f8dcdd2c7d2b1c2055d1850f1f7362 Mon Sep 17 00:00:00 2001
+From 331f51e63a7994413a9b3c08550cee553e49cb8a Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:49 +0700
-Subject: [PATCH 17/18] Use native macOS tray icon
+Subject: [PATCH 17/19] Use native macOS tray icon
 
 ---
  src/trayicon.c | 356 ++++++++++++++++++++++++++++++++++++++++++++++++-
@@ -398,5 +398,5 @@ index eea46af..c910ad6 100644
  TrayIcon *trayicon_create	(MainWindow	*mainwin);
  void trayicon_show		(TrayIcon	*tray_icon);
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 

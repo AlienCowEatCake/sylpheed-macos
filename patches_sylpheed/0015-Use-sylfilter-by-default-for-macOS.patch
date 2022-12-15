@@ -1,7 +1,7 @@
-From bf9dbe091d235e75771c1bfacffe525d64a71665 Mon Sep 17 00:00:00 2001
+From 3c7e018870cebae4a1207e6c8ad2bad2b93657f8 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 17:01:46 +0700
-Subject: [PATCH 15/18] Use sylfilter by default for macOS
+Subject: [PATCH 15/19] Use sylfilter by default for macOS
 
 ---
  libsylph/prefs_common.c | 2 +-
@@ -21,5 +21,5 @@ index 59dc6a2..247d6f5 100644
  	 &prefs_common.junk_learncmd, P_STRING},
  	{"nojunk_learn_command", "sylfilter -c",
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 

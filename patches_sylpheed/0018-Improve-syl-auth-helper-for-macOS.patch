@@ -1,7 +1,7 @@
-From 468abaf29e9dbd72ecceac8d6b2d47a57787d837 Mon Sep 17 00:00:00 2001
+From 36a7118a646e3025065a2cf800906af0372c41b4 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Wed, 21 Sep 2022 01:12:10 +0700
-Subject: [PATCH 18/18] Improve syl-auth-helper for macOS
+Subject: [PATCH 18/19] Improve syl-auth-helper for macOS
 
 ---
  macosx/bundle/sylpheed.bundle | 1 +
@@ -39,5 +39,5 @@ index 9e38d8a..8355378 100644
  			g_free(file);
  			g_warning("oauth2.ini not found.");
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 

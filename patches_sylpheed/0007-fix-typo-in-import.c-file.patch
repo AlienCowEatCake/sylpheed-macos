@@ -1,7 +1,7 @@
-From db78fef8e28063bd0c820fceb4c7e7c1d67381cb Mon Sep 17 00:00:00 2001
+From 6fd85a7470df42977b1c655cf55d32a2260c0cfa Mon Sep 17 00:00:00 2001
 From: Ricardo Mones <mones@debian.org>
 Date: Tue, 20 Sep 2022 20:33:17 +0700
-Subject: [PATCH 07/18] fix typo in import.c file
+Subject: [PATCH 07/19] fix typo in import.c file
 
 ---
  src/import.c | 2 +-
@@ -21,5 +21,5 @@ index a59f11f..b323270 100644
  	}
  	gtk_entry_set_text(GTK_ENTRY(file_entry), utf8_filename);
 -- 
-2.37.0 (Apple Git-136)
+2.37.1 (Apple Git-137.1)
 
