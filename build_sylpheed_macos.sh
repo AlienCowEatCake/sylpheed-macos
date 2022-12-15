@@ -51,7 +51,7 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O2 -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch arm64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
     -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
@@ -90,7 +90,7 @@ cd sylfilter-0.8
 find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --disable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 jhbuild run clang \
-    -O2 -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
+    -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
     lib/*.c lib/filters/*.c src/*.c \
     -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed \
     -lsylph-0.1 $(pkg-config --cflags glib-2.0 sqlite3) $(pkg-config --libs glib-2.0 sqlite3) \
@@ -146,7 +146,7 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O2 -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
     -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
@@ -182,7 +182,7 @@ cd sylfilter-0.8
 find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
 arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --disable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 arch -x86_64 jhbuild run clang \
-    -O2 -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
+    -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
     lib/*.c lib/filters/*.c src/*.c \
     -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed \
     -lsylph-0.1 $(pkg-config --cflags glib-2.0 sqlite3) $(pkg-config --libs glib-2.0 sqlite3) \
