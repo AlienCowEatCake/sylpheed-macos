@@ -11,9 +11,20 @@ export MACOSX_DEPLOYMENT_TARGET="10.9"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/3.10.2/lib/pkgconfig"
 
+function copy_bash {
+    # @note Workaround for SIP workaround in gtk-osx
+    mkdir -p "${HOME}/.new_local/bin"
+    cat << EOF > "${HOME}/.new_local/bin/bash"
+#!/bin/bash -e
+/bin/bash "\${@}"
+EOF
+    chmod 755 "${HOME}/.new_local/bin/bash"
+}
+
 git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
 cd gtk-osx
 git checkout e9fc8c35ea404420d5bf700e835f7d48d2d38ac2
+copy_bash
 ./gtk-osx-setup.sh
 cd ..
 
@@ -110,6 +121,7 @@ rm -rf \
     "sylpheed-3.8.0beta1"
 
 cd gtk-osx
+copy_bash
 arch -x86_64 ./gtk-osx-setup.sh
 cd ..
 

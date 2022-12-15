@@ -52,13 +52,13 @@
   </metamodule>
 
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.2.6">
+    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.4.0">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
 
   <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-static">
-    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.21">
+    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.21.1">
       <patch file="0001-GETTEXT-disable-futimens-utimensat.patch" strip="1"/>
     </branch>
   </autotools>
@@ -102,7 +102,7 @@
   </autotools>
 
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.10/libxml2-${version}.tar.xz" version="2.10.2"/>
+    <branch module="libxml2/2.10/libxml2-${version}.tar.xz" version="2.10.3"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -117,21 +117,24 @@
 
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir --disable-static">
-    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.3"/>
+    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.4"/>
   </autotools>
 
   <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.38">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.39">
       <patch file="0001-LIBPNG-add-macOS-10.13-guard-for-inflateValidate.patch" strip="1"/>
     </branch>
   </autotools>
 
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_4_9/expat-${version}.tar.bz2" version="2.4.9"/>
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_5_0/expat-${version}.tar.bz2" version="2.5.0"/>
   </autotools>
 
-  <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx --disable-static">
-    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.40.0"/>
+  <!-- Disable NEON intrinsic support on macOS -->
+  <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/59 -->
+  <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/69 -->
+  <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx --disable-static --disable-arm-a64-neon">
+    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.42.2"/>
     <after>
       <dep package="libpng"/>
     </after>
@@ -184,13 +187,13 @@
   </metamodule>
 
   <autotools id="libpcre2" autogen-sh="configure" autogenargs="--enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit --disable-static">
-    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.40">
+    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.42">
       <patch file="0001-PCRE2-remove-error-on-build-for-macos-11.0.patch" strip="1"/>
     </branch>
   </autotools>
 
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
-    <branch module="glib/2.74/glib-${version}.tar.xz" version="2.74.0">
+    <branch module="glib/2.74/glib-${version}.tar.xz" version="2.74.3">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -236,7 +239,7 @@
   </meson>
 
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="5.2.0" module="https://github.com/harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="5.3.1" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -247,7 +250,7 @@
   </meson>
 
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.50.10" module="pango/1.50/pango-${version}.tar.xz"/>
+    <branch version="1.50.12" module="pango/1.50/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -268,7 +271,7 @@
   </meson>
 
   <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
-    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-${version}.tar.xz" version="2.42.9">
+    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-${version}.tar.xz" version="2.42.10">
       <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
     <after>
@@ -363,10 +366,7 @@
 
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-${version}.tar.gz" version="1.1.1q" repo="openssl">
-        <!-- https://github.com/openssl/openssl/pull/18719 -->
-        <patch file="openssl-fix-missing-header.patch" strip="1"/>
-    </branch>
+    <branch module="openssl-${version}.tar.gz" version="1.1.1s" repo="openssl"/>
   </autotools>
 
   <autotools id="compface" autogen-sh="configure" supports-non-srcdir-builds="no">
@@ -396,7 +396,7 @@
   </autotools>
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3390300.tar.gz" version="3.39.3"/>
+    <branch repo="sqlite" module="2022/sqlite-autoconf-3400000.tar.gz" version="3.40.0"/>
   </autotools>
 
 </moduleset>
