@@ -84,16 +84,36 @@ find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -
 jhbuild run ./makeosx.sh
 cd ..
 
+curl -LO http://fallabs.com/qdbm/qdbm-1.8.78.tar.gz
+tar -xvpf qdbm-1.8.78.tar.gz
+cd qdbm-1.8.78
+jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-stable --enable-pthread --enable-zlib --enable-iconv
+for i in $(cat Makefile.in | grep -E '^MYLIBOBJS = ' | sed 's|MYLIBOBJS = || ; s|\.o||g') ; do
+    jhbuild run clang -c -O3 -DQDBM_STATIC -I. -DMYPTHREAD -DMYZLIB -DMYICONV -DNDEBUG -fPIC "${i}.c" -o "${i}.o"
+done
+jhbuild run ar rcs "${HOME}/gtk/inst/lib/libqdbm.a" *.o
+for i in $(cat Makefile.in | grep -E '^MYHEADS = ' | sed 's|MYHEADS = ||') ; do
+    cp -a "${i}" "${HOME}/gtk/inst/include/"
+done
+cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/qdbm.pc"
+Name: QDBM
+Description: a high performance embedded database library
+Version: 1.8.78
+Libs: -L${HOME}/gtk/inst/lib ${HOME}/gtk/inst/lib/libqdbm.a -lz -lpthread -liconv
+Cflags: -I${HOME}/gtk/inst/include -DQDBM_STATIC
+EOF
+cd ..
+
 curl -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
 tar -xvpf sylfilter-0.8.tar.gz
 cd sylfilter-0.8
 find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --disable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
+jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 jhbuild run clang \
     -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
     lib/*.c lib/filters/*.c src/*.c \
-    -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed \
-    -lsylph-0.1 $(pkg-config --cflags glib-2.0 sqlite3) $(pkg-config --libs glib-2.0 sqlite3) \
+    -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed -lsylph-0 \
+    $(pkg-config --cflags glib-2.0 qdbm sqlite3) $(pkg-config --libs glib-2.0 qdbm sqlite3) \
     -o "${HOME}/gtk/inst/bin/sylfilter"
 strip "${HOME}/gtk/inst/bin/sylfilter"
 cd ..
@@ -117,6 +137,7 @@ rm -rf \
     "${HOME}/.new_local" \
     "${HOME}/gtk" \
     "${HOME}/Source" \
+    "qdbm-1.8.78" \
     "sylfilter-0.8" \
     "sylpheed-3.8.0beta1"
 
@@ -177,15 +198,34 @@ find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -
 arch -x86_64 jhbuild run ./makeosx.sh
 cd ..
 
+tar -xvpf qdbm-1.8.78.tar.gz
+cd qdbm-1.8.78
+arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-stable --enable-pthread --enable-zlib --enable-iconv
+for i in $(cat Makefile.in | grep -E '^MYLIBOBJS = ' | sed 's|MYLIBOBJS = || ; s|\.o||g') ; do
+    arch -x86_64 jhbuild run clang -c -O3 -DQDBM_STATIC -I. -DMYPTHREAD -DMYZLIB -DMYICONV -DNDEBUG -fPIC "${i}.c" -o "${i}.o"
+done
+arch -x86_64 jhbuild run ar rcs "${HOME}/gtk/inst/lib/libqdbm.a" *.o
+for i in $(cat Makefile.in | grep -E '^MYHEADS = ' | sed 's|MYHEADS = ||') ; do
+    cp -a "${i}" "${HOME}/gtk/inst/include/"
+done
+cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/qdbm.pc"
+Name: QDBM
+Description: a high performance embedded database library
+Version: 1.8.78
+Libs: -L${HOME}/gtk/inst/lib ${HOME}/gtk/inst/lib/libqdbm.a -lz -lpthread -liconv
+Cflags: -I${HOME}/gtk/inst/include -DQDBM_STATIC
+EOF
+cd ..
+
 tar -xvpf sylfilter-0.8.tar.gz
 cd sylfilter-0.8
 find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --disable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
+arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 arch -x86_64 jhbuild run clang \
     -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
     lib/*.c lib/filters/*.c src/*.c \
-    -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed \
-    -lsylph-0.1 $(pkg-config --cflags glib-2.0 sqlite3) $(pkg-config --libs glib-2.0 sqlite3) \
+    -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed -lsylph-0 \
+    $(pkg-config --cflags glib-2.0 qdbm sqlite3) $(pkg-config --libs glib-2.0 qdbm sqlite3) \
     -o "${HOME}/gtk/inst/bin/sylfilter"
 arch -x86_64 strip "${HOME}/gtk/inst/bin/sylfilter"
 cd ..
@@ -231,10 +271,12 @@ rm -rf \
     "${HOME}/.new_local" \
     "${HOME}/gtk" \
     "${HOME}/Source" \
+    "qdbm-1.8.78" \
     "sylfilter-0.8" \
     "sylpheed-3.8.0beta1" \
     "gtk-osx" \
     "gtk-mac-bundler" \
+    "qdbm-1.8.78.tar.gz" \
     "sylfilter-0.8.tar.gz" \
     "sylpheed-3.8.0beta1.tar.bz2" \
     "${HOME}/.config/jhbuildrc" \
