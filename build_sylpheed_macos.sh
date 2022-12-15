@@ -350,3 +350,8 @@ popd >/dev/null
 hdiutil create -format UDBZ -fs HFS+ -srcfolder "Sylpheed" -volname "Sylpheed" "Sylpheed_${BUNDLE_VERSION}.dmg"
 sign "Sylpheed_${BUNDLE_VERSION}.dmg"
 notarize "Sylpheed_${BUNDLE_VERSION}.dmg" "${BUNDLE_IDENTIFIER}"
+
+rm -rf \
+    "${INSTALL_DIR}" \
+    "${HOME}/Desktop/Sylpheed.app"
+echo "DONE"
