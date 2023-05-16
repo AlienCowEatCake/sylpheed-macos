@@ -52,7 +52,7 @@
   </metamodule>
 
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.4.0">
+    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.4.3">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
@@ -102,14 +102,14 @@
   </autotools>
 
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.10/libxml2-${version}.tar.xz" version="2.10.3"/>
+    <branch module="libxml2/2.11/libxml2-${version}.tar.xz" version="2.11.3"/>
     <after>
       <dep package="xz"/>
     </after>
   </autotools>
 
   <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.37"/>
+    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.38"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -193,7 +193,7 @@
   </autotools>
 
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
-    <branch module="glib/2.74/glib-${version}.tar.xz" version="2.74.3">
+    <branch module="glib/2.76/glib-${version}.tar.xz" version="2.76.2">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -240,7 +240,7 @@
   </meson>
 
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="5.3.1" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="7.3.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -251,7 +251,7 @@
   </meson>
 
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.50.12" module="pango/1.50/pango-${version}.tar.xz"/>
+    <branch version="1.50.14" module="pango/1.50/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -367,7 +367,7 @@
 
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-${version}.tar.gz" version="1.1.1s" repo="openssl"/>
+    <branch module="openssl-${version}.tar.gz" version="1.1.1t" repo="openssl"/>
   </autotools>
 
   <autotools id="compface" autogen-sh="configure" supports-non-srcdir-builds="no">
@@ -397,7 +397,7 @@
   </autotools>
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2022/sqlite-autoconf-3400000.tar.gz" version="3.40.0"/>
+    <branch repo="sqlite" module="2023/sqlite-autoconf-3410200.tar.gz" version="3.41.2"/>
   </autotools>
 
 </moduleset>
