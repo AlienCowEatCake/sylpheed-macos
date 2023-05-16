@@ -1,10 +1,10 @@
 // Original file: https://gitlab.gnome.org/GNOME/gtk-mac-bundler/-/blob/3770bb6c27a913dc39dbcc98fe175a53df92700c/examples/launcher.sh
-// Build: clang launcher.m -o "launcher" -framework Foundation -O2 -Weverything -fobjc-arc -mmacos-version-min=10.7
+// Build: clang launcher.m -o "launcher" -framework Foundation -O2 -Weverything -mmacos-version-min=10.7
 
 #include <stdlib.h>
 #import <Foundation/Foundation.h>
 
-static NSString * path() {
+static NSString * path(void) {
     const char * pathEnv = getenv("PATH");
     if(pathEnv)
         return [NSString stringWithUTF8String:pathEnv];
@@ -223,14 +223,14 @@ int main(int argc, const char * argv[]) {
 
     @autoreleasepool {
         const NSUInteger argumentsCount = (NSUInteger)(argc);
-        NSMutableArray * arguments = [[NSMutableArray alloc] initWithCapacity:(argumentsCount - 1)];
+        NSMutableArray * arguments = [[[NSMutableArray alloc] initWithCapacity:(argumentsCount - 1)] autorelease];
         for(NSUInteger i = 1; i < argumentsCount; ++i) {
             NSString * argument = [NSString stringWithUTF8String:argv[i]];
             if(argument)
                 [arguments addObject:argument];
         }
 
-        NSTask * task = [[NSTask alloc] init];
+        NSTask * task = [[[NSTask alloc] init] autorelease];
         task.launchPath = [[[NSBundle mainBundle] executablePath] stringByAppendingString:@"-bin"];
         task.arguments = arguments;
         [task launch];
