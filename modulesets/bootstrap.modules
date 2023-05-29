@@ -204,6 +204,7 @@
   </meson>
 
   <!-- Cairo 12cd2bcbb260f4ed64a72b64bd2fdd593f683bbc works fine on 10.11+, but broken on 10.9 -->
+  <!-- Cairo 1.17.8 snapshot is still broken -->
   <meson id="cairo" mesonargs="--buildtype=release -Dfontconfig=disabled -Dfreetype=disabled">
     <branch module="${version}/cairo-${version}.tar.bz2" version="1.17.6" repo="cairographics-temp">
       <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
