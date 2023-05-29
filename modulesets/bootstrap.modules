@@ -103,7 +103,7 @@
   </autotools>
 
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.11/libxml2-${version}.tar.xz" version="2.11.3"/>
+    <branch module="libxml2/2.11/libxml2-${version}.tar.xz" version="2.11.4"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -166,7 +166,7 @@
   </metamodule>
 
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x --disable-static">
-    <branch version="4.4.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
+    <branch version="4.5.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
       <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -194,7 +194,7 @@
   </autotools>
 
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
-    <branch module="glib/2.76/glib-${version}.tar.xz" version="2.76.2">
+    <branch module="glib/2.76/glib-${version}.tar.xz" version="2.76.3">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -248,7 +248,7 @@
   </meson>
 
   <meson id="fribidi" mesonargs="--buildtype=release -Ddocs=false -Dtests=false">
-    <branch module="fribidi/fribidi/releases/download/v${version}/fribidi-${version}.tar.xz" repo="github-tarball" version="1.0.12"/>
+    <branch module="fribidi/fribidi/releases/download/v${version}/fribidi-${version}.tar.xz" repo="github-tarball" version="1.0.13"/>
   </meson>
 
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
@@ -399,7 +399,7 @@
   </autotools>
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2023/sqlite-autoconf-3410200.tar.gz" version="3.41.2"/>
+    <branch repo="sqlite" module="2023/sqlite-autoconf-3420000.tar.gz" version="3.42.0"/>
   </autotools>
 
   <autotools id="libgpg-error" autogenargs="--disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
