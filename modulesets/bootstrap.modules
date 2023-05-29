@@ -19,6 +19,7 @@
   <repository type="tarball" name="openssl" href="https://www.openssl.org/source/"/>
   <repository type="tarball" name="compface" href="http://ftp.xemacs.org/pub/xemacs/aux/"/>
   <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
+  <repository type="tarball" name="gnupg" href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
   <repository type="system" name="system"/>
 
@@ -362,6 +363,7 @@
       <dep package="oniguruma"/>
       <dep package="gtkspell"/>
       <dep package="sqlite"/>
+      <dep package="gpgme"/>
     </dependencies>
   </metamodule>
 
@@ -398,6 +400,25 @@
 
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
     <branch repo="sqlite" module="2023/sqlite-autoconf-3410200.tar.gz" version="3.41.2"/>
+  </autotools>
+
+  <autotools id="libgpg-error" autogenargs="--disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
+    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.47"/>
+  </autotools>
+
+  <autotools id="libassuan" autogenargs="--disable-static --disable-doc" autogen-sh="configure">
+    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="2.5.5"/>
+    <dependencies>
+      <dep package="libgpg-error"/>
+    </dependencies>
+  </autotools>
+
+  <autotools id="gpgme" autogenargs="--disable-static --enable-languages='' --disable-gpgconf-test --disable-gpg-test --disable-gpgsm-test --disable-g13-test" autogen-sh="configure">
+    <branch repo="gnupg" module="gpgme/gpgme-${version}.tar.bz2" version="1.20.0"/>
+    <dependencies>
+      <dep package="libassuan"/>
+      <dep package="libgpg-error"/>
+    </dependencies>
   </autotools>
 
 </moduleset>

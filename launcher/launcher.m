@@ -8,7 +8,24 @@ static NSString * path(void) {
     const char * pathEnv = getenv("PATH");
     if(pathEnv)
         return [NSString stringWithUTF8String:pathEnv];
-    return @"/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin";
+    return @"/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin";
+}
+
+static NSString * wellKnownPath(void) {
+    NSArray *strings = @[
+        // GPG Suite
+        @"/usr/local/MacGPG2/bin",
+        // Homebrew arm64
+        @"/opt/homebrew/bin",
+        @"/opt/homebrew/sbin",
+        // Homebrew x86_64
+        @"/usr/local/bin",
+        @"/usr/local/sbin",
+        // MacPorts
+        @"/opt/local/bin",
+        @"/opt/local/sbin",
+    ];
+    return [strings componentsJoinedByString:@":"];
 }
 
 static NSString * substr(NSString * str, NSUInteger from, NSUInteger len) {
@@ -34,7 +51,7 @@ int main(int argc, const char * argv[]) {
         NSString * bundleData = [bundleRes stringByAppendingPathComponent:@"share"];
         NSString * bundleEtc = [bundleRes stringByAppendingPathComponent:@"etc"];
 
-        setenv("PATH", [[NSString stringWithFormat:@"%@:%@:%@", bundleExec, bundleBin, path()] UTF8String], 1);
+        setenv("PATH", [[NSString stringWithFormat:@"%@:%@:%@:%@", bundleExec, bundleBin, path(), wellKnownPath()] UTF8String], 1);
 
         setenv("XDG_CONFIG_DIRS", [[bundleEtc stringByAppendingPathComponent:@"xdg"] UTF8String], 0);
         setenv("XDG_DATA_DIRS", [bundleData UTF8String], 0);
