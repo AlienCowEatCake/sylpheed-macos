@@ -1,7 +1,7 @@
 # Sylpheed for macOS
 
 ## About Sylpheed
-[Sylpheed](http://sylpheed.sraoss.jp/) is a simple, lightweight but featureful, and easy-to-use e-mail client.
+[Sylpheed](https://sylpheed.sraoss.jp/en/) is a simple, lightweight but featureful, and easy-to-use e-mail client.
 Sylpheed is a free software distributed under the [GNU GPL](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
 
 ## About Sylpheed for macOS
