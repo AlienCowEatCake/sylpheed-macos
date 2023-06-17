@@ -52,18 +52,20 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 6.4.0 -compatibility_version 6.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 8.0.0 -compatibility_version 8.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch arm64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
+    -Wno-declaration-after-statement \
     -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
 prefix=${HOME}/gtk/inst
-libdir=\${prefix}/lib
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
 includedir=\${prefix}/include
 
 Name: libenchant
 Description: A spell checking library
-Version: 2.3.4
+Version: 2.5.0
 Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF
@@ -168,18 +170,20 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 6.3.0 -compatibility_version 6.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 8.0.0 -compatibility_version 8.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
+    -Wno-declaration-after-statement \
     -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
 prefix=${HOME}/gtk/inst
-libdir=\${prefix}/lib
+exec_prefix=\${prefix}
+libdir=\${exec_prefix}/lib
 includedir=\${prefix}/include
 
 Name: libenchant
 Description: A spell checking library
-Version: 2.3.3
+Version: 2.5.0
 Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF

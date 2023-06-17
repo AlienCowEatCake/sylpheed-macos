@@ -173,7 +173,7 @@
 
   <!-- https://xorg.freedesktop.org/releases/individual/util/ -->
   <autotools id="xorg-macros">
-    <branch repo="xorg.freedesktop.org" module="individual/util/util-macros-${version}.tar.bz2" version="1.19.3"/>
+    <branch repo="xorg.freedesktop.org" module="individual/util/util-macros-${version}.tar.gz" version="1.20.0"/>
   </autotools>
 
   <metamodule id="meta-gtk-osx-bootstrap">
@@ -186,7 +186,7 @@
 
   <!-- https://download.osgeo.org/libtiff/ -->
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x --disable-static">
-    <branch version="4.5.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
+    <branch version="4.5.1" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
       <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -405,7 +405,7 @@
   <!-- https://www.openssl.org/source/ -->
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-${version}.tar.gz" version="1.1.1t" repo="openssl"/>
+    <branch module="openssl-${version}.tar.gz" version="1.1.1u" repo="openssl"/>
   </autotools>
 
   <!-- http://ftp.xemacs.org/pub/xemacs/aux/ -->

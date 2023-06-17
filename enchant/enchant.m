@@ -1,8 +1,8 @@
 /*
 clang enchant.m -O3 \
     -dynamiclib -fPIC \
-    -current_version 6.4.0 \
-    -compatibility_version 6.0.0 \
+    -current_version 8.0.0 \
+    -compatibility_version 8.0.0 \
     -mmacos-version-min=10.9 \
     -framework AppKit \
     -framework Foundation \
@@ -10,6 +10,7 @@ clang enchant.m -O3 \
     -Wno-gnu-zero-variadic-macro-arguments \
     -Wno-documentation-unknown-command \
     -Wno-poison-system-directories \
+    -Wno-declaration-after-statement \
     -o libenchant-2.dylib \
     -install_name "${PWD}/libenchant-2.dylib"
 */
@@ -59,7 +60,7 @@ struct str_enchant_dict
     NSMutableSet<NSString*> *ignores;
 };
 
-EnchantBroker *enchant_broker_init()
+EnchantBroker *enchant_broker_init(void)
 {
     ENCHANT_DEBUG = !!getenv("ENCHANT_DEBUG");
     dprintf();

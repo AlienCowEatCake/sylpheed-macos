@@ -1,5 +1,6 @@
 /* enchant
  * Copyright (C) 2003 Dom Lachowicz
+ * Copyright (C) 2016-2023 Reuben Thomas
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,8 +17,8 @@
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  *
- * In addition, as a special exception, Dom Lachowicz
- * gives permission to link the code of this program with
+ * In addition, as a special exception, the copyright holders
+ * give permission to link the code of this program with
  * non-LGPL Spelling Provider libraries (eg: a MSFT Office
  * spell checker backend) and distribute linked combinations including
  * the two.  You must obey the GNU Lesser General Public License in all
@@ -65,8 +66,20 @@ void enchant_broker_free (EnchantBroker * broker);
  * @tag: The non-null language tag you wish to request a dictionary for ("en_US", "de_DE", ...)
  *
  * Returns: An #EnchantDict, or %null if no suitable dictionary could be found. This dictionary is reference counted.
+ * The default personal wordlist file is used.
  */
 EnchantDict *enchant_broker_request_dict (EnchantBroker * broker, const char *const tag);
+
+/**
+ * enchant_broker_request_dict_with_pwl
+ * @broker: A non-null #EnchantBroker
+ * @tag: The non-null language tag you wish to request a dictionary for ("en_US", "de_DE", ...)
+ * @pwl: A non-null pathname in the GLib file name encoding (UTF-8 on Windows) to the personal wordlist file
+ *
+ * Returns: An #EnchantDict, or %null if no suitable dictionary could be found, or if the pwl could not be opened.
+ * This dictionary is reference counted.
+ */
+EnchantDict *enchant_broker_request_dict_with_pwl (EnchantBroker * broker, const char *const tag, const char *pwl);
 
 /**
  * enchant_broker_request_pwl_dict
@@ -184,8 +197,8 @@ char **enchant_dict_suggest (EnchantDict * dict, const char *const word,
  * @word: The non-null word you wish to add to your personal dictionary, in UTF-8 encoding
  * @len: The byte length of @word, or -1 for strlen (@word)
  *
- * Remarks: if the word exists in the exclude dictionary, it will be removed from the
- *          exclude dictionary
+ * The word is also added to the session. If the word exists in the exclude
+ * dictionary, it will be removed from the exclude dictionary.
  */
 void enchant_dict_add (EnchantDict * dict, const char *const word, ssize_t len);
 
@@ -205,6 +218,7 @@ void enchant_dict_add_to_session (EnchantDict * dict, const char *const word, ss
  *        remove from the personal dictionary, in UTF-8 encoding
  * @len: The byte length of @word, or -1 for strlen (@word)
  *
+ * The word is also removed from the session.
  */
 void enchant_dict_remove (EnchantDict * dict, const char *const word, ssize_t len);
 
@@ -241,9 +255,7 @@ int enchant_dict_is_removed (EnchantDict * dict, const char *const word, ssize_t
  * @cor: The non-null correction word, in UTF-8 encoding
  * @cor_len: The byte length of @cor, or -1 for strlen (@cor)
  *
- * Notes that you replaced @mis with @cor, so it's possibly more likely
- * that future occurrences of @mis will be replaced with @cor. So it might
- * bump @cor up in the suggestion list.
+ * Does nothing; API is deprecated and retained only for backwards compatibility.
  */
 void enchant_dict_store_replacement (EnchantDict * dict,
 				     const char *const mis, ssize_t mis_len,
