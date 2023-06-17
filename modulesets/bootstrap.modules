@@ -11,7 +11,7 @@
   <repository type="tarball" name="tukaani.org" href="http://tukaani.org/"/>
   <repository type="tarball" name="launchpad" href="http://launchpad.net/"/>
   <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
-  <repository type="tarball" name="cairo-snapshots" href="http://cairographics.org/snapshots/"/>
+  <repository type="tarball" name="cairographics-temp" href="https://gitlab.freedesktop.org/cairo/cairo/-/archive/"/>
   <repository type="tarball" name="ijg" href="http://www.ijg.org/files/"/>
   <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
   <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
@@ -229,7 +229,7 @@
   <!-- Cairo 12cd2bcbb260f4ed64a72b64bd2fdd593f683bbc works fine on 10.11+, but broken on 10.9 -->
   <!-- Cairo 1.17.8 snapshot is still broken -->
   <meson id="cairo" mesonargs="--buildtype=release -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch module="cairo-${version}.tar.xz" version="1.17.6" repo="cairo-snapshots">
+    <branch module="${version}/cairo-${version}.tar.bz2" version="1.17.6" repo="cairographics-temp">
       <!-- https://gitlab.gnome.org/GNOME/gtk/-/issues/1620 -->
       <!-- https://gitlab.freedesktop.org/cairo/cairo/-/merge_requests/9 -->
       <patch file="0001-quartz-font-Add-support-for-color-emoji-glyphs.patch" strip="1"/>
