@@ -14,6 +14,7 @@ export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/
 function copy_bash {
     # @note Workaround for SIP workaround in gtk-osx
     mkdir -p "${HOME}/.new_local/bin"
+    rm -rf "${HOME}/.new_local/bin/bash"
     cat << EOF > "${HOME}/.new_local/bin/bash"
 #!/bin/bash -e
 /bin/bash "\${@}"
