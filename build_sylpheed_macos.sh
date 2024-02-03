@@ -84,7 +84,7 @@ curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz
 tar -xvpf sylpheed-3.8.0beta1.tar.bz2
 cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-jhbuild run ./makeosx.sh
+jhbuild run ./makeosx.sh --enable-oniguruma
 cd ..
 
 curl -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
@@ -200,7 +200,7 @@ arch -x86_64 jhbuild bootstrap
 tar -xvpf sylpheed-3.8.0beta1.tar.bz2
 cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-arch -x86_64 jhbuild run ./makeosx.sh
+arch -x86_64 jhbuild run ./makeosx.sh --enable-oniguruma
 cd ..
 
 tar -xvpf qdbm-1.8.78.tar.gz
