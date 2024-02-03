@@ -43,7 +43,7 @@ mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/zlib.pc"
 Name: zlib
 Description: zlib compression library
-Version: 1.2.11
+Version: 1.3.1
 
 Requires:
 Libs: -lz
@@ -52,7 +52,7 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 8.0.0 -compatibility_version 8.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 9.5.0 -compatibility_version 9.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch arm64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
     -Wno-declaration-after-statement \
@@ -65,7 +65,7 @@ includedir=\${prefix}/include
 
 Name: libenchant
 Description: A spell checking library
-Version: 2.5.0
+Version: 2.6.5
 Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF
@@ -87,7 +87,7 @@ find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -
 jhbuild run ./makeosx.sh
 cd ..
 
-curl -LO http://fallabs.com/qdbm/qdbm-1.8.78.tar.gz
+curl -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
 tar -xvpf qdbm-1.8.78.tar.gz
 cd qdbm-1.8.78
 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-stable --enable-pthread --enable-zlib --enable-iconv
@@ -161,7 +161,7 @@ mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/zlib.pc"
 Name: zlib
 Description: zlib compression library
-Version: 1.2.11
+Version: 1.3.1
 
 Requires:
 Libs: -lz
@@ -170,7 +170,7 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 8.0.0 -compatibility_version 8.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 9.5.0 -compatibility_version 9.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
     -Wno-declaration-after-statement \
@@ -183,7 +183,7 @@ includedir=\${prefix}/include
 
 Name: libenchant
 Description: A spell checking library
-Version: 2.5.0
+Version: 2.6.5
 Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF

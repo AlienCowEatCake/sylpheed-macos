@@ -20,6 +20,7 @@
   <repository type="tarball" name="compface" href="http://ftp.xemacs.org/pub/xemacs/aux/"/>
   <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
   <repository type="tarball" name="gnupg" href="https://www.gnupg.org/ftp/gcrypt/"/>
+  <repository type="tarball" name="snapshot.debian.org" href="https://snapshot.debian.org/archive/"/>
   <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
   <repository type="system" name="system"/>
 
@@ -54,14 +55,14 @@
 
   <!-- https://tukaani.org/xz/ -->
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <branch repo="tukaani.org" module="xz/xz-${version}.tar.bz2" version="5.4.3">
+    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.4.6">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/gettext/ -->
   <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-static">
-    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.21.1">
+    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.22.4">
       <patch file="0001-GETTEXT-disable-futimens-utimensat.patch" strip="1"/>
     </branch>
   </autotools>
@@ -73,7 +74,7 @@
 
   <!-- https://ftp.gnu.org/gnu/autoconf/ -->
   <autotools id="autoconf" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org" module="autoconf/autoconf-${version}.tar.gz" version="2.71"/>
+    <branch repo="ftp.gnu.org" module="autoconf/autoconf-${version}.tar.gz" version="2.72"/>
     <dependencies>
       <dep package="m4"/>
     </dependencies>
@@ -113,7 +114,7 @@
 
   <!-- https://download.gnome.org/sources/libxml2/ -->
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.11/libxml2-${version}.tar.xz" version="2.11.4"/>
+    <branch module="libxml2/2.12/libxml2-${version}.tar.xz" version="2.12.4"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -121,7 +122,7 @@
 
   <!-- https://download.gnome.org/sources/libxslt/ -->
   <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.38"/>
+    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.39"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -135,7 +136,7 @@
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
   <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.39">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.41">
       <patch file="0001-LIBPNG-add-macOS-10.13-guard-for-inflateValidate.patch" strip="1"/>
     </branch>
   </autotools>
@@ -149,12 +150,12 @@
   <!-- Disable NEON intrinsic support on macOS -->
   <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/59 -->
   <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/69 -->
-  <autotools id="pixman" autogen-sh="configure" autogenargs="--disable-gtk --disable-mmx --disable-static --disable-arm-a64-neon">
-    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.42.2"/>
+  <meson id="pixman" mesonargs="--buildtype=release -Dgtk=disabled -Dtests=disabled -Ddemos=disabled -Dmmx=disabled -Da64-neon=disabled">
+    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.43.2"/>
     <after>
       <dep package="libpng"/>
     </after>
-  </autotools>
+  </meson>
 
   <!-- https://ftp.gnu.org/gnu/libtasn1/ -->
   <autotools id="libtasn1" autogen-sh="configure" autogenargs="--disable-static">
@@ -163,7 +164,7 @@
 
   <!-- https://www.ijg.org/ -->
   <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-static">
-    <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9e" checkoutdir="jpeg-${version}"/>
+    <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9f" checkoutdir="jpeg-${version}"/>
   </autotools>
 
   <!-- https://itstool.org/download.html -->
@@ -186,7 +187,7 @@
 
   <!-- https://download.osgeo.org/libtiff/ -->
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x --disable-static">
-    <branch version="4.5.1" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
+    <branch version="4.6.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
       <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -215,8 +216,8 @@
   </autotools>
 
   <!-- https://download.gnome.org/sources/glib/ -->
-  <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dgtk_doc=false -Dtests=false">
-    <branch module="glib/2.76/glib-${version}.tar.xz" version="2.76.3">
+  <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
+    <branch module="glib/2.79/glib-${version}.tar.xz" version="2.79.1">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -266,7 +267,7 @@
 
   <!-- https://github.com/harfbuzz/harfbuzz/releases/ -->
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="7.3.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="8.3.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -279,7 +280,7 @@
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.50.14" module="pango/1.50/pango-${version}.tar.xz"/>
+    <branch version="1.51.0" module="pango/1.51/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -362,17 +363,19 @@
     </dependencies>
   </metamodule>
 
-  <!-- http://tango.freedesktop.org/releases/ -->
+  <!-- http://tango.freedesktop.org/releases/ - 403 error at 2024-02-03 -->
   <autotools id="icon-naming-utils" autogen-sh="configure">
-    <branch repo="tango.freedesktop.org" version="0.8.90" module="icon-naming-utils-${version}.tar.bz2"/>
+    <!-- <branch repo="tango.freedesktop.org" version="0.8.90" module="icon-naming-utils-${version}.tar.bz2"/> -->
+    <branch repo="snapshot.debian.org" version="0.8.90" module="debian/20090308T214458Z/pool/main/i/icon-naming-utils/icon-naming-utils_${version}.orig.tar.gz" checkoutdir="icon-naming-utils-${version}"/>
     <after>
       <dep package="meta-gtk-osx-bootstrap"/>
     </after>
   </autotools>
 
-  <!-- http://tango.freedesktop.org/releases/ -->
+  <!-- http://tango.freedesktop.org/releases/ - 403 error at 2024-02-03 -->
   <autotools id="tango-icon-theme" autogenargs="--disable-icon-framing" autogen-sh="configure">
-    <branch repo="tango.freedesktop.org" version="0.8.90" module="tango-icon-theme-${version}.tar.gz"/>
+    <!-- <branch repo="tango.freedesktop.org" version="0.8.90" module="tango-icon-theme-${version}.tar.gz"/> -->
+    <branch repo="snapshot.debian.org" version="0.8.90" module="debian/20090315T155958Z/pool/main/t/tango-icon-theme/tango-icon-theme_${version}.orig.tar.gz" checkoutdir="tango-icon-theme-${version}"/>
     <dependencies>
       <dep package="icon-naming-utils"/>
       <dep package="hicolor-icon-theme"/>
@@ -405,7 +408,7 @@
   <!-- https://www.openssl.org/source/ -->
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-${version}.tar.gz" version="1.1.1u" repo="openssl"/>
+    <branch module="openssl-${version}.tar.gz" version="3.2.1" repo="openssl"/>
   </autotools>
 
   <!-- http://ftp.xemacs.org/pub/xemacs/aux/ -->
@@ -419,7 +422,7 @@
 
   <!-- https://github.com/kkos/oniguruma/releases/ -->
   <autotools id="oniguruma" autogen-sh="configure" autogenargs="--disable-static --enable-shared">
-    <branch repo="github-tarball" module="kkos/oniguruma/releases/download/v${version}/onig-${version}.tar.gz" version="6.9.8"/>
+    <branch repo="github-tarball" module="kkos/oniguruma/releases/download/v${version}/onig-${version}.tar.gz" version="6.9.9"/>
   </autotools>
 
   <!-- https://gtkspell.sourceforge.net/ -->
@@ -439,7 +442,7 @@
 
   <!-- https://www.sqlite.org/download.html -->
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2023/sqlite-autoconf-3420000.tar.gz" version="3.42.0"/>
+    <branch repo="sqlite" module="2024/sqlite-autoconf-3450100.tar.gz" version="3.45.1"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
@@ -449,7 +452,7 @@
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libassuan/ -->
   <autotools id="libassuan" autogenargs="--disable-static --disable-doc" autogen-sh="configure">
-    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="2.5.5"/>
+    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="2.5.6"/>
     <dependencies>
       <dep package="libgpg-error"/>
     </dependencies>
@@ -457,7 +460,7 @@
 
   <!-- https://www.gnupg.org/ftp/gcrypt/gpgme/ -->
   <autotools id="gpgme" autogenargs="--disable-static --enable-languages='' --disable-gpgconf-test --disable-gpg-test --disable-gpgsm-test --disable-g13-test" autogen-sh="configure">
-    <branch repo="gnupg" module="gpgme/gpgme-${version}.tar.bz2" version="1.20.0"/>
+    <branch repo="gnupg" module="gpgme/gpgme-${version}.tar.bz2" version="1.23.2"/>
     <dependencies>
       <dep package="libassuan"/>
       <dep package="libgpg-error"/>
