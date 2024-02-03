@@ -135,7 +135,7 @@
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
   <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.41">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.42">
       <patch file="0001-LIBPNG-add-macOS-10.13-guard-for-inflateValidate.patch" strip="1"/>
     </branch>
   </autotools>
