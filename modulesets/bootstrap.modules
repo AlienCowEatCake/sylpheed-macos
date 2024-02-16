@@ -113,7 +113,7 @@
 
   <!-- https://download.gnome.org/sources/libxml2/ -->
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.12/libxml2-${version}.tar.xz" version="2.12.4"/>
+    <branch module="libxml2/2.12/libxml2-${version}.tar.xz" version="2.12.5"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -130,7 +130,7 @@
   <!-- https://github.com/libffi/libffi/releases/ -->
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir --disable-static">
-    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.4"/>
+    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.5"/>
   </autotools>
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
@@ -142,7 +142,7 @@
 
   <!-- https://github.com/libexpat/libexpat/releases/ -->
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_5_0/expat-${version}.tar.bz2" version="2.5.0"/>
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_0/expat-${version}.tar.bz2" version="2.6.0"/>
   </autotools>
 
   <!-- https://www.cairographics.org/releases/ -->
@@ -209,14 +209,12 @@
 
   <!-- https://github.com/PCRE2Project/pcre2/releases/ -->
   <autotools id="libpcre2" autogen-sh="configure" autogenargs="--enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit --disable-static">
-    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.42">
-      <patch file="0001-PCRE2-remove-error-on-build-for-macos-11.0.patch" strip="1"/>
-    </branch>
+    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.43"/>
   </autotools>
 
   <!-- https://download.gnome.org/sources/glib/ -->
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
-    <branch module="glib/2.79/glib-${version}.tar.xz" version="2.79.1">
+    <branch module="glib/2.79/glib-${version}.tar.xz" version="2.79.2">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -250,7 +248,7 @@
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.51.0" module="pango/1.51/pango-${version}.tar.xz"/>
+    <branch version="1.51.2" module="pango/1.51/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>

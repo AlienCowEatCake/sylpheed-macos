@@ -52,7 +52,7 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 9.5.0 -compatibility_version 9.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 9.7.0 -compatibility_version 9.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch arm64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
     -Wno-declaration-after-statement \
@@ -170,7 +170,7 @@ EOF
 
 mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
 cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
-clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 9.5.0 -compatibility_version 9.0.0 \
+clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 9.7.0 -compatibility_version 9.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
     -Wno-declaration-after-statement \
