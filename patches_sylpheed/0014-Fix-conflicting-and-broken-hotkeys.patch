@@ -1,15 +1,15 @@
-From 27c9bb71055ca268813bdece9b2f9a2e558b1350 Mon Sep 17 00:00:00 2001
+From 1899c2c910fa98c5218101c407d3ed8cf1b24a74 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 04:47:15 +0700
 Subject: [PATCH 14/19] Fix conflicting and broken hotkeys
 
 ---
- src/addressbook.c |  56 +++++++++++++++++++++++++
- src/compose.c     |  28 +++++++++++--
- src/gtkutils.c    | 104 ++++++++++++++++++++++++++++++++++++++++++++++
- src/gtkutils.h    |   9 ++++
- src/mainwindow.c  |  44 ++++++++++++++++++--
- 5 files changed, 234 insertions(+), 7 deletions(-)
+ src/addressbook.c |  56 +++++++++++++++++++
+ src/compose.c     |  28 ++++++++--
+ src/gtkutils.c    | 139 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/gtkutils.h    |  10 ++++
+ src/mainwindow.c  |  44 ++++++++++++++-
+ 5 files changed, 270 insertions(+), 7 deletions(-)
 
 diff --git a/src/addressbook.c b/src/addressbook.c
 index e2768b4..ffa0a26 100644
@@ -211,10 +211,10 @@ index a927b00..ec7c818 100644
  
  static void compose_grab_focus_cb(GtkWidget *widget, Compose *compose)
 diff --git a/src/gtkutils.c b/src/gtkutils.c
-index b1a488a..5f49969 100644
+index b1a488a..33db071 100644
 --- a/src/gtkutils.c
 +++ b/src/gtkutils.c
-@@ -1117,3 +1117,107 @@ void gtkut_events_flush(void)
+@@ -1117,3 +1117,142 @@ void gtkut_events_flush(void)
  {
  	GTK_EVENTS_FLUSH();
  }
@@ -247,6 +247,41 @@ index b1a488a..5f49969 100644
 +	return NULL;
 +}
 +
++static void gtkut_get_selected_cb(GtkWidget *widget, gpointer data)
++{
++	GtkWidget **selected = (GtkWidget **)data;
++	gint start = 0, end = 0;
++
++	if (!widget || !selected)
++		return;
++
++	if (GTK_IS_CONTAINER(widget))
++		gtk_container_foreach(GTK_CONTAINER(widget), gtkut_get_selected_cb, data);
++
++	if (*selected)
++		return;
++
++	if (GTK_IS_LABEL(widget) &&
++	    gtk_label_get_selectable(GTK_LABEL(widget)) &&
++	    gtk_label_get_selection_bounds(GTK_LABEL(widget), &start, &end)) {
++		*selected = widget;
++	}
++}
++
++GtkWidget *gtkut_get_selected_widget(void)
++{
++	GtkWindow *window = gtkut_get_active_window();
++	if (window) {
++		GtkWidget *selected = NULL;
++		gtk_container_foreach(GTK_CONTAINER(window), gtkut_get_selected_cb, &selected);
++		if (selected) {
++			return selected;
++		}
++		return gtkut_get_focus_widget();
++	}
++	return NULL;
++}
++
 +gboolean gtkut_is_active_window(GtkWindow *window)
 +{
 +	GtkWindow *active_window = gtkut_get_active_window();
@@ -261,7 +296,7 @@ index b1a488a..5f49969 100644
 +
 +gboolean gtkut_default_cut(void)
 +{
-+	GtkWidget *focus_widget = gtkut_get_focus_widget();
++	GtkWidget *focus_widget = gtkut_get_selected_widget();
 +	if (focus_widget) {
 +		if (GTK_IS_LABEL(focus_widget) &&
 +		    gtk_label_get_selectable(GTK_LABEL(focus_widget))) {
@@ -278,7 +313,7 @@ index b1a488a..5f49969 100644
 +
 +gboolean gtkut_default_copy(void)
 +{
-+	GtkWidget *focus_widget = gtkut_get_focus_widget();
++	GtkWidget *focus_widget = gtkut_get_selected_widget();
 +	if (focus_widget) {
 +		if ((GTK_IS_LABEL(focus_widget) &&
 +		     gtk_label_get_selectable(GTK_LABEL(focus_widget))) ||
@@ -323,15 +358,16 @@ index b1a488a..5f49969 100644
 +	return FALSE;
 +}
 diff --git a/src/gtkutils.h b/src/gtkutils.h
-index 1872e67..a47f56d 100644
+index 1872e67..0434c2e 100644
 --- a/src/gtkutils.h
 +++ b/src/gtkutils.h
-@@ -235,4 +235,13 @@ void gtkut_widget_init			(void);
+@@ -235,4 +235,14 @@ void gtkut_widget_init			(void);
  
  void gtkut_events_flush			(void);
  
 +GtkWindow *gtkut_get_active_window	(void);
 +GtkWidget *gtkut_get_focus_widget	(void);
++GtkWidget *gtkut_get_selected_widget	(void);
 +gboolean gtkut_is_active_window		(GtkWindow	*window);
 +
 +gboolean gtkut_default_cut		(void);
@@ -444,5 +480,5 @@ index 1dc54d1..1ed206c 100644
  		summary_select_all(mainwin->summaryview);
  	else if (GTK_WIDGET_HAS_FOCUS(mainwin->summaryview->qsearch->entry))
 -- 
-2.37.1 (Apple Git-137.1)
+2.39.3 (Apple Git-145)
 

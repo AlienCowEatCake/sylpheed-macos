@@ -1,4 +1,4 @@
-From fff7a8f7877202431030fb9844c00c3949a985e0 Mon Sep 17 00:00:00 2001
+From 7eef8906b0b0e10e23bdf042d059ebd0576f6a4e Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:10 +0700
 Subject: [PATCH 16/19] Improve UX for macOS builds
@@ -73,7 +73,7 @@ index 2fab74d..555adf7 100644
  	libsylpheed-plugin-0.la \
  	../libsylph/libsylph-0.la \
 diff --git a/src/gtkutils.c b/src/gtkutils.c
-index 5f49969..3e53130 100644
+index 33db071..7d6a2f1 100644
 --- a/src/gtkutils.c
 +++ b/src/gtkutils.c
 @@ -34,6 +34,10 @@
@@ -220,5 +220,5 @@ index 7c8788f..3ccfcbd 100644
  
  static GtkWidget *prefs_other_create(void)
 -- 
-2.37.1 (Apple Git-137.1)
+2.39.3 (Apple Git-145)
 
