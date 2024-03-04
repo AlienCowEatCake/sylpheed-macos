@@ -54,14 +54,14 @@
 
   <!-- https://tukaani.org/xz/ -->
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.4.6">
+    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.6.0">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/gettext/ -->
   <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-static">
-    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.22.4">
+    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.22.5">
       <patch file="0001-GETTEXT-disable-futimens-utimensat.patch" strip="1"/>
     </branch>
   </autotools>
@@ -130,19 +130,19 @@
   <!-- https://github.com/libffi/libffi/releases/ -->
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir --disable-static">
-    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.5"/>
+    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.6"/>
   </autotools>
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
   <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.42">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.43">
       <patch file="0001-LIBPNG-add-macOS-10.13-guard-for-inflateValidate.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://github.com/libexpat/libexpat/releases/ -->
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_0/expat-${version}.tar.bz2" version="2.6.0"/>
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_1/expat-${version}.tar.bz2" version="2.6.1"/>
   </autotools>
 
   <!-- https://www.cairographics.org/releases/ -->
@@ -150,7 +150,7 @@
   <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/59 -->
   <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/69 -->
   <meson id="pixman" mesonargs="--buildtype=release -Dgtk=disabled -Dtests=disabled -Ddemos=disabled -Dmmx=disabled -Da64-neon=disabled">
-    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.43.2"/>
+    <branch repo="cairo" module="pixman-${version}.tar.gz" version="0.43.4"/>
     <after>
       <dep package="libpng"/>
     </after>
@@ -214,7 +214,7 @@
 
   <!-- https://download.gnome.org/sources/glib/ -->
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
-    <branch module="glib/2.79/glib-${version}.tar.xz" version="2.79.2">
+    <branch module="glib/2.79/glib-${version}.tar.xz" version="2.79.3">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -248,7 +248,7 @@
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.51.2" module="pango/1.51/pango-${version}.tar.xz"/>
+    <branch version="1.52.0" module="pango/1.52/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -415,7 +415,7 @@
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
   <autotools id="libgpg-error" autogenargs="--disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
-    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.47"/>
+    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.48"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libassuan/ -->
