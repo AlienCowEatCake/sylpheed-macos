@@ -54,7 +54,9 @@
 
   <!-- https://tukaani.org/xz/ -->
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.6.0">
+    <!-- XZ 5.6.0 and 5.6.1 are backdoored, see CVE-2024-3094 -->
+    <!--<branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.6.0">-->
+    <branch repo="sourceforge" module="lzmautils/xz-${version}.tar.gz" version="5.4.6">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
