@@ -115,7 +115,7 @@
 
   <!-- https://download.gnome.org/sources/libxml2/ -->
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.12/libxml2-${version}.tar.xz" version="2.12.5"/>
+    <branch module="libxml2/2.12/libxml2-${version}.tar.xz" version="2.12.6"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -144,7 +144,7 @@
 
   <!-- https://github.com/libexpat/libexpat/releases/ -->
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_1/expat-${version}.tar.bz2" version="2.6.1"/>
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_2/expat-${version}.tar.bz2" version="2.6.2"/>
   </autotools>
 
   <!-- https://www.cairographics.org/releases/ -->
@@ -216,7 +216,7 @@
 
   <!-- https://download.gnome.org/sources/glib/ -->
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
-    <branch module="glib/2.79/glib-${version}.tar.xz" version="2.79.3">
+    <branch module="glib/2.80/glib-${version}.tar.xz" version="2.80.0">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -237,7 +237,7 @@
 
   <!-- https://github.com/harfbuzz/harfbuzz/releases/ -->
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="8.3.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="8.4.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -250,7 +250,7 @@
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.52.0" module="pango/1.52/pango-${version}.tar.xz"/>
+    <branch version="1.52.1" module="pango/1.52/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -412,7 +412,7 @@
 
   <!-- https://www.sqlite.org/download.html -->
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2024/sqlite-autoconf-3450100.tar.gz" version="3.45.1"/>
+    <branch repo="sqlite" module="2024/sqlite-autoconf-3450200.tar.gz" version="3.45.2"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
@@ -422,7 +422,7 @@
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libassuan/ -->
   <autotools id="libassuan" autogenargs="--disable-static --disable-doc" autogen-sh="configure">
-    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="2.5.6"/>
+    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="2.5.7"/>
     <dependencies>
       <dep package="libgpg-error"/>
     </dependencies>
