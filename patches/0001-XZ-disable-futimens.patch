@@ -8,20 +8,20 @@ Subject: [PATCH] XZ: disable futimens
  1 file changed, 3 insertions(+)
 
 diff --git a/config.h.in b/config.h.in
-index c8ba420..f95b12c 100644
+index 95f8cce..ade4346 100644
 --- a/config.h.in
 +++ b/config.h.in
-@@ -133,7 +133,10 @@
- #undef HAVE_FCNTL_H
+@@ -151,7 +151,10 @@
+ #undef HAVE_FUNC_ATTRIBUTE_CONSTRUCTOR
  
- /* Define to 1 if you have the `futimens' function. */
+ /* Define to 1 if you have the 'futimens' function. */
 +/*
 +// warning: 'futimens' is only available on macOS 10.13 or newer [-Wunguarded-availability-new]
  #undef HAVE_FUTIMENS
 +*/
  
- /* Define to 1 if you have the `futimes' function. */
+ /* Define to 1 if you have the 'futimes' function. */
  #undef HAVE_FUTIMES
 -- 
-2.37.0 (Apple Git-136)
+2.39.3 (Apple Git-146)
 

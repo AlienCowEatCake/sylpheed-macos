@@ -8,7 +8,6 @@
   <repository type="tarball" name="icon-theme.freedesktop.org" href="http://icon-theme.freedesktop.org/releases/"/>
   <repository type="tarball" name="tango.freedesktop.org" href="http://tango.freedesktop.org/releases/"/>
   <repository type="tarball" name="sourceforge" href="http://downloads.sourceforge.net/sourceforge/"/>
-  <repository type="tarball" name="tukaani.org" href="http://tukaani.org/"/>
   <repository type="tarball" name="launchpad" href="http://launchpad.net/"/>
   <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
   <repository type="tarball" name="ijg" href="http://www.ijg.org/files/"/>
@@ -54,9 +53,7 @@
 
   <!-- https://tukaani.org/xz/ -->
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
-    <!-- XZ 5.6.0 and 5.6.1 are backdoored, see CVE-2024-3094 -->
-    <!--<branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.6.0">-->
-    <branch repo="sourceforge" module="lzmautils/xz-${version}.tar.gz" version="5.4.6">
+    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.6.2">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
@@ -115,7 +112,7 @@
 
   <!-- https://download.gnome.org/sources/libxml2/ -->
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.12/libxml2-${version}.tar.xz" version="2.12.6"/>
+    <branch module="libxml2/2.13/libxml2-${version}.tar.xz" version="2.13.1"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -123,7 +120,7 @@
 
   <!-- https://download.gnome.org/sources/libxslt/ -->
   <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.39"/>
+    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.41"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -175,7 +172,7 @@
 
   <!-- https://xorg.freedesktop.org/releases/individual/util/ -->
   <autotools id="xorg-macros">
-    <branch repo="xorg.freedesktop.org" module="individual/util/util-macros-${version}.tar.gz" version="1.20.0"/>
+    <branch repo="xorg.freedesktop.org" module="individual/util/util-macros-${version}.tar.gz" version="1.20.1"/>
   </autotools>
 
   <metamodule id="meta-gtk-osx-bootstrap">
@@ -211,12 +208,12 @@
 
   <!-- https://github.com/PCRE2Project/pcre2/releases/ -->
   <autotools id="libpcre2" autogen-sh="configure" autogenargs="--enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit --disable-static">
-    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.43"/>
+    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.44"/>
   </autotools>
 
   <!-- https://download.gnome.org/sources/glib/ -->
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
-    <branch module="glib/2.80/glib-${version}.tar.xz" version="2.80.0">
+    <branch module="glib/2.80/glib-${version}.tar.xz" version="2.80.3">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -237,7 +234,7 @@
 
   <!-- https://github.com/harfbuzz/harfbuzz/releases/ -->
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="8.4.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="8.5.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -245,12 +242,12 @@
 
   <!-- https://github.com/fribidi/fribidi/releases/ -->
   <meson id="fribidi" mesonargs="--buildtype=release -Ddocs=false -Dtests=false">
-    <branch module="fribidi/fribidi/releases/download/v${version}/fribidi-${version}.tar.xz" repo="github-tarball" version="1.0.13"/>
+    <branch module="fribidi/fribidi/releases/download/v${version}/fribidi-${version}.tar.xz" repo="github-tarball" version="1.0.15"/>
   </meson>
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.52.1" module="pango/1.52/pango-${version}.tar.xz"/>
+    <branch version="1.54.0" module="pango/1.54/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -273,7 +270,7 @@
 
   <!-- https://download.gnome.org/sources/gdk-pixbuf/ -->
   <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
-    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-${version}.tar.xz" version="2.42.10">
+    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-${version}.tar.xz" version="2.42.12">
       <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
     <after>
@@ -282,9 +279,9 @@
   </meson>
 
   <!-- http://icon-theme.freedesktop.org/releases/ -->
-  <autotools id="hicolor-icon-theme">
-    <branch module="hicolor-icon-theme-${version}.tar.xz" version="0.17" repo="icon-theme.freedesktop.org"/>
-  </autotools>
+  <meson id="hicolor-icon-theme">
+    <branch module="hicolor-icon-theme-${version}.tar.xz" version="0.18" repo="icon-theme.freedesktop.org"/>
+  </meson>
 
   <!-- https://download.gnome.org/sources/gtk+/ -->
   <autotools id="gtk+-2.0" autogen-sh="autoreconf" autogenargs="--with-gdktarget=quartz --enable-quartz-relocation --disable-introspection --disable-visibility">
@@ -378,7 +375,7 @@
   <!-- https://www.openssl.org/source/ -->
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-${version}.tar.gz" version="3.2.1" repo="openssl"/>
+    <branch module="openssl-${version}.tar.gz" version="3.3.1" repo="openssl"/>
   </autotools>
 
   <!-- http://ftp.xemacs.org/pub/xemacs/aux/ -->
@@ -412,12 +409,12 @@
 
   <!-- https://www.sqlite.org/download.html -->
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2024/sqlite-autoconf-3450200.tar.gz" version="3.45.2"/>
+    <branch repo="sqlite" module="2024/sqlite-autoconf-3460000.tar.gz" version="3.46.0"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
   <autotools id="libgpg-error" autogenargs="--disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
-    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.48"/>
+    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.49"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libassuan/ -->

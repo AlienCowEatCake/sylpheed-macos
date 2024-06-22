@@ -1,8 +1,8 @@
 /*
 clang enchant.m -O3 \
     -dynamiclib -fPIC \
-    -current_version 9.8.0 \
-    -compatibility_version 9.0.0 \
+    -current_version 11.1.0 \
+    -compatibility_version 11.0.0 \
     -mmacos-version-min=10.9 \
     -framework AppKit \
     -framework Foundation \
@@ -48,12 +48,12 @@ static BOOL ENCHANT_DEBUG = NO;
     } \
 } while (0)
 
-struct str_enchant_broker
+struct _EnchantBroker
 {
     NSSpellChecker *checker;
 };
 
-struct str_enchant_dict
+struct _EnchantDict
 {
     NSSpellChecker *checker;
     NSString *language;
