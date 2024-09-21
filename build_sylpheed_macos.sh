@@ -27,6 +27,10 @@ git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
 cd gtk-osx
 git checkout e9fc8c35ea404420d5bf700e835f7d48d2d38ac2
 copy_bash
+# @note Lock Rust version because 10.7-10.11 support is dropped since 1.74.0
+sed -i '' 's|\(.*sh\.rustup\.rs.*--profile minimal\)|\1 --default-toolchain 1.73.0|' ./gtk-osx-setup.sh
+# @note Lock some Python packages to avoid error "ImportError: cannot import name 'LegacySpecifier' from 'packaging.specifiers'"
+sed -i '' 's|\($PIPENV install\)|\1 "packaging<21.3" "setuptools<69.5"|' ./gtk-osx-setup.sh
 ./gtk-osx-setup.sh
 cd ..
 

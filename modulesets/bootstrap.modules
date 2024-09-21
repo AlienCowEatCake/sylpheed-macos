@@ -19,7 +19,6 @@
   <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
   <repository type="tarball" name="gnupg" href="https://www.gnupg.org/ftp/gcrypt/"/>
   <repository type="tarball" name="snapshot.debian.org" href="https://snapshot.debian.org/archive/"/>
-  <repository type="git" name="gitlab.gnome.org" href="https://gitlab.gnome.org/"/>
   <repository type="system" name="system"/>
 
   <systemmodule id="meson">
@@ -99,10 +98,6 @@
   <!-- https://pkg-config.freedesktop.org/releases/ -->
   <autotools id="pkg-config" autogen-sh="configure" autogenargs="--with-internal-glib">
     <branch repo="pkgconfig.freedesktop.org" module="pkg-config-${version}.tar.gz" version="0.29.2"/>
-  </autotools>
-
-  <autotools id="m4-common">
-    <branch repo="gitlab.gnome.org" module="GNOME/m4-common"/>
   </autotools>
 
   <!-- https://launchpad.net/intltool/+download -->
