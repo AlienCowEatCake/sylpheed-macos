@@ -11,6 +11,7 @@ export MACOSX_DEPLOYMENT_TARGET="10.10"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:"
 export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/3.10.2/lib/pkgconfig:"
 export CFLAGS="-Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-implicit-int"
+CFLAGS_TARGET="-Werror=unguarded-availability-new"
 
 function copy_bash {
     # @note Workaround for SIP workaround in gtk-osx
@@ -60,7 +61,7 @@ cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
 clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 11.2.0 -compatibility_version 11.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch arm64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
-    -Wno-declaration-after-statement \
+    -Wno-declaration-after-statement ${CFLAGS_TARGET} \
     -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
 prefix=${HOME}/gtk/inst
@@ -83,13 +84,13 @@ setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["arm64"])
 setup_release()
 EOF
 
-jhbuild bootstrap
+CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" jhbuild bootstrap
 
 curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz2
 tar -xvpf sylpheed-3.8.0beta1.tar.bz2
 cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-jhbuild run ./makeosx.sh --enable-oniguruma --build=aarch64-apple-darwin
+CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" jhbuild run ./makeosx.sh --enable-oniguruma --build=aarch64-apple-darwin
 cd ..
 
 curl -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
@@ -97,7 +98,7 @@ tar -xvpf qdbm-1.8.78.tar.gz
 cd qdbm-1.8.78
 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-stable --enable-pthread --enable-zlib --enable-iconv
 for i in $(cat Makefile.in | grep -E '^MYLIBOBJS = ' | sed 's|MYLIBOBJS = || ; s|\.o||g') ; do
-    jhbuild run clang -c -O3 -DQDBM_STATIC -I. -DMYPTHREAD -DMYZLIB -DMYICONV -DNDEBUG -fPIC "${i}.c" -o "${i}.o"
+    jhbuild run clang -c -O3 -DQDBM_STATIC -I. -DMYPTHREAD -DMYZLIB -DMYICONV -DNDEBUG -fPIC ${CFLAGS_TARGET} "${i}.c" -o "${i}.o"
 done
 jhbuild run ar rcs "${HOME}/gtk/inst/lib/libqdbm.a" *.o
 for i in $(cat Makefile.in | grep -E '^MYHEADS = ' | sed 's|MYHEADS = ||') ; do
@@ -119,7 +120,7 @@ find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read 
 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 jhbuild run clang \
     -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
-    lib/*.c lib/filters/*.c src/*.c \
+    lib/*.c lib/filters/*.c src/*.c ${CFLAGS_TARGET} \
     -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed -lsylph-0 \
     $(pkg-config --cflags glib-2.0 qdbm sqlite3) $(pkg-config --libs glib-2.0 qdbm sqlite3) \
     -o "${HOME}/gtk/inst/bin/sylfilter"
@@ -178,7 +179,7 @@ cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
 clang "${SOURCE_DIR}/enchant/enchant.m" -O3 -DNDEBUG -dynamiclib -fPIC -current_version 11.2.0 -compatibility_version 11.0.0 \
     -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -framework AppKit -framework Foundation \
     -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-documentation-unknown-command -Wno-poison-system-directories \
-    -Wno-declaration-after-statement \
+    -Wno-declaration-after-statement ${CFLAGS_TARGET} \
     -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
 cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
 prefix=${HOME}/gtk/inst
@@ -200,19 +201,19 @@ setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["x86_64"])
 setup_release()
 EOF
 
-arch -x86_64 jhbuild bootstrap
+CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" arch -x86_64 jhbuild bootstrap
 
 tar -xvpf sylpheed-3.8.0beta1.tar.bz2
 cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-arch -x86_64 jhbuild run ./makeosx.sh --enable-oniguruma --build=x86_64-apple-darwin
+CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" arch -x86_64 jhbuild run ./makeosx.sh --enable-oniguruma --build=x86_64-apple-darwin
 cd ..
 
 tar -xvpf qdbm-1.8.78.tar.gz
 cd qdbm-1.8.78
 arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-stable --enable-pthread --enable-zlib --enable-iconv
 for i in $(cat Makefile.in | grep -E '^MYLIBOBJS = ' | sed 's|MYLIBOBJS = || ; s|\.o||g') ; do
-    arch -x86_64 jhbuild run clang -c -O3 -DQDBM_STATIC -I. -DMYPTHREAD -DMYZLIB -DMYICONV -DNDEBUG -fPIC "${i}.c" -o "${i}.o"
+    arch -x86_64 jhbuild run clang -c -O3 -DQDBM_STATIC -I. -DMYPTHREAD -DMYZLIB -DMYICONV -DNDEBUG -fPIC ${CFLAGS_TARGET} "${i}.c" -o "${i}.o"
 done
 arch -x86_64 jhbuild run ar rcs "${HOME}/gtk/inst/lib/libqdbm.a" *.o
 for i in $(cat Makefile.in | grep -E '^MYHEADS = ' | sed 's|MYHEADS = ||') ; do
@@ -233,7 +234,7 @@ find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read 
 arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 arch -x86_64 jhbuild run clang \
     -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
-    lib/*.c lib/filters/*.c src/*.c \
+    lib/*.c lib/filters/*.c src/*.c ${CFLAGS_TARGET} \
     -I. -I./lib -I./lib/filters -I${HOME}/gtk/inst/include/sylpheed -lsylph-0 \
     $(pkg-config --cflags glib-2.0 qdbm sqlite3) $(pkg-config --libs glib-2.0 qdbm sqlite3) \
     -o "${HOME}/gtk/inst/bin/sylfilter"
