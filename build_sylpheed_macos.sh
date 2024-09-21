@@ -7,6 +7,13 @@ NOTARIZE_USERNAME="peter.zhigalov@gmail.com"
 NOTARIZE_PASSWORD="@keychain:Notarize: ${NOTARIZE_USERNAME}"
 NOTARIZE_ASC_PROVIDER="${APP_CERT: -11:10}"
 
+# @note Override HOME dir because it is too hard to override ALL paths in gtk-osx and other scripts
+HOME_DEV="${PWD}/devroot"
+HOME_PREV="${HOME}"
+export HOME="${HOME_DEV}"
+rm -rf "${HOME_DEV}"
+mkdir -p "${HOME_DEV}"
+
 export MACOSX_DEPLOYMENT_TARGET="10.10"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:"
 export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/3.10.2/lib/pkgconfig:"
@@ -76,8 +83,8 @@ Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF
 
-cp -a ~/.config/jhbuildrc-custom ~/.config/jhbuildrc-custom.bak
-cat << EOF > ~/.config/jhbuildrc-custom
+cp -a "${HOME}/.config/jhbuildrc-custom" "${HOME}/.config/jhbuildrc-custom.bak"
+cat << EOF > "${HOME}/.config/jhbuildrc-custom"
 use_local_modulesets = True
 modulesets_dir = '${SOURCE_DIR}/modulesets'
 setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["arm64"])
@@ -194,7 +201,7 @@ Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF
 
-cat << EOF > ~/.config/jhbuildrc-custom
+cat << EOF > "${HOME}/.config/jhbuildrc-custom"
 use_local_modulesets = True
 modulesets_dir = '${SOURCE_DIR}/modulesets'
 setup_sdk(target="${MACOSX_DEPLOYMENT_TARGET}", architectures=["x86_64"])
@@ -275,6 +282,22 @@ do
 done
 cd ..
 
+echo 'gtk-theme-name = "Clearlooks"' >> "${HOME}/Desktop/Sylpheed.app/Contents/Resources/etc/gtk-2.0/gtkrc"
+clang "${SOURCE_DIR}/launcher/launcher.m" -o "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/${BUNDLE_EXECUTABLE}" -framework Foundation -O2 -Weverything -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -arch arm64
+cp "${SOURCE_DIR}/misc/sylpheed.icns" "${HOME}/Desktop/Sylpheed.app/Contents/Resources/sylpheed.icns"
+base64 -d -i "${SOURCE_DIR}/misc/oauth2.ini.b64" -o "${HOME}/Desktop/Sylpheed.app/Contents/Resources/oauth2.ini"
+plutil -replace LSMinimumSystemVersion -string "${MACOSX_DEPLOYMENT_TARGET}" "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
+plutil -replace LSArchitecturePriority -json '["arm64","x86_64"]' "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
+
+BUNDLE_IDENTIFIER="$(plutil -extract CFBundleIdentifier xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
+#BUNDLE_VERSION="$(plutil -extract CFBundleVersion xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
+BUNDLE_VERSION="$(plutil -extract CFBundleGetInfoString xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p' | sed 's|[, ].*||')"
+INSTALL_DIR="${PWD}/Sylpheed"
+rm -rf "${INSTALL_DIR}"
+mkdir -p "${INSTALL_DIR}"
+ditto --norsrc --noextattr --noqtn "${HOME}/Desktop/Sylpheed.app" "${INSTALL_DIR}/Sylpheed.app"
+ln -s "/Applications" "${INSTALL_DIR}/Applications"
+
 rm -rf \
     "${HOME}/.cache/g-ir-scanner" \
     "${HOME}/.cache/jhbuild" \
@@ -294,23 +317,12 @@ rm -rf \
     "${HOME}/.config/jhbuildrc-custom" \
     "${HOME}/.config/pip" \
     "${HOME}/.rustup" \
-    "${HOME}/Desktop/Sylpheed_arm64.app"
+    "${HOME}/Desktop/Sylpheed_arm64.app" \
+    "${HOME}/Desktop/Sylpheed.app" \
+    "${HOME_DEV}"
 
-echo 'gtk-theme-name = "Clearlooks"' >> "${HOME}/Desktop/Sylpheed.app/Contents/Resources/etc/gtk-2.0/gtkrc"
-clang "${SOURCE_DIR}/launcher/launcher.m" -o "${HOME}/Desktop/Sylpheed.app/Contents/MacOS/${BUNDLE_EXECUTABLE}" -framework Foundation -O2 -Weverything -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch x86_64 -arch arm64
-cp "${SOURCE_DIR}/misc/sylpheed.icns" "${HOME}/Desktop/Sylpheed.app/Contents/Resources/sylpheed.icns"
-base64 -d -i "${SOURCE_DIR}/misc/oauth2.ini.b64" -o "${HOME}/Desktop/Sylpheed.app/Contents/Resources/oauth2.ini"
-plutil -replace LSMinimumSystemVersion -string "${MACOSX_DEPLOYMENT_TARGET}" "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
-plutil -replace LSArchitecturePriority -json '["arm64","x86_64"]' "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist"
-
-BUNDLE_IDENTIFIER="$(plutil -extract CFBundleIdentifier xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
-#BUNDLE_VERSION="$(plutil -extract CFBundleVersion xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p')"
-BUNDLE_VERSION="$(plutil -extract CFBundleGetInfoString xml1 -o - "${HOME}/Desktop/Sylpheed.app/Contents/Info.plist" | sed -n 's|.*<string>\(.*\)<\/string>.*|\1|p' | sed 's|[, ].*||')"
-INSTALL_DIR="${PWD}/Sylpheed"
-rm -rf "${INSTALL_DIR}"
-mkdir -p "${INSTALL_DIR}"
-ditto --norsrc --noextattr --noqtn "${HOME}/Desktop/Sylpheed.app" "${INSTALL_DIR}/Sylpheed.app"
-ln -s "/Applications" "${INSTALL_DIR}/Applications"
+# @note Restore HOME dir because it is required for signing
+export HOME="${HOME_PREV}"
 
 function sign() {
     local max_retry=10
@@ -362,7 +374,5 @@ hdiutil create -format UDBZ -fs HFS+ -srcfolder "Sylpheed" -volname "Sylpheed" "
 sign "Sylpheed_${BUNDLE_VERSION}.dmg"
 notarize "Sylpheed_${BUNDLE_VERSION}.dmg" "${BUNDLE_IDENTIFIER}"
 
-rm -rf \
-    "${INSTALL_DIR}" \
-    "${HOME}/Desktop/Sylpheed.app"
+rm -rf "${INSTALL_DIR}"
 echo "DONE"
