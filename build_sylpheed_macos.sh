@@ -39,6 +39,9 @@ copy_bash
 sed -i '' 's|\(.*sh\.rustup\.rs.*--profile minimal\)|\1 --default-toolchain 1.73.0|' ./gtk-osx-setup.sh
 # @note Lock some Python packages to avoid error "ImportError: cannot import name 'LegacySpecifier' from 'packaging.specifiers'"
 sed -i '' 's|\($PIPENV install\)|\1 "packaging<21.3" "setuptools<69.5"|' ./gtk-osx-setup.sh
+# @note Enable error handling
+sed -i '' 's|\(#!/usr/bin/env bash\)|\1 -e -x|' ./gtk-osx-setup.sh
+sed -i '' 's/\(.*=`which [^`]*`\)/\1 || true/g' ./gtk-osx-setup.sh
 ./gtk-osx-setup.sh
 cd ..
 
