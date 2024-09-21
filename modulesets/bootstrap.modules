@@ -263,7 +263,7 @@
   </meson>
 
   <!-- https://download.gnome.org/sources/gdk-pixbuf/ -->
-  <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false">
+  <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false -Dpng=enabled -Dtiff=enabled -Djpeg=enabled -Dgif=enabled -Dothers=enabled">
     <branch module="gdk-pixbuf/2.42/gdk-pixbuf-${version}.tar.xz" version="2.42.12">
       <patch file="gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
