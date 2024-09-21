@@ -34,7 +34,6 @@
         <dep package="automake"/>
         <dep package="bison"/>
         <dep package="pkg-config"/>
-        <dep package="m4-common"/>
         <dep package="intltool"/>
         <dep package="libxml2"/>
         <dep package="libxslt"/>
