@@ -14,7 +14,6 @@
   <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
   <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
   <repository type="tarball" name="github-tarball" href="https://github.com/"/>
-  <repository type="tarball" name="openssl" href="https://www.openssl.org/source/"/>
   <repository type="tarball" name="compface" href="http://ftp.xemacs.org/pub/xemacs/aux/"/>
   <repository type="tarball" name="sqlite" href="https://www.sqlite.org/"/>
   <repository type="tarball" name="gnupg" href="https://www.gnupg.org/ftp/gcrypt/"/>
@@ -84,7 +83,7 @@
 
   <!-- https://ftp.gnu.org/gnu/automake/ -->
   <autotools id="automake" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org" module="automake/automake-${version}.tar.gz" version="1.16.5"/>
+    <branch repo="ftp.gnu.org" module="automake/automake-${version}.tar.gz" version="1.17"/>
     <dependencies>
       <dep package="autoconf"/>
     </dependencies>
@@ -107,7 +106,7 @@
 
   <!-- https://download.gnome.org/sources/libxml2/ -->
   <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxml2/2.13/libxml2-${version}.tar.xz" version="2.13.1"/>
+    <branch module="libxml2/2.13/libxml2-${version}.tar.xz" version="2.13.4"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -115,7 +114,7 @@
 
   <!-- https://download.gnome.org/sources/libxslt/ -->
   <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
-    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.41"/>
+    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.42"/>
     <after>
       <dep package="xz"/>
     </after>
@@ -129,14 +128,14 @@
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
   <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
-    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.43">
+    <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.44">
       <patch file="0001-LIBPNG-add-macOS-10.13-guard-for-inflateValidate.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://github.com/libexpat/libexpat/releases/ -->
   <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_2/expat-${version}.tar.bz2" version="2.6.2"/>
+    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_3/expat-${version}.tar.bz2" version="2.6.3"/>
   </autotools>
 
   <!-- https://www.cairographics.org/releases/ -->
@@ -180,7 +179,7 @@
 
   <!-- https://download.osgeo.org/libtiff/ -->
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x --disable-static">
-    <branch version="4.6.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
+    <branch version="4.7.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
       <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -208,7 +207,7 @@
 
   <!-- https://download.gnome.org/sources/glib/ -->
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
-    <branch module="glib/2.80/glib-${version}.tar.xz" version="2.80.3">
+    <branch module="glib/2.82/glib-${version}.tar.xz" version="2.82.1">
       <patch file="0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -219,7 +218,7 @@
 
   <!-- https://www.cairographics.org/releases/ -->
   <meson id="cairo" mesonargs="--buildtype=release -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch repo="cairo" module="cairo-${version}.tar.xz" version="1.18.0"/>
+    <branch repo="cairo" module="cairo-${version}.tar.xz" version="1.18.2"/>
     <dependencies>
       <dep package="xz"/>
       <dep package="pixman"/>
@@ -229,7 +228,7 @@
 
   <!-- https://github.com/harfbuzz/harfbuzz/releases/ -->
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="8.5.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="9.0.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -370,7 +369,7 @@
   <!-- https://www.openssl.org/source/ -->
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch module="openssl-${version}.tar.gz" version="3.3.1" repo="openssl"/>
+    <branch repo="github-tarball" module="openssl/openssl/releases/download/openssl-${version}/openssl-${version}.tar.gz" version="3.3.2"/>
   </autotools>
 
   <!-- http://ftp.xemacs.org/pub/xemacs/aux/ -->
@@ -404,17 +403,21 @@
 
   <!-- https://www.sqlite.org/download.html -->
   <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
-    <branch repo="sqlite" module="2024/sqlite-autoconf-3460000.tar.gz" version="3.46.0"/>
+    <branch repo="sqlite" module="2024/sqlite-autoconf-3460100.tar.gz" version="3.46.1"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
   <autotools id="libgpg-error" autogenargs="--disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
-    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.49"/>
+    <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.50">
+      <!-- https://dev.gnupg.org/T7169 -->
+      <patch file="patch-src-spawn-posix.c.diff" strip="0"/>
+    </branch>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libassuan/ -->
-  <autotools id="libassuan" autogenargs="--disable-static --disable-doc" autogen-sh="configure">
-    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="2.5.7"/>
+  <!-- CFLAGS=-std=gnu89: https://lists.gnupg.org/pipermail/gnupg-devel/2024-July/035614.html -->
+  <autotools id="libassuan" autogenargs="--disable-static --disable-doc CFLAGS=-std=gnu89" autogen-sh="configure">
+    <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="3.0.1"/>
     <dependencies>
       <dep package="libgpg-error"/>
     </dependencies>
