@@ -15,8 +15,9 @@ rm -rf "${HOME_DEV}"
 mkdir -p "${HOME_DEV}"
 
 export MACOSX_DEPLOYMENT_TARGET="10.10"
+export PYTHON_VERSION="3.11.11"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:"
-export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/3.10.2/lib/pkgconfig:"
+export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/${PYTHON_VERSION:=3.10.2}/lib/pkgconfig:"
 export CFLAGS="-Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-implicit-int"
 CFLAGS_TARGET="-Werror=unguarded-availability-new"
 
