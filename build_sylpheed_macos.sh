@@ -101,7 +101,7 @@ curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz
 tar -xvpf sylpheed-3.8.0beta1.tar.bz2
 cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" jhbuild run ./makeosx.sh --enable-oniguruma --build=aarch64-apple-darwin
+CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" jhbuild run ./makeosx.sh --disable-dependency-tracking --enable-oniguruma --build=aarch64-apple-darwin
 cd ..
 
 curl -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
@@ -128,7 +128,7 @@ curl -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
 tar -xvpf sylfilter-0.8.tar.gz
 cd sylfilter-0.8
 find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
+jhbuild run ./configure --prefix="${HOME}/gtk/inst" --disable-dependency-tracking --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 jhbuild run clang \
     -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
     lib/*.c lib/filters/*.c src/*.c ${CFLAGS_TARGET} \
@@ -217,7 +217,7 @@ CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" arch -x86_64 jhbuild bootstrap
 tar -xvpf sylpheed-3.8.0beta1.tar.bz2
 cd sylpheed-3.8.0beta1
 find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" arch -x86_64 jhbuild run ./makeosx.sh --enable-oniguruma --build=x86_64-apple-darwin
+CFLAGS="${CFLAGS} ${CFLAGS_TARGET}" arch -x86_64 jhbuild run ./makeosx.sh --disable-dependency-tracking --enable-oniguruma --build=x86_64-apple-darwin
 cd ..
 
 tar -xvpf qdbm-1.8.78.tar.gz
@@ -242,7 +242,7 @@ cd ..
 tar -xvpf sylfilter-0.8.tar.gz
 cd sylfilter-0.8
 find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
-arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
+arch -x86_64 jhbuild run ./configure --prefix="${HOME}/gtk/inst" --disable-dependency-tracking --enable-shared --disable-static --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
 arch -x86_64 jhbuild run clang \
     -O3 -DNDEBUG -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} \
     lib/*.c lib/filters/*.c src/*.c ${CFLAGS_TARGET} \

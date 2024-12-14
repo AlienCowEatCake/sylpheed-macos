@@ -49,21 +49,21 @@
   </metamodule>
 
   <!-- https://tukaani.org/xz/ -->
-  <autotools id="xz" autogen-sh="configure" autogenargs="--disable-doc --disable-static">
+  <autotools id="xz" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-doc">
     <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.6.2">
       <patch file="0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/gettext/ -->
-  <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-static">
+  <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.22.5">
       <patch file="0001-GETTEXT-disable-futimens-utimensat.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/m4/ -->
-  <autotools id="m4" autogen-sh="configure" bootstrap="true">
+  <autotools id="m4" autogen-sh="configure" bootstrap="true" autogenargs="--disable-dependency-tracking">
     <branch repo="ftp.gnu.org" module="m4/m4-${version}.tar.gz" version="1.4.19"/>
   </autotools>
 
@@ -76,7 +76,7 @@
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/libtool/ -->
-  <autotools id="libtool" autogen-sh="configure" bootstrap="true">
+  <autotools id="libtool" autogen-sh="configure" bootstrap="true" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="ftp.gnu.org" module="libtool/libtool-${version}.tar.gz" version="2.4.7"/>
   </autotools>
 
@@ -89,12 +89,12 @@
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/bison/ -->
-  <autotools id="bison" autogen-sh="configure">
+  <autotools id="bison" autogen-sh="configure" autogenargs="--disable-dependency-tracking">
     <branch repo="ftp.gnu.org" module="bison/bison-${version}.tar.gz" version="3.8.2"/>
   </autotools>
 
   <!-- https://pkg-config.freedesktop.org/releases/ -->
-  <autotools id="pkg-config" autogen-sh="configure" autogenargs="--with-internal-glib">
+  <autotools id="pkg-config" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --with-internal-glib">
     <branch repo="pkgconfig.freedesktop.org" module="pkg-config-${version}.tar.gz" version="0.29.2"/>
   </autotools>
 
@@ -104,7 +104,7 @@
   </autotools>
 
   <!-- https://download.gnome.org/sources/libxml2/ -->
-  <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-static">
+  <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch module="libxml2/2.13/libxml2-${version}.tar.xz" version="2.13.4"/>
     <after>
       <dep package="xz"/>
@@ -112,7 +112,7 @@
   </autotools>
 
   <!-- https://download.gnome.org/sources/libxslt/ -->
-  <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-static">
+  <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.42"/>
     <after>
       <dep package="xz"/>
@@ -121,19 +121,19 @@
 
   <!-- https://github.com/libffi/libffi/releases/ -->
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
-  <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-multi-os-directory --disable-builddir --disable-static">
+  <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-multi-os-directory --disable-builddir">
     <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.4.6"/>
   </autotools>
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
-  <autotools id="libpng" autogen-sh="configure" autogenargs="--enable-shared --disable-static">
+  <autotools id="libpng" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="sourceforge" module="libpng/libpng-${version}.tar.gz" version="1.6.44">
       <patch file="0001-LIBPNG-add-macOS-10.13-guard-for-inflateValidate.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://github.com/libexpat/libexpat/releases/ -->
-  <autotools id="expat" autogen-sh="configure" autogenargs="--without-examples --without-tests --without-docbook --disable-static">
+  <autotools id="expat" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --without-examples --without-tests --without-docbook">
     <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_6_3/expat-${version}.tar.bz2" version="2.6.3"/>
   </autotools>
 
@@ -149,12 +149,12 @@
   </meson>
 
   <!-- https://ftp.gnu.org/gnu/libtasn1/ -->
-  <autotools id="libtasn1" autogen-sh="configure" autogenargs="--disable-static">
+  <autotools id="libtasn1" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-doc">
     <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz" version="4.19.0"/>
   </autotools>
 
   <!-- https://www.ijg.org/ -->
-  <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-static">
+  <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9f" checkoutdir="jpeg-${version}"/>
   </autotools>
 
@@ -177,7 +177,7 @@
   </metamodule>
 
   <!-- https://download.osgeo.org/libtiff/ -->
-  <autotools id="libtiff" autogen-sh="configure" autogenargs="--without-x --disable-static">
+  <autotools id="libtiff" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-tools --disable-tests --disable-docs --disable-sphinx --without-x">
     <branch version="4.7.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
       <patch file="tiff-nohtml.patch" strip="1"/>
     </branch>
@@ -200,7 +200,7 @@
   </metamodule>
 
   <!-- https://github.com/PCRE2Project/pcre2/releases/ -->
-  <autotools id="libpcre2" autogen-sh="configure" autogenargs="--enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit --disable-static">
+  <autotools id="libpcre2" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit">
     <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.44"/>
   </autotools>
 
@@ -277,7 +277,7 @@
   </meson>
 
   <!-- https://download.gnome.org/sources/gtk+/ -->
-  <autotools id="gtk+-2.0" autogen-sh="autoreconf" autogenargs="--with-gdktarget=quartz --enable-quartz-relocation --disable-introspection --disable-visibility">
+  <autotools id="gtk+-2.0" autogen-sh="autoreconf" autogenargs="--disable-dependency-tracking --disable-static --with-gdktarget=quartz --enable-quartz-relocation --disable-introspection --disable-visibility">
     <branch module="gtk+/2.24/gtk+-${version}.tar.xz" version="2.24.33">
       <patch file="0008-Implement-GtkDragSourceOwner-pasteboardChangedOwner.patch" strip="1"/>
       <patch file="0006-Bug-658722-Drag-and-Drop-sometimes-stops-working.patch" strip="1"/>
@@ -306,7 +306,7 @@
   </autotools>
 
   <!-- https://download.gnome.org/sources/gtk-mac-integration/ -->
-  <autotools id="gtk-mac-integration" autogen-sh="configure" autogenargs="--disable-python">
+  <autotools id="gtk-mac-integration" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-python">
     <branch module="gtk-mac-integration/3.0/gtk-mac-integration-${version}.tar.xz" version="3.0.1">
       <patch file="gtk-mac-integration-work-around-svg-locale-bug.patch" strip="1"/>
     </branch>
@@ -333,7 +333,7 @@
   </autotools>
 
   <!-- http://tango.freedesktop.org/releases/ - 403 error at 2024-02-03 -->
-  <autotools id="tango-icon-theme" autogenargs="--disable-icon-framing" autogen-sh="configure">
+  <autotools id="tango-icon-theme" autogenargs="--disable-dependency-tracking --disable-icon-framing" autogen-sh="configure">
     <!-- <branch repo="tango.freedesktop.org" version="0.8.90" module="tango-icon-theme-${version}.tar.gz"/> -->
     <branch repo="snapshot.debian.org" version="0.8.90" module="debian/20090315T155958Z/pool/main/t/tango-icon-theme/tango-icon-theme_${version}.orig.tar.gz" checkoutdir="tango-icon-theme-${version}"/>
     <dependencies>
@@ -343,7 +343,7 @@
   </autotools>
 
   <!-- https://download.gnome.org/sources/gtk-engines/ -->
-  <autotools id="gtk-engines" autogen-sh="configure" autogenargs="--disable-crux --disable-hc --disable-industrial --disable-mist --disable-redmond --disable-glide --disable-thinice">
+  <autotools id="gtk-engines" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-crux --disable-hc --disable-industrial --disable-mist --disable-redmond --disable-glide --disable-thinice">
     <branch module="gtk-engines/2.20/gtk-engines-${version}.tar.bz2" version="2.20.2"/>
     <after>
       <dep package="meta-gtk-osx-gtk2"/>
@@ -381,12 +381,12 @@
   </autotools>
 
   <!-- https://github.com/kkos/oniguruma/releases/ -->
-  <autotools id="oniguruma" autogen-sh="configure" autogenargs="--disable-static --enable-shared">
+  <autotools id="oniguruma" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="github-tarball" module="kkos/oniguruma/releases/download/v${version}/onig-${version}.tar.gz" version="6.9.9"/>
   </autotools>
 
   <!-- https://gtkspell.sourceforge.net/ -->
-  <autotools id="gtkspell" autogen-sh="configure" autogenargs="--disable-gtk-doc --disable-static --enable-shared" supports-non-srcdir-builds="no">
+  <autotools id="gtkspell" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-gtk-doc" supports-non-srcdir-builds="no">
     <branch repo="sourceforge" module="gtkspell/gtkspell-${version}.tar.gz" version="2.0.16">
       <!-- https://github.com/macports/macports-ports/blob/master/x11/gtkspell2/Portfile -->
       <patch file="gtkspell-patch-Makefile.in.diff" strip="0"/>
@@ -401,12 +401,12 @@
   </autotools>
 
   <!-- https://www.sqlite.org/download.html -->
-  <autotools id="sqlite" autogenargs="--enable-threadsafe --disable-static" autogen-sh="configure">
+  <autotools id="sqlite" autogenargs="--disable-dependency-tracking --disable-static --enable-threadsafe" autogen-sh="configure">
     <branch repo="sqlite" module="2024/sqlite-autoconf-3460100.tar.gz" version="3.46.1"/>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
-  <autotools id="libgpg-error" autogenargs="--disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
+  <autotools id="libgpg-error" autogenargs="--disable-dependency-tracking --disable-static --disable-doc --disable-tests --enable-install-gpg-error-config" autogen-sh="configure">
     <branch repo="gnupg" module="libgpg-error/libgpg-error-${version}.tar.bz2" version="1.50">
       <!-- https://dev.gnupg.org/T7169 -->
       <patch file="patch-src-spawn-posix.c.diff" strip="0"/>
@@ -415,7 +415,7 @@
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libassuan/ -->
   <!-- CFLAGS=-std=gnu89: https://lists.gnupg.org/pipermail/gnupg-devel/2024-July/035614.html -->
-  <autotools id="libassuan" autogenargs="--disable-static --disable-doc CFLAGS=-std=gnu89" autogen-sh="configure">
+  <autotools id="libassuan" autogenargs="--disable-dependency-tracking --disable-static --disable-doc CFLAGS=-std=gnu89" autogen-sh="configure">
     <branch repo="gnupg" module="libassuan/libassuan-${version}.tar.bz2" version="3.0.1"/>
     <dependencies>
       <dep package="libgpg-error"/>
@@ -423,7 +423,7 @@
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/gpgme/ -->
-  <autotools id="gpgme" autogenargs="--disable-static --enable-languages='' --disable-gpgconf-test --disable-gpg-test --disable-gpgsm-test --disable-g13-test" autogen-sh="configure">
+  <autotools id="gpgme" autogenargs="--disable-dependency-tracking --disable-static --enable-languages='' --disable-gpgconf-test --disable-gpg-test --disable-gpgsm-test --disable-g13-test" autogen-sh="configure">
     <branch repo="gnupg" module="gpgme/gpgme-${version}.tar.bz2" version="1.23.2"/>
     <dependencies>
       <dep package="libassuan"/>
