@@ -1,4 +1,4 @@
-From 26be46300366b5f4056f8b9b5032482083d072b4 Mon Sep 17 00:00:00 2001
+From 5bae723a0d542ce1c78d769346c3c09275198508 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 12 Jun 2022 03:38:53 +0700
 Subject: [PATCH 10/19] Add more options available in macOS for Web browser and
@@ -6,8 +6,8 @@ Subject: [PATCH 10/19] Add more options available in macOS for Web browser and
 
 ---
  libsylph/prefs_common.c   |  4 ++++
- src/prefs_common_dialog.c | 29 ++++++++++++++++++++++++++++-
- 2 files changed, 32 insertions(+), 1 deletion(-)
+ src/prefs_common_dialog.c | 47 ++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 50 insertions(+), 1 deletion(-)
 
 diff --git a/libsylph/prefs_common.c b/libsylph/prefs_common.c
 index 8ed74a3..59dc6a2 100644
@@ -32,10 +32,10 @@ index 8ed74a3..59dc6a2 100644
  	{"ext_editor_command", "gedit %s", &prefs_common.ext_editor_cmd,
  #endif
 diff --git a/src/prefs_common_dialog.c b/src/prefs_common_dialog.c
-index b46c9b7..7c8788f 100644
+index b46c9b7..27f1d51 100644
 --- a/src/prefs_common_dialog.c
 +++ b/src/prefs_common_dialog.c
-@@ -3021,6 +3021,19 @@ static GtkWidget *prefs_extcmd_create(void)
+@@ -3021,6 +3021,34 @@ static GtkWidget *prefs_extcmd_create(void)
  	gtkut_combo_set_items (GTK_COMBO (uri_combo),
  #if defined(G_OS_WIN32) || defined(__APPLE__)
  			       _("(Default browser)"),
@@ -44,18 +44,33 @@ index b46c9b7..7c8788f 100644
 +			       "open -a 'Google Chrome' '%s'",
 +			       "open -a 'Chromium' '%s'",
 +			       "open -a 'Firefox' '%s'",
++			       "open -a 'Firefox Developer Edition' '%s'",
++			       "open -a 'Firefox Nightly' '%s'",
++			       "open -a 'Waterfox' '%s'",
++			       "open -a 'Pale Moon' '%s'",
++			       "open -a 'Basilisk' '%s'",
++			       "open -a 'LibreWolf' '%s'",
++			       "open -a 'Floorp' '%s'",
 +			       "open -a 'Tor Browser' '%s'",
++			       "open -a 'DuckDuckGo' '%s'",
 +			       "open -a 'Microsoft Edge' '%s'",
 +			       "open -a 'Internet Explorer' '%s'",
 +			       "open -a 'Opera' '%s'",
++			       "open -a 'Opera Air' '%s'",
++			       "open -a 'Opera GX' '%s'",
++			       "open -a 'Opera Beta' '%s'",
++			       "open -a 'Opera Developer' '%s'",
 +			       "open -a 'Vivaldi' '%s'",
++			       "open -a 'Arc' '%s'",
 +			       "open -a 'Brave Browser' '%s'",
++			       "open -a 'Carbon' '%s'",
++			       "open -a 'Maxthon' '%s'",
 +			       "open -a 'Yandex' '%s'",
 +#  endif
  #else
  			       DEFAULT_BROWSER_CMD,
  			       "sensible-browser '%s'",
-@@ -3048,7 +3061,21 @@ static GtkWidget *prefs_extcmd_create(void)
+@@ -3048,7 +3076,24 @@ static GtkWidget *prefs_extcmd_create(void)
  #ifdef G_OS_WIN32
  			       "notepad '%s'",
  #elif defined(__APPLE__)
@@ -66,10 +81,13 @@ index b46c9b7..7c8788f 100644
 +			       "open -n -W -a 'gedit' --args --new-window --wait --standalone '%s'",
 +			       "open -n -W -a 'kate' --args --startanon --new '%s'",
 +			       "open -n -W -a 'CudaText' --args -n -nh -ns '%s'",
++			       "open -n -W -a 'NotepadNext' --args '%s'",
 +			       "'/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code' --new-window --wait '%s'",
 +			       "'/Applications/VSCodium.app/Contents/Resources/app/bin/codium' --new-window --wait '%s'",
 +			       "'/Applications/Atom.app/Contents/Resources/app/atom.sh' --new-window --wait '%s'",
++			       "'/Applications/CotEditor.app/Contents/SharedSupport/bin/cot' --wait --new '%s'",
 +			       "'/Applications/TextMate.app/Contents/MacOS/mate' --wait '%s'",
++			       "'/Applications/Zed.app/Contents/MacOS/cli' --wait --new '%s'",
 +			       "xed --wait '%s'", /* Xcode */
 +			       "open -n -W -a 'Brackets' '%s'",
 +			       "'/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl' --new-window --wait '%s'",
@@ -79,5 +97,5 @@ index b46c9b7..7c8788f 100644
  			       "gedit %s",
  			       "kedit %s",
 -- 
-2.37.1 (Apple Git-137.1)
+2.49.0
 
