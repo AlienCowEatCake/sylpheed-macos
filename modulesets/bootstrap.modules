@@ -293,6 +293,10 @@
       <patch file="gtk+-2.0/gdkimage.patch" strip="1"/>
       <!-- https://gist.github.com/brandt/3051415#file-gtk-2-24-10_nodocs-patch -->
       <patch file="gtk+-2.0/gtk+-2.24.33_nodocs.patch" strip="1"/>
+      <!-- https://gitlab.gnome.org/GNOME/gtk/-/commit/c1fa916e88de20fc61dc06d3ff9f26722effa0df -->
+      <patch file="gtk+-2.0/gtkfilechooserdefault.c.patch" strip="0"/>
+      <patch file="gtk+-2.0/gtkfilesystemmodel.c.patch" strip="0"/>
+      <patch file="gtk+-2.0/gtkpathbar.c.patch" strip="0"/>
     </branch>
     <dependencies>
       <dep package="glib"/>
