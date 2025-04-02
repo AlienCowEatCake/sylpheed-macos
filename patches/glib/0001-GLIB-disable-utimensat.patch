@@ -1,0 +1,47 @@
+From a8e1a149a1debb288276f41cc8074f3eb2c16784 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 26 Sep 2022 09:33:09 +0700
+Subject: [PATCH] GLIB: disable utimensat
+
+---
+ meson.build | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/meson.build b/meson.build
+index ddd099858..1022b2713 100644
+--- a/meson.build
++++ b/meson.build
+@@ -752,7 +752,8 @@ functions = [
+   'unsetenv',
+   'uselocale',
+   'utimes',
+-  'utimensat',
++  # warning: 'utimensat' is only available on macOS 10.11 or newer [-Wunguarded-availability-new]
++  # 'utimensat',
+   'valloc',
+   'vasprintf',
+   'vsnprintf',
+@@ -983,13 +984,13 @@ glib_have_cocoa = false
+ if host_system == 'darwin'
+   add_languages('objc', native: false, required: true)
+   objcc = meson.get_compiler('objc')
+-  if not objcc.compiles('''#include <AvailabilityMacros.h>
+-                           #if MAC_OS_X_VERSION_MIN_REQUIRED < 101300
+-                           #error message "GLib requires macOS 10.13 or later."
+-                           #endif''',
+-                         name : 'macOS 10.13 or later')
+-    error('GLib requires macOS 10.13 or later.')
+-  endif
++  # if not objcc.compiles('''#include <AvailabilityMacros.h>
++  #                          #if MAC_OS_X_VERSION_MIN_REQUIRED < 101300
++  #                          #error message "GLib requires macOS 10.13 or later."
++  #                          #endif''',
++  #                        name : 'macOS 10.13 or later')
++  #   error('GLib requires macOS 10.13 or later.')
++  # endif
+ 
+   add_project_arguments(objcc.get_supported_arguments(warning_objc_args), language: 'objc')
+ 
+-- 
+2.49.0
+

@@ -1,4 +1,4 @@
-From 38a2bd810baf13107a87eb86087d0a24c47b0396 Mon Sep 17 00:00:00 2001
+From 595db5e4d91970f916805aa726b9d87ee98502fb Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 26 Sep 2022 09:08:56 +0700
 Subject: [PATCH] GETTEXT: disable futimens/utimensat
@@ -8,10 +8,10 @@ Subject: [PATCH] GETTEXT: disable futimens/utimensat
  1 file changed, 6 insertions(+)
 
 diff --git a/gettext-tools/config.h.in b/gettext-tools/config.h.in
-index 030077b..346fec2 100644
+index 97b98e6..a675148 100644
 --- a/gettext-tools/config.h.in
 +++ b/gettext-tools/config.h.in
-@@ -1044,7 +1044,10 @@
+@@ -1635,7 +1635,10 @@
  #undef HAVE_FUNLOCKFILE
  
  /* Define to 1 if you have the `futimens' function. */
@@ -22,8 +22,8 @@ index 030077b..346fec2 100644
  
  /* Define to 1 if you have the `futimes' function. */
  #undef HAVE_FUTIMES
-@@ -1697,7 +1700,10 @@
- #undef HAVE_UTIME
+@@ -2409,7 +2412,10 @@
+ #undef HAVE_UTIMENS
  
  /* Define to 1 if you have the `utimensat' function. */
 +/*
@@ -34,5 +34,5 @@ index 030077b..346fec2 100644
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H
 -- 
-2.37.0 (Apple Git-136)
+2.49.0
 
