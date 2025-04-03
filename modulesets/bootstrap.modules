@@ -405,7 +405,10 @@
 
   <!-- https://www.sqlite.org/download.html -->
   <autotools id="sqlite" autogenargs="--disable-static --enable-threadsafe" autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s %(autogenargs)s" autogen-sh="configure">
-    <branch repo="sqlite" module="2025/sqlite-autoconf-3490100.tar.gz" version="3.49.1"/>
+    <branch repo="sqlite" module="2025/sqlite-autoconf-3490100.tar.gz" version="3.49.1">
+      <!-- https://gitlab.gnome.org/GNOME/gtk-osx/-/commit/62ec4f62c89d1b41a5d827782f113ee180a0f258 -->
+      <patch file="sqlite/sqlite3-install-name.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <!-- https://www.gnupg.org/ftp/gcrypt/libgpg-error/ -->
