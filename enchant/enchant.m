@@ -39,8 +39,10 @@ static BOOL ENCHANT_DEBUG = NO;
 
 #define dprintf(fmt, ...) do { \
     if(ENCHANT_DEBUG) { \
-        fprintf(stderr, "[ENCHANT_DEBUG] %s:%d: " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
-        fflush(stderr); \
+        @autoreleasepool { \
+            fprintf(stderr, "[ENCHANT_DEBUG] %s:%d: " fmt "\n", __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+            fflush(stderr); \
+        } \
     } \
 } while (0)
 
@@ -52,7 +54,7 @@ struct _EnchantBroker
 struct _EnchantDict
 {
     NSSpellChecker *checker;
-    NSString *language;
+    NSArray<NSString*> *languages;
     NSMutableSet<NSString*> *ignores;
 };
 
@@ -81,10 +83,22 @@ EnchantDict *enchant_broker_request_dict(EnchantBroker *broker, const char *cons
     EnchantDict *dict = (EnchantDict*)malloc(sizeof(EnchantDict));
     dict->checker = broker->checker;
     @autoreleasepool {
-        dict->language = [[NSString alloc] initWithUTF8String:tag];
+        NSMutableArray<NSString*> *languages = [NSMutableArray array];
+        NSArray<NSString*> *subtags = [[NSString stringWithUTF8String:tag] componentsSeparatedByString:@","];
+        for(NSString *subtag in subtags)
+        {
+            [dict->checker setAutomaticallyIdentifiesLanguages:NO];
+            BOOL ok = [dict->checker setLanguage:[subtag stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
+            if(ok)
+                [languages addObject:[dict->checker language]];
+        }
+        if([languages count] == 0)
+        {
+            free(dict);
+            return NULL;
+        }
+        dict->languages = [[NSArray alloc] initWithArray:languages];
         dict->ignores = [[NSMutableSet alloc] init];
-        [dict->checker setAutomaticallyIdentifiesLanguages:NO];
-        [dict->checker setLanguage:dict->language];
     }
     return dict;
 }
@@ -94,14 +108,14 @@ void enchant_broker_free_dict(EnchantBroker *broker, EnchantDict *dict)
     dprintf();
     if(!broker || !dict)
         return;
-    [dict->language release];
+    [dict->languages release];
     [dict->ignores release];
     free(dict);
 }
 
 int enchant_dict_check(EnchantDict *dict, const char *const word, ssize_t len)
 {
-    dprintf("lang=%s, word=%s", [dict->language UTF8String], (word ? word : "NULL"));
+    dprintf("lang=%s, word=%s", (dict ? [[dict->languages componentsJoinedByString:@","] UTF8String] : "NULL"), (word ? word : "NULL"));
     if(!dict || !word)
         return -1;
     @autoreleasepool {
@@ -113,15 +127,23 @@ int enchant_dict_check(EnchantDict *dict, const char *const word, ssize_t len)
         if([dict->ignores containsObject:str])
         {
             [str release];
-            dprintf("lang=%s, result=%s", [[dict->checker language] UTF8String], ("IGNORED"));
+            dprintf("lang=%s, result=%s", [[dict->languages componentsJoinedByString:@","] UTF8String], "IGNORED");
             return 0;
         }
-        [dict->checker setAutomaticallyIdentifiesLanguages:NO];
-        [dict->checker setLanguage:dict->language];
-        NSRange result = [dict->checker checkSpellingOfString:str startingAt:0];
+        BOOL check_ok = NO;
+        for(NSString *language in dict->languages)
+        {
+            [dict->checker setAutomaticallyIdentifiesLanguages:NO];
+            [dict->checker setLanguage:language];
+            NSRange result = [dict->checker checkSpellingOfString:str startingAt:0];
+            dprintf("lang=%s, result=%s", [language UTF8String], (result.length ? "BAD" : "GOOD"));
+            if(result.length)
+                continue;
+            check_ok = YES;
+            break;
+        }
         [str release];
-        dprintf("lang=%s, result=%s", [[dict->checker language] UTF8String], (result.length ? "BAD" : "GOOD"));
-        if(result.length)
+        if(!check_ok)
             return 1;
     }
     return 0;
@@ -129,7 +151,7 @@ int enchant_dict_check(EnchantDict *dict, const char *const word, ssize_t len)
 
 char **enchant_dict_suggest(EnchantDict *dict, const char *const word, ssize_t len, size_t *out_n_suggs)
 {
-    dprintf("lang=%s, word=%s", [dict->language UTF8String], (word ? word : "NULL"));
+    dprintf("lang=%s, word=%s", (dict ? [[dict->languages componentsJoinedByString:@","] UTF8String] : "NULL"), (word ? word : "NULL"));
     if(!dict || !word || !out_n_suggs)
         return NULL;
     *out_n_suggs = 0;
@@ -139,20 +161,27 @@ char **enchant_dict_suggest(EnchantDict *dict, const char *const word, ssize_t l
         NSString *str = [[NSString alloc] initWithBytes:word length:(NSUInteger)len encoding:NSUTF8StringEncoding];
         if(!str)
             return NULL;
-        [dict->checker setAutomaticallyIdentifiesLanguages:NO];
-        [dict->checker setLanguage:dict->language];
         NSRange range = NSMakeRange(0, [str length]);
-        NSArray<NSString *>* guesses = [dict->checker guessesForWordRange:range inString:str language:dict->language inSpellDocumentWithTag:0];
+        NSMutableArray<NSString*> *guesses = [NSMutableArray array];
+        for(NSString *language in dict->languages)
+        {
+            [dict->checker setAutomaticallyIdentifiesLanguages:NO];
+            [dict->checker setLanguage:language];
+            NSArray<NSString*> *suggestions = [dict->checker guessesForWordRange:range inString:str language:language inSpellDocumentWithTag:0];
+            [guesses addObjectsFromArray:suggestions];
+            for(NSString* suggestion in suggestions)
+                dprintf("lang=%s, suggest=%s", [language UTF8String], [suggestion UTF8String]);
+        }
         [str release];
         *out_n_suggs = [guesses count];
         char **result = (char**)malloc((*out_n_suggs + 1) * sizeof(char*));
         char **curr = result;
-        for(NSString* guess in guesses)
+        for(NSString *guess in guesses)
         {
             const NSUInteger guess_len = [guess lengthOfBytesUsingEncoding:NSUTF8StringEncoding] + 1;
             *curr = (char*)malloc(sizeof(char) * guess_len);
             [guess getCString:(*curr) maxLength:guess_len encoding:NSUTF8StringEncoding];
-            dprintf("lang=%s, guess_len=%lu, result=%s", [[dict->checker language] UTF8String], (unsigned long)guess_len, *curr);
+            dprintf("lang=%s, guess_len=%lu, result=%s", [[dict->languages componentsJoinedByString:@","] UTF8String], (unsigned long)guess_len, *curr);
             ++curr;
         }
         *curr = NULL;
@@ -163,7 +192,7 @@ char **enchant_dict_suggest(EnchantDict *dict, const char *const word, ssize_t l
 
 void enchant_dict_add(EnchantDict *dict, const char *const word, ssize_t len)
 {
-    dprintf("lang=%s, word=%s", [dict->language UTF8String], (word ? word : "NULL"));
+    dprintf("lang=%s, word=%s", (dict ? [[dict->languages componentsJoinedByString:@","] UTF8String] : "NULL"), (word ? word : "NULL"));
     if(!dict || !word)
         return;
     @autoreleasepool {
@@ -172,6 +201,9 @@ void enchant_dict_add(EnchantDict *dict, const char *const word, ssize_t len)
         NSString *str = [[NSString alloc] initWithBytes:word length:(NSUInteger)len encoding:NSUTF8StringEncoding];
         if(!str)
             return;
+        NSString *language = dict->languages[0];
+        [dict->checker setAutomaticallyIdentifiesLanguages:NO];
+        [dict->checker setLanguage:language];
         [dict->checker learnWord:str];
         [str release];
     }
@@ -179,7 +211,7 @@ void enchant_dict_add(EnchantDict *dict, const char *const word, ssize_t len)
 
 void enchant_dict_add_to_session(EnchantDict *dict, const char *const word, ssize_t len)
 {
-    dprintf("lang=%s, word=%s", [dict->language UTF8String], (word ? word : "NULL"));
+    dprintf("lang=%s, word=%s", (dict ? [[dict->languages componentsJoinedByString:@","] UTF8String] : "NULL"), (word ? word : "NULL"));
     if(!dict || !word)
         return;
     @autoreleasepool {
@@ -195,7 +227,7 @@ void enchant_dict_add_to_session(EnchantDict *dict, const char *const word, ssiz
 
 void enchant_dict_store_replacement(EnchantDict *dict, const char *const mis, ssize_t mis_len, const char *const cor, ssize_t cor_len)
 {
-    dprintf("lang=%s, mis=%s, cor=%s", [dict->language UTF8String], (mis ? mis : "NULL"), (cor ? cor : "NULL"));
+    dprintf("lang=%s, mis=%s, cor=%s", (dict ? [[dict->languages componentsJoinedByString:@","] UTF8String] : "NULL"), (mis ? mis : "NULL"), (cor ? cor : "NULL"));
     dprintf("NOT_IMPLEMENTED");
     (void)(dict);
     (void)(mis);
@@ -220,8 +252,9 @@ void enchant_dict_describe(EnchantDict *dict, EnchantDictDescribeFn fn, void *us
     if(!dict || !fn)
         return;
     @autoreleasepool {
-        dprintf("lang=%s", [dict->language UTF8String]);
-        fn([dict->language UTF8String], "AppleSpell", "AppleSpell Provider", "enchant_applespell.so", user_data);
+        NSString *language = dict->languages[0];
+        dprintf("lang=%s", [language UTF8String]);
+        fn([language UTF8String], "AppleSpell", "AppleSpell Provider", "enchant_applespell.so", user_data);
     }
 }
 
