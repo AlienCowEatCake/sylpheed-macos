@@ -6,11 +6,7 @@ clang enchant.m -O3 \
     -mmacos-version-min=10.9 \
     -framework AppKit \
     -framework Foundation \
-    -Weverything \
-    -Wno-gnu-zero-variadic-macro-arguments \
-    -Wno-documentation-unknown-command \
-    -Wno-poison-system-directories \
-    -Wno-declaration-after-statement \
+    -Wall -Wextra \
     -o libenchant-2.dylib \
     -install_name "${PWD}/libenchant-2.dylib"
 */
