@@ -54,7 +54,7 @@ sed -i '' 's|\(.*sh\.rustup\.rs.*--profile minimal\)|\1 --default-toolchain 1.73
 # @note Lock some Python packages to avoid error "ImportError: cannot import name 'LegacySpecifier' from 'packaging.specifiers'"
 sed -i '' 's|\($PIPENV install\)|\1 "packaging<21.3" "setuptools<69.5"|' ./gtk-osx-setup.sh
 # @note Update Ninja version
-sed -i '' 's|\(ninja/releases/download/\)v1\.10\.2|\1v1.12.1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(ninja/releases/download/\)v1\.10\.2|\1v1.13.1|' ./gtk-osx-setup.sh
 # @note Skip Rust installation because it is not required for all packages
 sed -i '' 's|\(if test -x "$RUSTUP"\)|if true; then echo "Rust installation was skipped"; el\1|' ./gtk-osx-setup.sh
 # @note Enable error handling
@@ -99,7 +99,7 @@ EOF
     mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
     cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
     clang "${SOURCE_DIR}/enchant/enchant.m" ${CPPFLAGS_TARGET} ${OBJCFLAGS_TARGET} -Wall -Wextra \
-        -dynamiclib -fPIC -current_version 11.2.0 -compatibility_version 11.0.0 \
+        -dynamiclib -fPIC -current_version 11.12.0 -compatibility_version 11.0.0 \
         -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch ${ARCH} -framework AppKit -framework Foundation \
         -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
     cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
@@ -110,7 +110,7 @@ includedir=\${prefix}/include
 
 Name: libenchant
 Description: A spell checking library
-Version: 2.8.2
+Version: 2.8.12
 Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF

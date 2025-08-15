@@ -189,7 +189,7 @@ int enchant_dict_check (EnchantDict * dict, const char *const word, ssize_t len)
  *     returned, or %null
  *
  * Returns: A %null terminated list of suggestions, or %null if any of the
- * pre-conditions is not met.
+ * pre-conditions is not met, or an error occurs.
  */
 char **enchant_dict_suggest (EnchantDict * dict, const char *const word,
 			     ssize_t len, size_t * out_n_suggs);
@@ -298,9 +298,6 @@ const char *enchant_dict_get_error (EnchantDict * dict);
  * string can be appended to a character class used to match word
  * characters.
  *
- * Words containing non-letters not in this string will automatically be
- * rejected by Enchant.
- *
  * Note that for some back-ends the result may be a guess, in which case it
  * may include characters not actually allowed in the given dictionary.
  */
@@ -371,6 +368,7 @@ void enchant_dict_describe (EnchantDict * dict,
  * @user_data: Optional user-data
  *
  * Enumerates the dictionaries available from all Enchant providers.
+ * If a provider returns erroneous data, it will be skipped.
  */
 void enchant_broker_list_dicts (EnchantBroker * broker,
 				EnchantDictDescribeFn fn,
