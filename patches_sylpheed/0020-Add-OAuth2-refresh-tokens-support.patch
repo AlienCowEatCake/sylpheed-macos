@@ -1,0 +1,759 @@
+From d14f34fdfc7f64bd725f9016e82b90413fa4ad26 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sun, 17 Aug 2025 04:56:29 +0700
+Subject: [PATCH 20/20] Add OAuth2 refresh tokens support
+
+https://github.com/AlienCowEatCake/sylpheed-windows/issues/10
+---
+ libsylph/imap.c       |  18 +-
+ libsylph/oauth2.c     |  45 +++-
+ libsylph/pop.c        |  18 +-
+ libsylph/smtp.c       |  18 +-
+ src/syl-auth-helper.c | 530 +++++++++++++++++++++++++++++++++++++++---
+ 5 files changed, 574 insertions(+), 55 deletions(-)
+
+diff --git a/libsylph/imap.c b/libsylph/imap.c
+index e0bc7d2..819b90e 100644
+--- a/libsylph/imap.c
++++ b/libsylph/imap.c
+@@ -3846,8 +3846,22 @@ static gint imap_cmd_auth_oauth2(IMAPSession *session, const gchar *user,
+ 	gint ok;
+ 
+ 	account = (PrefsAccount *)(SESSION(session)->data);
+-	if (!account->token)
+-		oauth2_get_token(user, &account->token, NULL, NULL);
++	if (account->token && account->token_expire > 0) {
++		gint now = (gint)(g_get_monotonic_time() / (gint64)1000000);
++		if (now > account->token_expire) {
++			g_free(account->token);
++			account->token = NULL;
++			account->token_expire = 0;
++		}
++	}
++	if (!account->token) {
++		gint now = (gint)(g_get_monotonic_time() / (gint64)1000000);
++		account->token_expire = 0;
++		oauth2_get_token(user, &account->token, &account->refresh_token,
++				 &account->token_expire);
++		if (account->token_expire > 0)
++			account->token_expire += now;
++	}
+ 	if (!account->token) {
+ 		log_warning("Could not get OAuth2 token.\n");
+ 		return IMAP_AUTHFAIL;
+diff --git a/libsylph/oauth2.c b/libsylph/oauth2.c
+index 7165e19..2963317 100644
+--- a/libsylph/oauth2.c
++++ b/libsylph/oauth2.c
+@@ -43,26 +43,47 @@ gint oauth2_get_token   (const gchar     *user,
+ 	gchar *out = NULL;
+ 	gint status = 0;
+ 	GError *error = NULL;
++	gchar **lines;
+ 
+ 	g_return_val_if_fail(user != NULL, -1);
+ 
+ 	argv[1] = (gchar *)user;
+-	if (g_spawn_sync(NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
+-			 NULL, NULL, &out, NULL, &status, &error)) {
+-		debug_print("syl-auth-helper out: %s\n", out);
+-		gchar **lines = g_strsplit(out, "\n", 4);
+-		if (lines && lines[0] && token) {
+-			*token = g_strdup(g_strchomp(lines[0]));
+-			if (lines[1] && r_token)
+-				*r_token = g_strdup(g_strchomp(lines[1]));
+-		}
+-		g_strfreev(lines);
+-		return 0;
+-	} else {
++	if (!g_spawn_sync(NULL, argv, NULL, G_SPAWN_SEARCH_PATH,
++			  NULL, NULL, &out, NULL, &status, &error)) {
+ 		g_warning("OAuth2 helper execution failed.\n");
+ 		g_error_free(error);
+ 		return -1;
+ 	}
++
++	debug_print("syl-auth-helper out: %s\n", out);
++	lines = g_strsplit(out, "\n", 4);
++	if (!lines)
++		return -1;
++
++	if (!lines[0])
++		goto finish;
++	if (token) {
++		g_strchomp(lines[0]);
++		if (lines[0][0] != '\0')
++			*token = g_strdup(lines[0]);
++	}
++
++	if (!lines[1])
++		goto finish;
++	if (r_token) {
++		g_strchomp(lines[1]);
++		if (lines[1][0] != '\0')
++			*r_token = g_strdup(lines[1]);
++	}
++
++	if (!lines[2])
++		goto finish;
++	if (expire)
++		*expire = (gint)g_ascii_strtoll(g_strchomp(lines[2]), NULL, 10);
++
++finish:
++	g_strfreev(lines);
++	return 0;
+ }
+ 
+ gchar *oauth2_get_sasl_xoauth2	(const gchar	 *user,
+diff --git a/libsylph/pop.c b/libsylph/pop.c
+index 868b531..a17bd5c 100644
+--- a/libsylph/pop.c
++++ b/libsylph/pop.c
+@@ -226,8 +226,22 @@ gint pop3_getauth_auth_data_send(Pop3Session *session)
+ 
+ 	session->state = POP3_GETAUTH_AUTH_DATA;
+ 
+-	if (!ac->token)
+-		oauth2_get_token(session->user, &ac->token, NULL, NULL);
++	if (ac->token && ac->token_expire > 0) {
++		gint now = (gint)(g_get_monotonic_time() / (gint64)1000000);
++		if (now >= ac->token_expire) {
++			g_free(ac->token);
++			ac->token = NULL;
++			ac->token_expire = 0;
++		}
++	}
++	if (!ac->token) {
++		gint now = (gint)(g_get_monotonic_time() / (gint64)1000000);
++		ac->token_expire = 0;
++		oauth2_get_token(session->user, &ac->token, &ac->refresh_token,
++				 &ac->token_expire);
++		if (ac->token_expire > 0)
++			ac->token_expire += now;
++	}
+ 	if (!ac->token) {
+ 		log_warning("Could not get OAuth2 token.\n");
+ 		session->error_val = PS_AUTHFAIL;
+diff --git a/libsylph/smtp.c b/libsylph/smtp.c
+index bdd0b25..7985ef1 100644
+--- a/libsylph/smtp.c
++++ b/libsylph/smtp.c
+@@ -245,8 +245,22 @@ static gint smtp_auth_recv(SMTPSession *session, const gchar *msg)
+ 		if (!strncmp(msg, "334 ", 4)) {
+ 			gchar *response64;
+ 			PrefsAccount *ac = (PrefsAccount *)SESSION(session)->data;
+-			if (ac && !ac->token)
+-				oauth2_get_token(session->user, &ac->token, NULL, NULL);
++			if (ac && ac->token && ac->token_expire > 0) {
++				gint now = (gint)(g_get_monotonic_time() / (gint64)1000000);
++				if (now >= ac->token_expire) {
++					g_free(ac->token);
++					ac->token = NULL;
++					ac->token_expire = 0;
++				}
++			}
++			if (ac && !ac->token) {
++				gint now = (gint)(g_get_monotonic_time() / (gint64)1000000);
++				ac->token_expire = 0;
++				oauth2_get_token(session->user, &ac->token, &ac->refresh_token,
++						 &ac->token_expire);
++				if (ac->token_expire > 0)
++					ac->token_expire += now;
++			}
+ 			if (!ac || !ac->token) {
+ 				log_warning("Could not get OAuth2 token.\n");
+ 				session_send_msg(SESSION(session), SESSION_MSG_NORMAL, "*");
+diff --git a/src/syl-auth-helper.c b/src/syl-auth-helper.c
+index 8355378..02e4931 100644
+--- a/src/syl-auth-helper.c
++++ b/src/syl-auth-helper.c
+@@ -29,15 +29,25 @@
+ #ifdef G_OS_WIN32
+ #  include <winsock2.h>
+ #  include <ws2tcpip.h>
++#  include <windows.h>
++#  include <dpapi.h>
++#  define USE_WIN32_CRYPT32
+ #else
+ #  include <sys/socket.h>
+ #endif /* G_OS_WIN32 */
++#ifdef __APPLE__
++#  include <pwd.h>
++#  include <unistd.h>
++#  include <CommonCrypto/CommonCrypto.h>
++#  define USE_APPLE_CCCRYPT
++#endif /* __APPLE__ */
+ 
+ #include "utils.h"
+ #include "socket.h"
+ #include "base64.h"
+ 
+ #define TIMEOUT_MSEC	90000
++#define OAUTH2_RC	"oauth2rc"
+ 
+ typedef struct _APIInfo
+ {
+@@ -350,41 +360,474 @@ static APIInfo *get_api_info(GKeyFile *key_file, const gchar *address)
+ 	return api;
+ }
+ 
++static void api_free(APIInfo *api)
++{
++	g_return_if_fail(api != NULL);
++	if (api->auth_uri) g_free(api->auth_uri);
++	if (api->token_uri) g_free(api->token_uri);
++	if (api->redirect_uri) g_free(api->redirect_uri);
++	if (api->client_id) g_free(api->client_id);
++	if (api->client_secret) g_free(api->client_secret);
++	if (api->scope) g_free(api->scope);
++	g_free(api);
++}
++
+ static gint parse_token_response(const gchar *body, TokenData *data)
+ {
+-	const gchar *p, *e;
+-
+-	if (!body || !data) return -1;
+-
+-	p = strstr(body, "\"access_token\"");
+-	if (!p) return -1;
+-	p += 14;
+-	p = strchr(p, ':');
+-	if (!p) return -1;
+-	p++;
+-	p = strchr(p, '\"');
+-	if (!p) return -1;
+-	p++;
+-	e = strchr(p, '\"');
+-	if (!e) return -1;
+-	data->access_token = g_strndup(p, e - p);
+-
+-	p = strstr(body, "\"refresh_token\"");
+-	if (!p) return 0;
+-	p += 15;
+-	p = strchr(p, ':');
+-	if (!p) return 0;
+-	p++;
+-	p = strchr(p, '\"');
+-	if (!p) return 0;
+-	p++;
+-	e = strchr(p, '\"');
+-	if (!e) return 0;
+-	data->refresh_token = g_strndup(p, e - p);
++	GError *error;
++	GRegex *regex;
++	GMatchInfo *match_info;
++
++	g_return_val_if_fail(body != NULL, -1);
++	g_return_val_if_fail(data != NULL, -1);
++
++	error = NULL;
++	regex = g_regex_new("\"access_token\"[\\s]*:[\\s]*\"([^\"]*)\"", G_REGEX_MULTILINE, 0, &error);
++	if (!regex) {
++		debug_print("regex compilation failed %s\n", error->message);
++		g_error_free(error);
++	} else {
++		match_info = NULL;
++		if (g_regex_match(regex, body, 0, &match_info)) {
++			data->access_token = g_match_info_fetch(match_info, 1);
++			g_match_info_free(match_info);
++		}
++		g_regex_unref(regex);
++	}
++
++	if (!data->access_token) return -1;
++
++	error = NULL;
++	regex = g_regex_new("\"refresh_token\"[\\s]*:[\\s]*\"([^\"]*)\"", G_REGEX_MULTILINE, 0, &error);
++	if (!regex) {
++		debug_print("regex compilation failed %s\n", error->message);
++		g_error_free(error);
++	} else {
++		match_info = NULL;
++		if (g_regex_match(regex, body, 0, &match_info)) {
++			data->refresh_token = g_match_info_fetch(match_info, 1);
++			g_match_info_free(match_info);
++		}
++		g_regex_unref(regex);
++	}
++
++	error = NULL;
++	regex = g_regex_new("\"expires_in\"[\\s]*:[\\s]*([0-9]*)", G_REGEX_MULTILINE, 0, &error);
++	if (!regex) {
++		debug_print("regex compilation failed %s\n", error->message);
++		g_error_free(error);
++	} else {
++		match_info = NULL;
++		if (g_regex_match(regex, body, 0, &match_info)) {
++			gchar *captured = g_match_info_fetch(match_info, 1);
++			data->expires_in = (gint)g_ascii_strtoll(captured, NULL, 10);
++			g_free(captured);
++			g_match_info_free(match_info);
++		}
++		g_regex_unref(regex);
++	}
++
++	error = NULL;
++	regex = g_regex_new("\"ext_expires_in\"[\\s]*:[\\s]*([0-9]*)", G_REGEX_MULTILINE, 0, &error);
++	if (!regex) {
++		debug_print("regex compilation failed %s\n", error->message);
++		g_error_free(error);
++	} else {
++		match_info = NULL;
++		if (g_regex_match(regex, body, 0, &match_info)) {
++			gchar *captured = g_match_info_fetch(match_info, 1);
++			data->ext_expires_in = (gint)g_ascii_strtoll(captured, NULL, 10);
++			g_free(captured);
++			g_match_info_free(match_info);
++		}
++		g_regex_unref(regex);
++	}
+ 
+ 	return 0;
+ }
+ 
++static gboolean print_token_data(const TokenData *data)
++{
++	g_return_val_if_fail(data != NULL, FALSE);
++	if (data->access_token)
++		fputs(data->access_token, stdout);
++	fputs("\n", stdout);
++	if (data->refresh_token)
++		fputs(data->refresh_token, stdout);
++	fputs("\n", stdout);
++	fprintf(stdout, "%d\n", data->expires_in);
++	fflush(stdout);
++	return TRUE;
++}
++
++static gchar *base64_string_encode(const gchar *in)
++{
++	gint len;
++	gchar *out;
++	g_return_val_if_fail(in != NULL, NULL);
++	len = strlen(in);
++	out = g_malloc(len * 2 + 1);
++	base64_encode(out, (guchar *)in, len);
++	return out;
++}
++
++static gchar *base64_string_decode(const gchar *in)
++{
++	gint len;
++	gchar *out;
++	g_return_val_if_fail(in != NULL, NULL);
++	len = strlen(in);
++	out = g_malloc(len + 1);
++	len = base64_decode((guchar *)out, in, len);
++	out[len] = '\0';
++	return out;
++}
++
++#ifdef USE_WIN32_CRYPT32
++
++typedef BOOL(WINAPI *CryptProtectDataFunc)(DATA_BLOB*, LPCWSTR, DATA_BLOB*,
++	     PVOID, CRYPTPROTECT_PROMPTSTRUCT*, DWORD, DATA_BLOB*);
++typedef BOOL(WINAPI *CryptUnprotectDataFunc)(DATA_BLOB*, LPWSTR*, DATA_BLOB*,
++	     PVOID, CRYPTPROTECT_PROMPTSTRUCT*, DWORD, DATA_BLOB*);
++
++static BOOL crypt32_initialized = FALSE;
++static HMODULE crypt32_hmodule = NULL;
++static CryptProtectDataFunc CryptProtectData_func = NULL;
++static CryptUnprotectDataFunc CryptUnprotectData_func = NULL;
++
++static gboolean win32_crypt32_init(void)
++{
++	if (!crypt32_initialized) {
++		crypt32_hmodule = LoadLibraryA("Crypt32.dll");
++		if (crypt32_hmodule) {
++			CryptProtectData_func = (CryptProtectDataFunc)
++				GetProcAddress(crypt32_hmodule, "CryptProtectData");
++			CryptUnprotectData_func = (CryptUnprotectDataFunc)
++				GetProcAddress(crypt32_hmodule, "CryptUnprotectData");
++		}
++		crypt32_initialized = TRUE;
++	}
++	return CryptProtectData_func && CryptUnprotectData_func;
++}
++
++static gchar *win32_crypt32_string_encode(const gchar *in)
++{
++	DATA_BLOB data_in;
++	DATA_BLOB data_out;
++	gchar *out = NULL;
++
++	g_return_val_if_fail(in != NULL, NULL);
++	g_return_val_if_fail(win32_crypt32_init(), NULL);
++
++	data_in.pbData = (BYTE *)in;
++	data_in.cbData = (DWORD)(strlen(in) + 1);
++	if (CryptProtectData_func(&data_in, NULL, NULL, NULL, NULL, 0, &data_out)) {
++		out = g_malloc(data_out.cbData * 2 + 1);
++		base64_encode(out, (guchar *)data_out.pbData, data_out.cbData);
++		LocalFree(data_out.pbData);
++	} else {
++		debug_print("encrypt failed\n");
++	}
++
++	return out;
++}
++
++static gchar *win32_crypt32_string_decode(const gchar *in)
++{
++	DATA_BLOB data_in;
++	DATA_BLOB data_out;
++	gchar *out = NULL;
++	gint len;
++
++	g_return_val_if_fail(in != NULL, NULL);
++	g_return_val_if_fail(win32_crypt32_init(), NULL);
++
++	len = strlen(in);
++	data_in.pbData = (BYTE *)g_malloc(len + 1);
++	data_in.cbData = (DWORD)base64_decode((guchar *)data_in.pbData, in, len);
++	if (CryptUnprotectData_func(&data_in, NULL, NULL, NULL, NULL, 0, &data_out)) {
++		out = g_strndup((gchar *)data_out.pbData, (gsize)data_out.cbData);
++		LocalFree(data_out.pbData);
++	} else {
++		debug_print("decrypt failed\n");
++	}
++	g_free(data_in.pbData);
++
++	return out;
++}
++
++#endif /* USE_WIN32_CRYPT32 */
++#ifdef USE_APPLE_CCCRYPT
++
++static void apple_cccrypt_fill_key(gchar *key, gint len)
++{
++	struct passwd *pws;
++	char hostname[256];
++
++	g_return_if_fail(key != NULL);
++
++	pws = getpwuid(getuid());
++
++	memset(hostname, 0, sizeof(hostname));
++	gethostname(hostname, sizeof(hostname));
++	hostname[sizeof(hostname) - 1] = '\0';
++
++	memset(key, 0, len);
++	g_snprintf(key, len, "%s %s %u %u %s", __FILE_NAME__, pws->pw_name,
++		   (guint)pws->pw_uid, (guint)pws->pw_gid, hostname);
++}
++
++static gchar *apple_cccrypt_string_encode(const gchar *in)
++{
++	gchar key[kCCKeySizeAES256 + 1];
++	gchar *buffer;
++	size_t buffer_size;
++	CCCryptorStatus status;
++	gchar *out = NULL;
++
++	g_return_val_if_fail(in != NULL, NULL);
++
++	apple_cccrypt_fill_key(key, sizeof(key));
++	buffer_size = strlen(in) + 1 + kCCBlockSizeAES128;
++	buffer = g_malloc(buffer_size);
++	status = CCCrypt(kCCEncrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
++			 key, kCCKeySizeAES256, NULL, in, strlen(in) + 1,
++			 buffer, buffer_size, &buffer_size);
++	if (status == kCCSuccess) {
++		out = g_malloc(buffer_size * 2 + 1);
++		base64_encode(out, (guchar *)buffer, buffer_size);
++	} else {
++		debug_print("encrypt failed %d.\n", (gint)status);
++	}
++	g_free(buffer);
++
++	return out;
++}
++
++static gchar *apple_cccrypt_string_decode(const gchar *in)
++{
++	gchar key[kCCKeySizeAES256 + 1];
++	gchar *buffer;
++	size_t buffer_size;
++	CCCryptorStatus status;
++	gchar *out = NULL;
++	size_t len;
++
++	g_return_val_if_fail(in != NULL, NULL);
++
++	apple_cccrypt_fill_key(key, sizeof(key));
++	len = strlen(in);
++	buffer = g_malloc(len + 1);
++	buffer_size = base64_decode((guchar *)buffer, in, len);
++	len = buffer_size + 1 + kCCBlockSizeAES128;
++	out = g_malloc(len);
++	status = CCCrypt(kCCDecrypt, kCCAlgorithmAES128, kCCOptionPKCS7Padding,
++			 key, kCCKeySizeAES256, NULL, buffer, buffer_size,
++			 out, len, &len);
++	if (status == kCCSuccess) {
++		out[len] = '\0';
++	} else {
++		debug_print("decrypt failed %d.\n", (gint)status);
++		g_free(out);
++		out = NULL;
++	}
++	g_free(buffer);
++
++	return out;
++}
++
++#endif /* USE_APPLE_CCCRYPT */
++
++static gchar *string_encode(const gchar *in)
++{
++#ifdef USE_WIN32_CRYPT32
++	if (win32_crypt32_init())
++		return win32_crypt32_string_encode(in);
++#endif /* USE_WIN32_CRYPT32 */
++#ifdef USE_APPLE_CCCRYPT
++	return apple_cccrypt_string_encode(in);
++#endif /* USE_APPLE_CCCRYPT */
++	return base64_string_encode(in);
++}
++
++static gchar *string_decode(const gchar *in)
++{
++#ifdef USE_WIN32_CRYPT32
++	if (win32_crypt32_init())
++		return win32_crypt32_string_decode(in);
++#endif /* USE_WIN32_CRYPT32 */
++#ifdef USE_APPLE_CCCRYPT
++	return apple_cccrypt_string_decode(in);
++#endif /* USE_APPLE_CCCRYPT */
++	return base64_string_decode(in);
++}
++
++static gchar *load_string_encoded(GKeyFile *key_file, const gchar *group_name,
++				  const gchar *key, GError **error)
++{
++	gchar *result = g_key_file_get_string(key_file, group_name, key, error);
++	if (result) {
++		gchar *tmp = string_decode(result);
++		g_free(result);
++		result = tmp;
++	}
++	return result;
++}
++
++void save_string_encoded(GKeyFile *key_file, const gchar *group_name,
++			 const gchar *key, const gchar *string)
++{
++	gchar *encoded = string_encode(string);
++	if (encoded) {
++		g_key_file_set_string(key_file, group_name, key, encoded);
++		g_free(encoded);
++	}
++}
++
++static gboolean load_token_data(TokenData *data, const gchar *address)
++{
++	GKeyFile *key_file;
++	gchar *file;
++
++	g_return_val_if_fail(data != NULL, FALSE);
++	g_return_val_if_fail(address != NULL, FALSE);
++
++	key_file = g_key_file_new();
++	file = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, OAUTH2_RC, NULL);
++	if (!g_key_file_load_from_file(key_file, file, G_KEY_FILE_NONE, NULL)) {
++		debug_print("not exist %s.\n", file);
++		g_free(file);
++		g_key_file_free(key_file);
++		return FALSE;
++	}
++	debug_print("load %s\n", file);
++	g_free(file);
++
++	if (!g_key_file_has_group(key_file, address)) {
++		debug_print("not data for %s.\n", address);
++		g_key_file_free(key_file);
++		return FALSE;
++	}
++
++	if (data->access_token)
++		g_free(data->access_token);
++	if (data->refresh_token)
++		g_free(data->refresh_token);
++	memset(data, 0, sizeof(TokenData));
++
++	data->expires_in = g_key_file_get_integer(key_file, address, "expires_in", NULL);
++	data->ext_expires_in = g_key_file_get_integer(key_file, address, "ext_expires_in", NULL);
++	data->access_token = load_string_encoded(key_file, address, "access_token", NULL);
++	data->refresh_token = load_string_encoded(key_file, address, "refresh_token", NULL);
++
++	g_key_file_free(key_file);
++	return TRUE;
++}
++
++static gboolean save_token_data(const TokenData *data, const gchar *address)
++{
++	GKeyFile *key_file;
++	gchar *file;
++
++	g_return_val_if_fail(data != NULL, FALSE);
++	g_return_val_if_fail(address != NULL, FALSE);
++
++	key_file = g_key_file_new();
++	file = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, OAUTH2_RC, NULL);
++	if (!g_key_file_load_from_file(key_file, file, G_KEY_FILE_NONE, NULL)) {
++		debug_print("not exist %s.\n", file);
++	}
++
++	if (data->expires_in)
++		g_key_file_set_integer(key_file, address, "expires_in", data->expires_in);
++	else if (g_key_file_has_key(key_file, address, "expires_in", NULL))
++		g_key_file_remove_key(key_file, address, "expires_in", NULL);
++	if (data->ext_expires_in)
++		g_key_file_set_integer(key_file, address, "ext_expires_in", data->ext_expires_in);
++	else if (g_key_file_has_key(key_file, address, "ext_expires_in", NULL))
++		g_key_file_remove_key(key_file, address, "ext_expires_in", NULL);
++	if (data->access_token)
++		save_string_encoded(key_file, address, "access_token", data->access_token);
++	else if (g_key_file_has_key(key_file, address, "access_token", NULL))
++		g_key_file_remove_key(key_file, address, "access_token", NULL);
++	if (data->refresh_token)
++		save_string_encoded(key_file, address, "refresh_token", data->refresh_token);
++	else if (g_key_file_has_key(key_file, address, "refresh_token", NULL))
++		g_key_file_remove_key(key_file, address, "refresh_token", NULL);
++
++	if (!g_key_file_save_to_file(key_file, file, NULL)) {
++		g_warning("could not save %s", file);
++		g_free(file);
++		g_key_file_free(key_file);
++		return FALSE;
++	}
++
++	debug_print("save %s\n", file);
++	g_free(file);
++	g_key_file_free(key_file);
++	return TRUE;
++}
++
++static gboolean refresh_token_data(APIInfo *api, TokenData *data)
++{
++	gchar *header = NULL, *body;
++	GString *req_body;
++	CURL *curl;
++	gchar *tmp;
++
++	g_return_val_if_fail(api != NULL, FALSE);
++	g_return_val_if_fail(data != NULL, FALSE);
++	g_return_val_if_fail(data->refresh_token != NULL, FALSE);
++
++	curl = curl_easy_init();
++	if (!curl) {
++		return FALSE;
++	}
++
++	req_body = g_string_new(NULL);
++	g_string_append_printf(req_body, "client_id=%s", api->client_id);
++	tmp = curl_easy_escape(curl, data->refresh_token, 0);
++	g_string_append_printf(req_body, "&refresh_token=%s", tmp);
++	curl_free(tmp);
++	g_string_append(req_body, "&grant_type=refresh_token");
++	tmp = curl_easy_escape(curl, api->client_secret, 0);
++	g_string_append_printf(req_body, "&client_secret=%s", tmp);
++	curl_free(tmp);
++
++	body = http_post(api->token_uri, req_body->str, &header);
++	if (!header && !body) {
++		g_warning("could not get token");
++	}
++	if (header) {
++		debug_print("token response header:\n%s\n", header);
++		g_free(header);
++	}
++	if (body) {
++		tmp = data->refresh_token;
++		if (data->access_token)
++			g_free(data->access_token);
++		memset(data, 0, sizeof(TokenData));
++		debug_print("token response body:\n%s\n\n", body);
++		parse_token_response(body, data);
++		if (data->refresh_token)
++			g_free(tmp);
++		else
++			data->refresh_token = tmp;
++		g_free(body);
++	}
++	g_string_free(req_body, TRUE);
++
++	curl_easy_cleanup(curl);
++
++	if (!data->access_token) {
++		debug_print("token refresh failed\n");
++		return FALSE;
++	}
++
++	debug_print("token refresh completed\n");
++	return TRUE;
++}
++
+ static gchar *generate_state()
+ {
+ 	guint32 data[8];
+@@ -462,6 +905,7 @@ int main(int argc, char *argv[])
+ 		return EXIT_FAILURE;
+ 	}
+ 	api = get_api_info(key_file, address);
++	g_key_file_free(key_file);
+ 	if (!api) {
+ 		g_warning("could not get API info");
+ 		return EXIT_FAILURE;
+@@ -469,8 +913,25 @@ int main(int argc, char *argv[])
+ 
+ 	curl_global_init(CURL_GLOBAL_ALL);
+ 
++	if (load_token_data(&data, address)) {
++		if (data.refresh_token && refresh_token_data(api, &data)) {
++			print_token_data(&data);
++			save_token_data(&data, address);
++			api_free(api);
++			curl_global_cleanup();
++			return ret;
++		} else {
++			if (data.access_token)
++				g_free(data.access_token);
++			if (data.refresh_token)
++				g_free(data.refresh_token);
++			memset(&data, 0, sizeof(TokenData));
++		}
++	}
++
+ 	curl = curl_easy_init();
+ 	if (!curl) {
++		api_free(api);
+ 		curl_global_cleanup();
+ 		return EXIT_FAILURE;
+ 	}
+@@ -525,19 +986,14 @@ int main(int argc, char *argv[])
+ 	if (body) {
+ 		debug_print("token response body:\n%s\n\n", body);
+ 		parse_token_response(body, &data);
+-		if (data.access_token) {
+-			fputs(data.access_token, stdout);
+-			fputs("\n", stdout);
+-		}
+-		if (data.refresh_token) {
+-			fputs(data.refresh_token, stdout);
+-			fputs("\n", stdout);
+-		}
++		print_token_data(&data);
++		save_token_data(&data, address);
+ 		g_free(body);
+ 	}
+ 	g_string_free(req_body, TRUE);
+ 	g_free(code);
+ 	g_free(state);
++	api_free(api);
+ 
+ 	curl_easy_cleanup(curl);
+ 	curl_global_cleanup();
+-- 
+2.49.0
+
