@@ -255,6 +255,10 @@ rm -rf \
 export HOME="${HOME_PREV}"
 
 function sign() {
+    local APP_CERT="${APP_CERT}"
+    if [ ! -z "${ADHOC_SIGN+x}" ] ; then
+        APP_CERT='-'
+    fi
     local max_retry=10
     local last_retry=$((${max_retry}-1))
     for ((i=0; i<${max_retry}; i++)) ; do
@@ -283,12 +287,14 @@ function sign() {
     done
 }
 function notarize() {
-    /usr/bin/python3 "${SOURCE_DIR}/scripts/MacNotarizer.py" \
-        --application "${1}" \
-        --primary-bundle-id "${2}" \
-        --username "${NOTARIZE_USERNAME}" \
-        --password "${NOTARIZE_PASSWORD}" \
-        --asc-provider "${NOTARIZE_ASC_PROVIDER}"
+    if [ -z "${ADHOC_SIGN+x}" ] ; then
+        /usr/bin/python3 "${SOURCE_DIR}/scripts/MacNotarizer.py" \
+            --application "${1}" \
+            --primary-bundle-id "${2}" \
+            --username "${NOTARIZE_USERNAME}" \
+            --password "${NOTARIZE_PASSWORD}" \
+            --asc-provider "${NOTARIZE_ASC_PROVIDER}"
+    fi
 }
 find "${INSTALL_DIR}/Sylpheed.app/Contents/Resources/lib" \( -name '*.so' -or -name '*.dylib' \) -print0 | while IFS= read -r -d '' item ; do sign "${item}" ; done
 find "${INSTALL_DIR}/Sylpheed.app/Contents/MacOS" -type f -print0 | while IFS= read -r -d '' item ; do sign "${item}" ; done
