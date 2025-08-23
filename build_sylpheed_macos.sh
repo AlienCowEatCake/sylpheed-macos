@@ -15,7 +15,7 @@ rm -rf "${HOME_DEV}"
 mkdir -p "${HOME_DEV}"
 
 export MACOSX_DEPLOYMENT_TARGET="10.10"
-export PYTHON_VERSION="3.11.11"
+export PYTHON_VERSION="3.11.13"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:"
 export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/${PYTHON_VERSION:=3.10.2}/lib/pkgconfig:"
 export CFLAGS="-O3 -Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-implicit-int"
@@ -33,17 +33,6 @@ function target_build_env {
     CXXFLAGS="${CXXFLAGS_TARGET}" \
     OBJCFLAGS="${OBJCFLAGS_TARGET}" \
     "${@}"
-}
-
-function copy_bash {
-    # @note Workaround for SIP workaround in gtk-osx
-    mkdir -p "${HOME}/.new_local/bin"
-    rm -rf "${HOME}/.new_local/bin/bash"
-    cat << EOF > "${HOME}/.new_local/bin/bash"
-#!/bin/bash -e
-/bin/bash "\${@}"
-EOF
-    chmod 755 "${HOME}/.new_local/bin/bash"
 }
 
 git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
@@ -72,8 +61,23 @@ curl -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T
 curl -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
 
 for ARCH in arm64 x86_64 ; do
+    # Workaround for broken mirrors for readline in pyenv in gtk-osx
+    mkdir -p "${HOME}/Source"
+    rm -rf "${HOME}/Source/pyenv"
+    git clone https://github.com/pyenv/pyenv.git "${HOME}/Source/pyenv"
+    sed -i '' 's|https://ftpmirror\.gnu\.org/readline/|https://ftp.gnu.org/gnu/readline/|' \
+        "${HOME}/Source/pyenv/plugins/python-build/share/python-build/${PYTHON_VERSION}" || true
+
+    # @note Workaround for SIP workaround in gtk-osx
+    mkdir -p "${HOME}/.new_local/bin"
+    rm -rf "${HOME}/.new_local/bin/bash"
+    cat << EOF > "${HOME}/.new_local/bin/bash"
+#!/bin/bash -e
+/bin/bash "\${@}"
+EOF
+    chmod 755 "${HOME}/.new_local/bin/bash"
+
     cd gtk-osx
-    copy_bash
     arch -${ARCH} ./gtk-osx-setup.sh
     cd ..
 
