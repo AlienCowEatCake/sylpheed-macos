@@ -1,0 +1,27 @@
+From 0ef7ba4ed0ebe1b4c67a90cb2c301ae68f54ab9c Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 19 Aug 2025 01:19:23 +0700
+Subject: [PATCH 21/21] Fix multilanguage spell checking
+
+---
+ src/compose.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/compose.c b/src/compose.c
+index ec7c818..25f40ad 100644
+--- a/src/compose.c
++++ b/src/compose.c
+@@ -6301,7 +6301,9 @@ static void compose_set_spell_lang_menu(Compose *compose)
+ 	enchant_broker_list_dicts(eb, ench_dict_desc_cb, &dict_list);
+ 	enchant_broker_free(eb);
+ 
+-	for (cur = dict_list; cur != NULL; cur = cur->next) {
++	if (compose->spell_lang != NULL && strchr(compose->spell_lang, ','))
++		lang_set = TRUE;
++	for (cur = dict_list; cur != NULL && !lang_set; cur = cur->next) {
+ 		if (compose->spell_lang != NULL &&
+ 		    g_ascii_strcasecmp(compose->spell_lang,
+ 				       (gchar *)cur->data) == 0)
+-- 
+2.49.0
+
