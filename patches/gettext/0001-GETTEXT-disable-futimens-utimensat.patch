@@ -1,4 +1,4 @@
-From 595db5e4d91970f916805aa726b9d87ee98502fb Mon Sep 17 00:00:00 2001
+From 421b892834761d07a6e8f9185959ed0377b8aace Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 26 Sep 2022 09:08:56 +0700
 Subject: [PATCH] GETTEXT: disable futimens/utimensat
@@ -8,28 +8,28 @@ Subject: [PATCH] GETTEXT: disable futimens/utimensat
  1 file changed, 6 insertions(+)
 
 diff --git a/gettext-tools/config.h.in b/gettext-tools/config.h.in
-index 97b98e6..a675148 100644
+index 9a010c6..667ee61 100644
 --- a/gettext-tools/config.h.in
 +++ b/gettext-tools/config.h.in
-@@ -1635,7 +1635,10 @@
+@@ -1657,7 +1657,10 @@
  #undef HAVE_FUNLOCKFILE
  
  /* Define to 1 if you have the `futimens' function. */
-+/*
-+// warning: 'futimens' is only available on macOS 10.13 or newer [-Wunguarded-availability-new]
++#if 0
++/* warning: 'futimens' is only available on macOS 10.13 or newer [-Wunguarded-availability-new] */
  #undef HAVE_FUTIMENS
-+*/
++#endif
  
  /* Define to 1 if you have the `futimes' function. */
  #undef HAVE_FUTIMES
-@@ -2409,7 +2412,10 @@
+@@ -2437,7 +2440,10 @@
  #undef HAVE_UTIMENS
  
  /* Define to 1 if you have the `utimensat' function. */
-+/*
-+// warning: 'utimensat' is only available on macOS 10.13 or newer [-Wunguarded-availability-new]
++#if 0
++/* warning: 'utimensat' is only available on macOS 10.13 or newer [-Wunguarded-availability-new] */
  #undef HAVE_UTIMENSAT
-+*/
++#endif
  
  /* Define to 1 if you have the <utime.h> header file. */
  #undef HAVE_UTIME_H

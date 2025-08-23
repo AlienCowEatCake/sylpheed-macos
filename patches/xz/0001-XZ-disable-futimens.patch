@@ -1,4 +1,4 @@
-From 2a1c37b064341fe41c5eeb49246cd007f72ddeaa Mon Sep 17 00:00:00 2001
+From 96080d790c8f6efee380e9ae1f042a9e142c7748 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 26 Sep 2022 08:59:50 +0700
 Subject: [PATCH] XZ: disable futimens
@@ -8,17 +8,17 @@ Subject: [PATCH] XZ: disable futimens
  1 file changed, 3 insertions(+)
 
 diff --git a/config.h.in b/config.h.in
-index 33a99df..9d19b58 100644
+index 33a99df..9efe50b 100644
 --- a/config.h.in
 +++ b/config.h.in
 @@ -154,7 +154,10 @@
  #undef HAVE_FUNC_ATTRIBUTE_CONSTRUCTOR
  
  /* Define to 1 if you have the 'futimens' function. */
-+/*
-+// warning: 'futimens' is only available on macOS 10.13 or newer [-Wunguarded-availability-new]
++#if 0
++/* warning: 'futimens' is only available on macOS 10.13 or newer [-Wunguarded-availability-new] */
  #undef HAVE_FUTIMENS
-+*/
++#endif
  
  /* Define to 1 if you have the 'futimes' function. */
  #undef HAVE_FUTIMES
