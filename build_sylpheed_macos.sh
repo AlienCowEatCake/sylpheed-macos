@@ -126,7 +126,7 @@ EOF
 
     tar -xvpf sylpheed-3.8.0beta1.tar.bz2
     cd sylpheed-3.8.0beta1
-    find "${SOURCE_DIR}/patches_sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
+    find "${SOURCE_DIR}/patches/sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
     target_build_env arch -${ARCH} jhbuild run \
         ./makeosx.sh --disable-dependency-tracking --enable-oniguruma --build=${ARCH/arm64/aarch64}-apple-darwin
     cd ..
@@ -158,7 +158,7 @@ EOF
 
     tar -xvpf sylfilter-0.8.tar.gz
     cd sylfilter-0.8
-    find "${SOURCE_DIR}/patches_sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
+    find "${SOURCE_DIR}/patches/sylfilter" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
     target_build_env arch -${ARCH} jhbuild run \
         ./configure --prefix="${HOME}/gtk/inst" --disable-dependency-tracking --enable-shared --disable-static \
             --enable-sqlite --enable-qdbm --disable-gdbm --with-libsylph=sylpheed --with-pic
