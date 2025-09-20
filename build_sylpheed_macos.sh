@@ -49,6 +49,8 @@ sed -i '' 's|\(if test -x "$RUSTUP"\)|if true; then echo "Rust installation was 
 # @note Enable error handling
 sed -i '' 's|\(#!/usr/bin/env bash\)|\1 -e -x|' ./gtk-osx-setup.sh
 sed -i '' 's/\(.*=`which [^`]*`\)/\1 || true/g' ./gtk-osx-setup.sh
+# @note Add retry on curl error
+sed -i '' 's|\(curl \)|\1--retry 5 --fail |g' ./gtk-osx-setup.sh
 cd ..
 
 git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
@@ -56,9 +58,9 @@ cd gtk-mac-bundler
 git checkout b01203ec8073637e0c0909f598eded9a260d19cd
 cd ..
 
-curl -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz2
-curl -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
-curl -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
+curl --retry 5 --fail -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz2
+curl --retry 5 --fail -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
+curl --retry 5 --fail -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
 
 for ARCH in arm64 x86_64 ; do
     # Workaround for broken mirrors for readline in pyenv in gtk-osx
@@ -87,6 +89,9 @@ EOF
 
     pushd "${HOME}/Source/jhbuild" >/dev/null
     git checkout c23ed55f46054b505389c5b6c261c335328cdd5d
+    git cherry-pick --no-commit 13b481dfd98298f0cca8f1117999d68bf17eb7cd
+    git cherry-pick --no-commit 6bab6297f0a58ada484b99c9303c6092266dd898
+    git cherry-pick --no-commit 1fd39a82717816562dbcf16d8284a56f1d45dfcb
     popd >/dev/null
 
     mkdir -p "${HOME}/gtk/inst/lib/pkgconfig"
