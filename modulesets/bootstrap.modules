@@ -3,7 +3,6 @@
 <moduleset>
   <repository type="tarball" name="ftp.gnome.org" default="yes" href="http://ftp.gnome.org/pub/GNOME/sources/"/>
   <repository type="tarball" name="ftp.gnu.org" href="http://ftp.gnu.org/gnu/"/>
-  <repository type="tarball" name="xorg.freedesktop.org" href="http://xorg.freedesktop.org/releases/"/>
   <repository type="tarball" name="pkgconfig.freedesktop.org" href="http://pkgconfig.freedesktop.org/releases/"/>
   <repository type="tarball" name="icon-theme.freedesktop.org" href="http://icon-theme.freedesktop.org/releases/"/>
   <repository type="tarball" name="tango.freedesktop.org" href="http://tango.freedesktop.org/releases/"/>
@@ -36,10 +35,7 @@
         <dep package="intltool"/>
         <dep package="libffi"/>
         <dep package="libpng"/>
-        <dep package="expat"/>
         <dep package="pixman"/>
-        <dep package="libtasn1"/>
-        <dep package="xorg-macros"/>
       </if>
     </dependencies>
   </metamodule>
@@ -113,11 +109,6 @@
     </branch>
   </autotools>
 
-  <!-- https://github.com/libexpat/libexpat/releases/ -->
-  <autotools id="expat" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --without-examples --without-tests --without-docbook">
-    <branch repo="github-tarball" module="libexpat/libexpat/releases/download/R_2_7_1/expat-${version}.tar.bz2" version="2.7.1"/>
-  </autotools>
-
   <!-- https://www.cairographics.org/releases/ -->
   <!-- Disable NEON intrinsic support on macOS -->
   <!-- Issue ref: https://gitlab.freedesktop.org/pixman/pixman/-/issues/59 -->
@@ -129,19 +120,9 @@
     </after>
   </meson>
 
-  <!-- https://ftp.gnu.org/gnu/libtasn1/ -->
-  <autotools id="libtasn1" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-doc">
-    <branch repo="ftp.gnu.org" module="libtasn1/libtasn1-${version}.tar.gz" version="4.20.0"/>
-  </autotools>
-
   <!-- https://www.ijg.org/ -->
   <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9f" checkoutdir="jpeg-${version}"/>
-  </autotools>
-
-  <!-- https://xorg.freedesktop.org/releases/individual/util/ -->
-  <autotools id="xorg-macros">
-    <branch repo="xorg.freedesktop.org" module="individual/util/util-macros-${version}.tar.gz" version="1.20.2"/>
   </autotools>
 
   <metamodule id="meta-gtk-osx-bootstrap">
