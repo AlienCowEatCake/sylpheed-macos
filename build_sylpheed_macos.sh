@@ -15,9 +15,8 @@ rm -rf "${HOME_DEV}"
 mkdir -p "${HOME_DEV}"
 
 export MACOSX_DEPLOYMENT_TARGET="10.10"
-export PYTHON_VERSION="3.11.13"
 export PATH="${HOME}/gtk/inst/bin:${HOME}/.new_local/bin:${HOME}/.local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:"
-export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:${HOME}/.new_local/share/pyenv/versions/${PYTHON_VERSION:=3.10.2}/lib/pkgconfig:"
+export PKG_CONFIG_PATH="${HOME}/gtk/inst/lib/pkgconfig:"
 export CFLAGS="-O3 -Wno-int-conversion -Wno-incompatible-function-pointer-types -Wno-implicit-int"
 CFLAGS_TARGET="${CFLAGS} -Werror=unguarded-availability-new"
 export CPPFLAGS="-DNDEBUG"
@@ -51,6 +50,13 @@ sed -i '' 's|\(#!/usr/bin/env bash\)|\1 -e -x|' ./gtk-osx-setup.sh
 sed -i '' 's/\(.*=`which [^`]*`\)/\1 || true/g' ./gtk-osx-setup.sh
 # @note Add retry on curl error
 sed -i '' 's|\(curl \)|\1--retry 5 --fail |g' ./gtk-osx-setup.sh
+# @note Use system python3
+sed -i '' 's|\(if test ! -x "$PYENV\)|if true; then echo "Pyenv installation was skipped"; el\1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(export PYENV_VERSION=\)\($PYTHON_VERSION\)|#\1\2\n\1"$(python3 --version \| sed "s/[^0-9\.]//g")"|' ./gtk-osx-setup.sh
+sed -i '' 's|\($PYENV install -v $PYENV_VERSION\)|#\1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(PIP="$PYENV_ROOT/shims/pip3"\)|#\1\nPIP="python3 -m pip"|' ./gtk-osx-setup.sh
+sed -i '' 's|\($PIP install --upgrade --user pipenv==\)2020\.11\.15|\12021.11.9|' ./gtk-osx-setup.sh
+sed -i '' 's|\(\[\[source\]\]\)|\1\nname = "pypi"|' ./gtk-osx-setup.sh
 cd ..
 
 git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
@@ -63,13 +69,6 @@ curl --retry 5 --fail -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive
 curl --retry 5 --fail -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
 
 for ARCH in arm64 x86_64 ; do
-    # Workaround for broken mirrors for readline in pyenv in gtk-osx
-    mkdir -p "${HOME}/Source"
-    rm -rf "${HOME}/Source/pyenv"
-    git clone https://github.com/pyenv/pyenv.git "${HOME}/Source/pyenv"
-    sed -i '' 's|https://ftpmirror\.gnu\.org/readline/|https://ftp.gnu.org/gnu/readline/|' \
-        "${HOME}/Source/pyenv/plugins/python-build/share/python-build/${PYTHON_VERSION}" || true
-
     # @note Workaround for SIP workaround in gtk-osx
     mkdir -p "${HOME}/.new_local/bin"
     rm -rf "${HOME}/.new_local/bin/bash"

@@ -11,7 +11,6 @@
   <repository type="tarball" name="launchpad" href="http://launchpad.net/"/>
   <repository type="tarball" name="cairo" href="http://www.cairographics.org/releases/"/>
   <repository type="tarball" name="ijg" href="http://www.ijg.org/files/"/>
-  <repository type="tarball" name="itstool.org" href="http://files.itstool.org/itstool/"/>
   <repository type="tarball" name="libtiff" href="http://download.osgeo.org/"/>
   <repository type="tarball" name="github-tarball" href="https://github.com/"/>
   <repository type="tarball" name="compface" href="http://ftp.xemacs.org/pub/xemacs/aux/"/>
@@ -35,14 +34,11 @@
         <dep package="bison"/>
         <dep package="pkg-config"/>
         <dep package="intltool"/>
-        <dep package="libxml2"/>
-        <dep package="libxslt"/>
         <dep package="libffi"/>
         <dep package="libpng"/>
         <dep package="expat"/>
         <dep package="pixman"/>
         <dep package="libtasn1"/>
-        <dep package="itstool"/>
         <dep package="xorg-macros"/>
       </if>
     </dependencies>
@@ -104,22 +100,6 @@
     <branch repo="launchpad" module="intltool/trunk/${version}/+download/intltool-${version}.tar.gz" version="0.51.0"/>
   </autotools>
 
-  <!-- https://download.gnome.org/sources/libxml2/ -->
-  <autotools id="libxml2" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
-    <branch module="libxml2/2.14/libxml2-${version}.tar.xz" version="2.14.5"/>
-    <after>
-      <dep package="xz"/>
-    </after>
-  </autotools>
-
-  <!-- https://download.gnome.org/sources/libxslt/ -->
-  <autotools id="libxslt" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
-    <branch module="libxslt/1.1/libxslt-${version}.tar.xz" version="1.1.43"/>
-    <after>
-      <dep package="xz"/>
-    </after>
-  </autotools>
-
   <!-- https://github.com/libffi/libffi/releases/ -->
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-multi-os-directory --disable-builddir">
@@ -157,11 +137,6 @@
   <!-- https://www.ijg.org/ -->
   <autotools id="libjpeg" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static">
     <branch repo="ijg" module="jpegsrc.v${version}.tar.gz" version="9f" checkoutdir="jpeg-${version}"/>
-  </autotools>
-
-  <!-- https://itstool.org/download.html -->
-  <autotools id="itstool" autogen-sh="autoreconf">
-    <branch repo="itstool.org" module="itstool-${version}.tar.bz2" version="2.0.7"/>
   </autotools>
 
   <!-- https://xorg.freedesktop.org/releases/individual/util/ -->
