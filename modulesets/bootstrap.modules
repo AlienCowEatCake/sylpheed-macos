@@ -135,7 +135,7 @@
 
   <!-- https://download.osgeo.org/libtiff/ -->
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-tools --disable-tests --disable-docs --disable-sphinx --without-x">
-    <branch version="4.7.0" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
+    <branch version="4.7.1" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
       <patch file="libtiff/tiff-nohtml.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -158,12 +158,12 @@
 
   <!-- https://github.com/PCRE2Project/pcre2/releases/ -->
   <autotools id="libpcre2" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit">
-    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.45"/>
+    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.46"/>
   </autotools>
 
   <!-- https://download.gnome.org/sources/glib/ -->
-  <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman-pages=disabled -Ddocumentation=false -Dtests=false">
-    <branch module="glib/2.84/glib-${version}.tar.xz" version="2.84.4">
+  <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dman-pages=disabled -Ddtrace=disabled -Dsystemtap=disabled -Dsysprof=disabled -Ddocumentation=false -Dtests=false -Dinstalled_tests=false -Dintrospection=disabled">
+    <branch module="glib/2.86/glib-${version}.tar.xz" version="2.86.0">
       <patch file="glib/0001-GLIB-disable-utimensat.patch" strip="1"/>
     </branch>
     <dependencies>
@@ -183,8 +183,8 @@
   </meson>
 
   <!-- https://github.com/harfbuzz/harfbuzz/releases/ -->
-  <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled">
-    <branch repo="github-tarball" version="11.4.3" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+  <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled -Ddoc_tests=false">
+    <branch repo="github-tarball" version="11.5.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -196,8 +196,8 @@
   </meson>
 
   <!-- https://download.gnome.org/sources/pango/ -->
-  <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch version="1.56.4" module="pango/1.56/pango-${version}.tar.xz"/>
+  <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled -Ddocumentation=false -Dman-pages=false -Dbuild-testsuite=false -Dbuild-examples=false">
+    <branch version="1.57.0" module="pango/1.57/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -210,7 +210,7 @@
   </meson>
 
   <!-- https://download.gnome.org/sources/atk/ -->
-  <meson id="atk" mesonargs="--buildtype=release -Dintrospection=false">
+  <meson id="atk" mesonargs="--buildtype=release -Dintrospection=false -Ddocs=false">
     <branch module="atk/2.38/atk-${version}.tar.xz" version="2.38.0"/>
     <after>
       <dep package="glib"/>
@@ -219,8 +219,8 @@
   </meson>
 
   <!-- https://download.gnome.org/sources/gdk-pixbuf/ -->
-  <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Dgtk_doc=false -Dintrospection=disabled -Dinstalled_tests=false -Dpng=enabled -Dtiff=enabled -Djpeg=enabled -Dgif=enabled -Dothers=enabled">
-    <branch module="gdk-pixbuf/2.42/gdk-pixbuf-${version}.tar.xz" version="2.42.12">
+  <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Ddocumentation=false -Dintrospection=disabled -Dinstalled_tests=false -Dpng=enabled -Dtiff=enabled -Djpeg=enabled -Dgif=enabled -Dothers=enabled -Dtests=false -Dinstalled_tests=false -Dgio_sniffing=false -Dthumbnailer=disabled">
+    <branch module="gdk-pixbuf/2.44/gdk-pixbuf-${version}.tar.xz" version="2.44.1">
       <patch file="gdk-pixbuf/gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
     <after>
@@ -327,7 +327,7 @@
   <!-- https://www.openssl.org/source/ -->
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch repo="github-tarball" module="openssl/openssl/releases/download/openssl-${version}/openssl-${version}.tar.gz" version="3.5.2"/>
+    <branch repo="github-tarball" module="openssl/openssl/releases/download/openssl-${version}/openssl-${version}.tar.gz" version="3.5.3"/>
   </autotools>
 
   <!-- http://ftp.xemacs.org/pub/xemacs/aux/ -->
