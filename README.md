@@ -5,7 +5,7 @@
 Sylpheed is a free software distributed under the [GNU GPL](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
 
 ## About Sylpheed for macOS
-This software works on macOS 10.10 (Yosemite) or later. It runs on any Mac with a 64-bit Intel processor or an Apple Silicon chip. It has been tested on 12.7.6 (Monterey) and 15.6.1 (Sequoia).
+This software works on macOS 10.10 (Yosemite) or later. It runs on any Mac with a 64-bit Intel processor or an Apple Silicon chip. It has been tested on 12.7.6 (Monterey) and 26.0 (Tahoe).
 Though Sylpheed for macOS is stable, please note that it has various issues because it is still testing stage.
 
 ## Screenshots
