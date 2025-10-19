@@ -197,7 +197,7 @@
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled -Ddocumentation=false -Dman-pages=false -Dbuild-testsuite=false -Dbuild-examples=false">
-    <branch version="1.57.0" module="pango/1.57/pango-${version}.tar.xz"/>
+    <branch version="1.56.4" module="pango/1.56/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
