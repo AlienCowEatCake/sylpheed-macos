@@ -34,7 +34,8 @@ function target_build_env {
     "${@}"
 }
 
-git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
+#git clone https://gitlab.gnome.org/GNOME/gtk-osx.git
+tar -xvpf "${SOURCE_DIR}/sources/gtk-osx.git.tar.bz2"
 cd gtk-osx
 git checkout e9fc8c35ea404420d5bf700e835f7d48d2d38ac2
 # @note Lock Rust version because 10.7-10.11 support is dropped since 1.74.0
@@ -57,16 +58,30 @@ sed -i '' 's|\($PYENV install -v $PYENV_VERSION\)|#\1|' ./gtk-osx-setup.sh
 sed -i '' 's|\(PIP="$PYENV_ROOT/shims/pip3"\)|#\1\nPIP="python3 -m pip"|' ./gtk-osx-setup.sh
 sed -i '' 's|\($PIP install --upgrade --user pipenv==\)2020\.11\.15|\12021.11.9|' ./gtk-osx-setup.sh
 sed -i '' 's|\(\[\[source\]\]\)|\1\nname = "pypi"|' ./gtk-osx-setup.sh
+# @note Fix builds in isolated networks
+sed -i '' "s|\([ \t]*\)\(curl .*\$BASEURL/\)\([^ ]*\)\([ \t]*-o[ \t]*\)\(.*\)|\1#\2\3\4\5\n\1cp -a \"${SOURCE_DIR}/sources/jhbuildrc/\3\" \5|" ./gtk-osx-setup.sh
+sed -i '' "s|\(\$PIP install\)|\1 --no-index --find-links \"${SOURCE_DIR}/sources/pip\"|" ./gtk-osx-setup.sh
+sed -i '' "s|\(\$PIPENV install\)|\$PIP install --no-index --find-links \"${SOURCE_DIR}/sources/pip\" meson\n#\1|" ./gtk-osx-setup.sh
+sed -i '' 's|\(pygments = \)|# \1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(meson = \)|# \1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(docutils = \)|# \1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(gi-docgen = \)|# \1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(git pull\)|#\1|' ./gtk-osx-setup.sh
+sed -i '' 's|\(git reset\)|# \1|' ./gtk-osx-setup.sh
 cd ..
 
-git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
+#git clone https://gitlab.gnome.org/GNOME/gtk-mac-bundler.git
+tar -xvpf "${SOURCE_DIR}/sources/gtk-mac-bundler.git.tar.bz2"
 cd gtk-mac-bundler
 git checkout b01203ec8073637e0c0909f598eded9a260d19cd
 cd ..
 
-curl --retry 5 --fail -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.bz2
-curl --retry 5 --fail -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
-curl --retry 5 --fail -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
+#curl --retry 5 --fail -LO https://sylpheed.sraoss.jp/sylpheed/v3.8beta/sylpheed-3.8.0beta1.tar.xz
+cp -a "${SOURCE_DIR}/sources/sylpheed-3.8.0beta1.tar.xz" ./
+#curl --retry 5 --fail -Lo qdbm-1.8.78.tar.gz https://snapshot.debian.org/archive/debian/20111016T212433Z/pool/main/q/qdbm/qdbm_1.8.78.orig.tar.gz
+cp -a "${SOURCE_DIR}/sources/qdbm-1.8.78.tar.gz" ./
+#curl --retry 5 --fail -LO http://sylpheed.sraoss.jp/sylfilter/src/sylfilter-0.8.tar.gz
+cp -a "${SOURCE_DIR}/sources/sylfilter-0.8.tar.gz" ./
 
 for ARCH in arm64 x86_64 ; do
     # @note Workaround for SIP workaround in gtk-osx
@@ -77,6 +92,16 @@ for ARCH in arm64 x86_64 ; do
 /bin/bash "\${@}"
 EOF
     chmod 755 "${HOME}/.new_local/bin/bash"
+
+    unzip -d "${HOME}/.new_local/bin" "${SOURCE_DIR}/sources/ninja-mac.zip"
+
+    mkdir -p "${HOME}/Source"
+    pushd "${HOME}/Source" >/dev/null
+    tar -xvpf "${SOURCE_DIR}/sources/jhbuild.git.tar.bz2"
+    popd >/dev/null
+
+    mkdir -p "${HOME}/gtk/source/pkgs"
+    cp -a "${SOURCE_DIR}/sources/pkgs/"* "${HOME}/gtk/source/pkgs"
 
     cd gtk-osx
     arch -${ARCH} ./gtk-osx-setup.sh
@@ -132,7 +157,7 @@ EOF
 
     target_build_env arch -${ARCH} jhbuild bootstrap
 
-    tar -xvpf sylpheed-3.8.0beta1.tar.bz2
+    tar -xvpf sylpheed-3.8.0beta1.tar.xz
     cd sylpheed-3.8.0beta1
     find "${SOURCE_DIR}/patches/sylpheed" -name '*.patch' | sort | while IFS= read -r item ; do patch -p1 -i "${item}" ; done
     target_build_env arch -${ARCH} jhbuild run \
@@ -251,7 +276,7 @@ rm -rf \
     "gtk-mac-bundler" \
     "qdbm-1.8.78.tar.gz" \
     "sylfilter-0.8.tar.gz" \
-    "sylpheed-3.8.0beta1.tar.bz2" \
+    "sylpheed-3.8.0beta1.tar.xz" \
     "${HOME}/.config/jhbuildrc" \
     "${HOME}/.config/jhbuildrc-custom" \
     "${HOME}/.config/pip" \
