@@ -1,7 +1,7 @@
 /*
 clang enchant.m -O3 \
     -dynamiclib -fPIC \
-    -current_version 11.12.0 \
+    -current_version 11.14.0 \
     -compatibility_version 11.0.0 \
     -mmacos-version-min=10.9 \
     -framework AppKit \
