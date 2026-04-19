@@ -1,0 +1,23 @@
+From: Florian Weimer <fweimer@redhat.com>
+Date: Sun, 21 Jan 2024 10:39:08 +0100
+Subject: gtk2-c89-6
+
+Convert to the expected pointer.  This was not fixed before the file
+was removed upstream.
+---
+ modules/other/gail/gailtreeview.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/modules/other/gail/gailtreeview.c b/modules/other/gail/gailtreeview.c
+index 23923c5..ac6ff0a 100644
+--- a/modules/other/gail/gailtreeview.c
++++ b/modules/other/gail/gailtreeview.c
+@@ -995,7 +995,7 @@ gail_tree_view_ref_child (AtkObject *obj,
+         gail_cell_add_state (cell, ATK_STATE_FOCUSABLE, FALSE);
+         if (focus_index == i)
+           {
+-            gailview->focus_cell = g_object_ref (cell);
++            gailview->focus_cell = ATK_OBJECT (g_object_ref (cell));
+             gail_cell_add_state (cell, ATK_STATE_FOCUSED, FALSE);
+             g_signal_emit_by_name (gailview,
+                                    "active-descendant-changed",

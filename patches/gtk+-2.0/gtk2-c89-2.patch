@@ -1,0 +1,22 @@
+From: Cosimo Cecchi <cosimoc@gnome.org>
+Date: Mon, 18 Feb 2013 19:37:20 -0500
+Subject: gtk2-c89-2
+
+immodule: fix a GCC warning
+---
+ gtk/gtkimmodule.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gtk/gtkimmodule.c b/gtk/gtkimmodule.c
+index 1fcb17a..445b2be 100644
+--- a/gtk/gtkimmodule.c
++++ b/gtk/gtkimmodule.c
+@@ -662,7 +662,7 @@ lookup_immodule (gchar **immodules_list)
+ 	  gboolean found;
+ 	  gchar *context_id;
+ 	  found = g_hash_table_lookup_extended (contexts_hash, *immodules_list,
+-						&context_id, NULL);
++						(gpointer *) &context_id, NULL);
+ 	  if (found)
+ 	    return context_id;
+ 	}

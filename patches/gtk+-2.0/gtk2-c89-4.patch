@@ -1,0 +1,23 @@
+From: Florian Weimer <fweimer@redhat.com>
+Date: Sun, 21 Jan 2024 10:36:34 +0100
+Subject: gtk2-c89-4
+
+Return the expected GObject * type.  This was not fixed upstream before
+this file was removed.
+---
+ gtk/gtkuimanager.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gtk/gtkuimanager.c b/gtk/gtkuimanager.c
+index d004cf1..8cbeda9 100644
+--- a/gtk/gtkuimanager.c
++++ b/gtk/gtkuimanager.c
+@@ -503,7 +503,7 @@ gtk_ui_manager_buildable_construct_child (GtkBuildable *buildable,
+   g_signal_connect (widget, "hierarchy-changed",
+ 		    G_CALLBACK (child_hierarchy_changed_cb),
+ 		    GTK_UI_MANAGER (buildable));
+-  return g_object_ref (widget);
++  return G_OBJECT (g_object_ref (widget));
+ }
+ 
+ static void

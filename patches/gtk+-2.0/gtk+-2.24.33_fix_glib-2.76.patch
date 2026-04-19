@@ -1,0 +1,74 @@
+From a2bba86bb1760790820ad5b76adcd3552bbb9832 Mon Sep 17 00:00:00 2001
+From: Emmanuele Bassi <ebassi@gnome.org>
+Date: Mon, 13 Mar 2023 11:49:50 +0000
+Subject: [PATCH] Check for attribute availability before accessing it
+
+Starting from GLib 2.76, the standard attribute getters in the GFileInfo
+object will warn if the attribute is unset, instead of silently bailing
+out and returning a default value.
+---
+ gtk/gtkfilechooserdefault.c | 6 ++++--
+ gtk/gtkfilesystemmodel.c    | 7 ++++++-
+ gtk/gtkpathbar.c            | 3 ++-
+ 3 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/gtk/gtkfilechooserdefault.c b/gtk/gtkfilechooserdefault.c
+index c11354248e..8bacca5d01 100644
+--- a/gtk/gtkfilechooserdefault.c
++++ b/gtk/gtkfilechooserdefault.c
+@@ -6378,10 +6378,12 @@ show_and_select_files (GtkFileChooserDefault *impl,
+       if (!_gtk_file_system_model_iter_is_visible (fsmodel, &iter))
+         {
+           GFileInfo *info = _gtk_file_system_model_get_info (fsmodel, &iter);
++          gboolean has_is_hidden = g_file_info_has_attribute (info, "standard::is-hidden");
++          gboolean has_is_backup = g_file_info_has_attribute (info, "standard::is-backup");
+ 
+           if (!enabled_hidden &&
+-              (g_file_info_get_is_hidden (info) ||
+-               g_file_info_get_is_backup (info)))
++              ((has_is_hidden && g_file_info_get_is_hidden (info)) ||
++               (has_is_backup && g_file_info_get_is_backup (info))))
+             {
+               g_object_set (impl, "show-hidden", TRUE, NULL);
+               enabled_hidden = TRUE;
+diff --git a/gtk/gtkfilesystemmodel.c b/gtk/gtkfilesystemmodel.c
+index 840f1e83bf..285b1a3624 100644
+--- a/gtk/gtkfilesystemmodel.c
++++ b/gtk/gtkfilesystemmodel.c
+@@ -444,13 +444,18 @@ static gboolean
+ node_should_be_visible (GtkFileSystemModel *model, guint id, gboolean filtered_out)
+ {
+   FileModelNode *node = get_node (model, id);
++  gboolean has_is_hidden, has_is_backup;
+   gboolean result;
+ 
+   if (node->info == NULL)
+     return FALSE;
+ 
++  has_is_hidden = g_file_info_has_attribute (node->info, "standard::is-hidden");
++  has_is_backup = g_file_info_has_attribute (node->info, "standard::is-backup");
++
+   if (!model->show_hidden &&
+-      (g_file_info_get_is_hidden (node->info) || g_file_info_get_is_backup (node->info)))
++      ((has_is_hidden && g_file_info_get_is_hidden (node->info)) ||
++       (has_is_backup && g_file_info_get_is_backup (node->info))))
+     return FALSE;
+ 
+   if (_gtk_file_info_consider_as_directory (node->info))
+diff --git a/gtk/gtkpathbar.c b/gtk/gtkpathbar.c
+index 2813c8e945..0f9100ab70 100644
+--- a/gtk/gtkpathbar.c
++++ b/gtk/gtkpathbar.c
+@@ -1659,7 +1659,8 @@ gtk_path_bar_get_info_callback (GCancellable *cancellable,
+     }
+ 
+   display_name = g_file_info_get_display_name (info);
+-  is_hidden = g_file_info_get_is_hidden (info) || g_file_info_get_is_backup (info);
++  is_hidden = g_file_info_get_attribute_boolean (info, "standard::is-hidden") ||
++              g_file_info_get_attribute_boolean (info, "standard::is-backup");
+ 
+   gtk_widget_push_composite_child ();
+   button_data = make_directory_button (file_info->path_bar, display_name,
+-- 
+2.53.0.windows.1
+
