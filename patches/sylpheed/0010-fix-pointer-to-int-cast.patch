@@ -1,0 +1,25 @@
+From 9bfbcdd02c939961e3aef422e094f1b79ad2644c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Sat, 27 Jan 2024 13:31:38 +0100
+Subject: [PATCH 10/33] fix pointer to int cast
+
+---
+ libsylph/account.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libsylph/account.c b/libsylph/account.c
+index 2431bf3..7067af3 100644
+--- a/libsylph/account.c
++++ b/libsylph/account.c
+@@ -276,7 +276,7 @@ gboolean account_address_exist(const gchar *address)
+ 		}
+ 	}
+ 
+-	return (gboolean)g_hash_table_lookup(address_table, address);
++	return g_hash_table_lookup(address_table, address) != NULL;
+ }
+ 
+ void account_foreach(AccountFunc func, gpointer user_data)
+-- 
+2.53.0
+

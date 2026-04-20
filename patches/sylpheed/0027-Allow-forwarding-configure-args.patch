@@ -1,7 +1,7 @@
-From 7f394e5cf9aec2d66dccc673baa71ae62c2e336c Mon Sep 17 00:00:00 2001
+From daea1f686cd4076dcbdef0524385d035d889a183 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 14 Jun 2022 18:15:22 +0700
-Subject: [PATCH 12/19] Allow forwarding configure args
+Subject: [PATCH 27/33] Allow forwarding configure args
 
 ---
  makeosx.sh | 1 +
@@ -20,5 +20,5 @@ index 92ae1ed..0671d94 100755
    --with-themedir=Contents/Resources/share/icons \
    && make \
 -- 
-2.39.3 (Apple Git-145)
+2.53.0
 

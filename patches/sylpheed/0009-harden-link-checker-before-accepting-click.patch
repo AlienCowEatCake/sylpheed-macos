@@ -1,0 +1,35 @@
+From 7a69d0fbec9a24689d4d41e4d890e740b565bd5e Mon Sep 17 00:00:00 2001
+From: Paul <paul@claws-mail.org>
+Date: Sun, 23 May 2021 12:16:40 +0100
+Subject: [PATCH 09/33] harden link checker before accepting click
+
+---
+ src/textview.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/textview.c b/src/textview.c
+index e55eea9..0ec9f8e 100644
+--- a/src/textview.c
++++ b/src/textview.c
+@@ -2689,7 +2689,7 @@ static gboolean textview_uri_security_check(TextView *textview, RemoteURI *uri)
+ 	gboolean retval = TRUE;
+ 
+ 	if (is_uri_string(uri->uri) == FALSE)
+-		return TRUE;
++		return FALSE;
+ 
+ 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview->text));
+ 	gtk_text_buffer_get_iter_at_offset(buffer, &start_iter, uri->start);
+@@ -2725,6 +2725,9 @@ static gboolean textview_uri_security_check(TextView *textview, RemoteURI *uri)
+ 		if (aval == G_ALERTDEFAULT)
+ 			retval = TRUE;
+ 	}
++	if (strlen(uri->uri) > get_uri_len(uri->uri))
++		retval = FALSE;
++
+ 
+ 	g_free(visible_str);
+ 
+-- 
+2.53.0
+

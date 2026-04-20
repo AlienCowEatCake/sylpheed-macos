@@ -1,7 +1,7 @@
-From de7d58ff98ad9dc6d839c5a779b0734a92adfcc2 Mon Sep 17 00:00:00 2001
+From a9a9f179436c153cc7c533cd814ef972944c3dfd Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 4 Jan 2021 22:15:56 +0700
-Subject: [PATCH 02/19] Update sylpheed-3.4.1-osx-test1.patch for 3.8.0beta1
+Subject: [PATCH 23/33] Update sylpheed-3.4.1-osx-test1.patch for 3.8.0beta1
 
 ---
  po/ja.po          | 729 +++++++++++++++++++++++-----------------------
@@ -2009,7 +2009,7 @@ index b15e0e4..9ca20fe 100644
  	../libsylph/libsylph-0.la \
  	$(SYLPHEED_RES)
 diff --git a/src/addressbook.c b/src/addressbook.c
-index b013507..eaaa56a 100644
+index 592050d..e2768b4 100644
 --- a/src/addressbook.c
 +++ b/src/addressbook.c
 @@ -27,6 +27,12 @@
@@ -2102,7 +2102,7 @@ index b013507..eaaa56a 100644
  
  static gint addressbook_close(void)
 diff --git a/src/compose.c b/src/compose.c
-index 0e5a032..d2b2976 100644
+index 6980cd3..6d01825 100644
 --- a/src/compose.c
 +++ b/src/compose.c
 @@ -77,6 +77,11 @@
@@ -2623,5 +2623,5 @@ index 571671f..31ffa73 100644
  	rpop3_window.treeview = treeview;
  	rpop3_window.store = store;
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 

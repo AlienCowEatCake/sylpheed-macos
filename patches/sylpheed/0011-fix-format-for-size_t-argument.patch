@@ -1,0 +1,48 @@
+From 529b7c1c1bddeed749916f9eb240148b55bdc2d7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Sat, 27 Jan 2024 13:32:13 +0100
+Subject: [PATCH 11/33] fix format for size_t argument
+
+---
+ libsylph/codeconv.c | 2 +-
+ libsylph/procmime.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/libsylph/codeconv.c b/libsylph/codeconv.c
+index 49d1b3d..6cad90d 100644
+--- a/libsylph/codeconv.c
++++ b/libsylph/codeconv.c
+@@ -2722,7 +2722,7 @@ CharSet conv_check_file_encoding(const gchar *file)
+ 	if ((size = fread(buf, 2, BUFFSIZE / 2, fp)) > 0) {
+ 		CharSet guess_enc = C_AUTO;
+ 
+-		debug_print("conv_check_file_encoding: check first %d bytes of file %s\n", size * 2, file);
++		debug_print("conv_check_file_encoding: check first %zd bytes of file %s\n", size * 2, file);
+ 
+ 		/* BOM check */
+ 		if ((buf[0] & 0xff) == 0xfe && (buf[1] & 0xff) == 0xff) {
+diff --git a/libsylph/procmime.c b/libsylph/procmime.c
+index 4c3a90c..0c10192 100644
+--- a/libsylph/procmime.c
++++ b/libsylph/procmime.c
+@@ -1890,7 +1890,7 @@ EncodingType procmime_get_encoding_for_text_file(const gchar *file)
+ 		octet_percentage = 0.0;
+ 
+ 	debug_print("procmime_get_encoding_for_text_file(): "
+-		    "8bit chars: %d / %d (%f%%)\n", octet_chars, total_len,
++		    "8bit chars: %zd / %zd (%f%%)\n", octet_chars, total_len,
+ 		    100.0 * octet_percentage);
+ 
+ 	if (octet_percentage > 0.20) {
+@@ -1926,7 +1926,7 @@ EncodingType procmime_get_encoding_for_str(const gchar *str)
+ 		octet_percentage = 0.0;
+ 
+ 	debug_print("procmime_get_encoding_for_str(): "
+-		    "8bit chars: %d / %d (%f%%)\n", octet_chars, total_len,
++		    "8bit chars: %zd / %zd (%f%%)\n", octet_chars, total_len,
+ 		    100.0 * octet_percentage);
+ 
+ 	if (octet_percentage > 0.20) {
+-- 
+2.53.0
+

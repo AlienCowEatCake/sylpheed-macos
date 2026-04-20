@@ -1,0 +1,33 @@
+From 26563b6a448b2b812dfef8a21c1903221bd69014 Mon Sep 17 00:00:00 2001
+From: Hideki Yamane <henrich@debian.org>
+Date: Fri, 9 Feb 2018 23:04:58 +0900
+Subject: [PATCH 04/33] detect oniguruma without onig-config
+
+---
+ configure.ac | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 3e73bfa..becd830 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -346,13 +346,10 @@ AC_MSG_CHECKING([whether to use Oniguruma])
+ if test "$ac_cv_enable_oniguruma" = yes; then
+ 	AC_MSG_RESULT(yes)
+ 	AC_MSG_CHECKING([whether Oniguruma is available])
+-        dnl AC_CHECK_PROG(ONIG_CONFIG, onig-config, onig-config)
+-	ONIG_CONFIG=onig-config
+-	ONIG_VERSION=`$ONIG_CONFIG --version 2>/dev/null`
+-	if test "x$ONIG_VERSION" != "x"; then
++	if `pkg-config --exists oniguruma`; then
+ 		AC_MSG_RESULT(yes)
+-		CFLAGS="$CFLAGS `$ONIG_CONFIG --cflags`"
+-		LIBS="$LIBS `$ONIG_CONFIG --libs`"
++		CFLAGS="$CFLAGS `pkg-config --cflags oniguruma`"
++		LIBS="$LIBS `pkg-config --libs oniguruma`"
+ 		AC_DEFINE(USE_ONIGURUMA, 1, Define if you want to use Oniguruma.)
+ 	else
+ 		AC_MSG_RESULT(no)
+-- 
+2.53.0
+

@@ -1,7 +1,7 @@
-From 1516bf9bb284ef95074af4dc4e372e3c015c5cdc Mon Sep 17 00:00:00 2001
+From e12b00f161dfe6712ff111c910babe357247d44a Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:10 +0700
-Subject: [PATCH 16/19] Improve UX for macOS builds
+Subject: [PATCH 31/33] Improve UX for macOS builds
 
 ---
  libsylph/defs.h                   |  6 +++++-
@@ -220,5 +220,5 @@ index 27f1d51..c3fb39d 100644
  
  static GtkWidget *prefs_other_create(void)
 -- 
-2.49.0
+2.53.0
 

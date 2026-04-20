@@ -1,0 +1,107 @@
+From b5470bda54f125a5489829e70e210851fddd6d0b Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 20 Apr 2026 23:41:02 +0700
+Subject: [PATCH 20/33] OAuth2 PKCE Support
+
+Original Author: Laurence Darby <laurence.darby+git@ldarby.me.uk>
+Upstream PR: https://github.com/sylpheed-mail/sylpheed/pull/60
+---
+ src/syl-auth-helper.c | 47 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+
+diff --git a/src/syl-auth-helper.c b/src/syl-auth-helper.c
+index e241dff..01154eb 100644
+--- a/src/syl-auth-helper.c
++++ b/src/syl-auth-helper.c
+@@ -48,6 +48,7 @@ typedef struct _APIInfo
+ 	gchar *client_secret;
+ 	gchar *scope;
+ 	gint local_port;
++	gint use_pkce;
+ } APIInfo;
+ 
+ typedef struct _TokenData
+@@ -343,6 +344,7 @@ static APIInfo *get_api_info(GKeyFile *key_file, const gchar *address)
+ 		api->local_port = g_key_file_get_integer(key_file, group, "local_port", NULL);
+ 		if (api->local_port == 0)
+ 			api->local_port = 8089;
++		api->use_pkce = g_key_file_get_integer(key_file, group, "use_pkce", NULL);
+ 	}
+ 
+ 	g_strfreev(groups);
+@@ -411,6 +413,36 @@ static gchar *generate_state()
+ 	return str;
+ }
+ 
++static gchar *generate_challenge(char* verifier)
++{
++	GChecksum *checksum;
++	guint8 checksum_dest[32]; /* sha256 is 32 bytes */
++	gsize checksum_len;
++	gint i;
++	gchar *str;
++
++	checksum_len = sizeof(checksum_dest) / sizeof(checksum_dest[0]);
++	checksum = g_checksum_new(G_CHECKSUM_SHA256);
++	g_checksum_update(checksum, (const guchar*)verifier, strlen(verifier));
++	g_checksum_get_digest(checksum, checksum_dest, &checksum_len);
++	g_checksum_free(checksum);
++
++	str = g_malloc(checksum_len * 2 + 1);
++	base64_encode(str, checksum_dest, checksum_len);
++	/* convert to Base64 URL encoding */
++	for (i = 0; str[i] != '\0'; i++) {
++		if (str[i] == '+')
++			str[i] = '-';
++		else if (str[i] == '/')
++			str[i] = '_';
++		else if (str[i] == '=') {
++			str[i] = '\0';
++			break;
++		}
++	}
++	return str;
++}
++
+ int main(int argc, char *argv[])
+ {
+ 	int ret = EXIT_SUCCESS;
+@@ -429,6 +461,8 @@ int main(int argc, char *argv[])
+ 	const gchar *address = NULL;
+ 	APIInfo *api;
+ 	int original_stdout_fd;
++	gchar *code_challenge = NULL;
++	gchar *code_verifier = NULL;
+ 
+ 	key_file = g_key_file_new();
+ 	file = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "oauth2.ini", NULL);
+@@ -483,6 +517,15 @@ int main(int argc, char *argv[])
+ 	g_string_append_printf(auth_uri, "&state=%s", state);
+ 	g_string_append(auth_uri, "&access_type=offline");
+ 
++	if (api->use_pkce) {
++		g_string_append(auth_uri, "&code_challenge_method=S256");
++		code_verifier = generate_state();
++		debug_print("code_verifier =>%s<=\n",code_verifier);
++		code_challenge = generate_challenge(code_verifier);
++		debug_print("code_challenge =>%s<=\n",code_challenge);
++		g_string_append_printf(auth_uri, "&code_challenge=%s",code_challenge);
++		g_free(code_challenge);
++	}
+ 	debug_print("url: %s\n", auth_uri->str);
+ 	/* chromium prints "Opening in existing browser session." on
+ 	 * stdout, which must be prevented from appearing on this
+@@ -517,6 +560,10 @@ int main(int argc, char *argv[])
+ 	tmp = curl_easy_escape(curl, api->redirect_uri, 0);
+ 	g_string_append_printf(req_body, "&redirect_uri=%s", tmp);
+ 	curl_free(tmp);
++	if (api->use_pkce) {
++		g_string_append_printf(req_body, "&code_verifier=%s",code_verifier);
++		g_free(code_verifier);
++	}
+ 	g_string_append(req_body, "&grant_type=authorization_code");
+ 	if (api->client_secret) {
+ 		tmp = curl_easy_escape(curl, api->client_secret, 0);
+-- 
+2.53.0
+

@@ -1,0 +1,34 @@
+From c1fb7d88e75781086a8ac476882f04032b776099 Mon Sep 17 00:00:00 2001
+From: Ricardo Mones <mones@debian.org>
+Date: Mon, 20 Apr 2026 03:11:36 +0700
+Subject: [PATCH 08/33] fix FTBFS with GCC 14 compiler
+
+---
+ libsylph/utils.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/libsylph/utils.c b/libsylph/utils.c
+index aabce06..68ba282 100644
+--- a/libsylph/utils.c
++++ b/libsylph/utils.c
+@@ -4254,7 +4254,7 @@ gint execute_open_file(const gchar *file, const gchar *content_type)
+ 	log_print("opening %s - %s\n", file, content_type ? content_type : "");
+ 
+ 	argv[1] = file;
+-	execute_async(argv);
++	execute_async((gchar * const*) argv);
+ #else
+ 	const gchar *argv[3] = {"xdg-open", NULL, NULL};
+ 
+@@ -4263,7 +4263,7 @@ gint execute_open_file(const gchar *file, const gchar *content_type)
+ 	log_print("opening %s - %s\n", file, content_type ? content_type : "");
+ 
+ 	argv[1] = file;
+-	execute_async(argv);
++	execute_async((gchar * const*) argv);
+ #endif
+ 
+ 	return 0;
+-- 
+2.53.0
+

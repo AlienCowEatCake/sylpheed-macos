@@ -1,7 +1,7 @@
-From 776cc47e94c62daa4857d06ae3b36c5c12956fe8 Mon Sep 17 00:00:00 2001
+From 976a6c946661ce367499918ab073eb11cafc348b Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Thu, 15 Dec 2022 01:19:45 +0700
-Subject: [PATCH 19/19] Improve HTML Symbol Entities support
+Subject: [PATCH 14/33] Improve HTML Symbol Entities support
 
 Entities list was generated from
 https://www.w3schools.com/charsets/ref_utf_punctuation.asp
@@ -54,8 +54,8 @@ with open('html5.txt', 'r') as f:
 
 print("MAX LENGTH ENTITY: ", maxlen)
 ---
- libsylph/html.c | 3008 ++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 files changed, 2992 insertions(+), 16 deletions(-)
+ libsylph/html.c | 3008 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 2992 insertions(+), 16 deletions(-)
 
 diff --git a/libsylph/html.c b/libsylph/html.c
 index a86c07b..6e0426d 100644
@@ -3147,5 +3147,5 @@ index a86c07b..6e0426d 100644
  						up += len;
  					} else {
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 

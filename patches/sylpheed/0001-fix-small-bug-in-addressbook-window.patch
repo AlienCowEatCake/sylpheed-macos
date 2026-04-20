@@ -1,17 +1,17 @@
-From 061dc83ae1de9e6f71f56b77b2ca75afc63fd401 Mon Sep 17 00:00:00 2001
+From c830857142125b4338feb6fb864cb9c2e96b5c83 Mon Sep 17 00:00:00 2001
 From: Gustavo Noronha Silva <kov@debian.org>
 Date: Sun, 28 Jan 2018 18:20:19 +0900
-Subject: [PATCH 03/19] fix small bug in addressbook window
+Subject: [PATCH 01/33] fix small bug in addressbook window
 
 ---
  src/addressbook.c | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
 diff --git a/src/addressbook.c b/src/addressbook.c
-index eaaa56a..e2768b4 100644
+index b013507..592050d 100644
 --- a/src/addressbook.c
 +++ b/src/addressbook.c
-@@ -1347,6 +1347,17 @@ static void addressbook_to_clicked(GtkButton *button, gpointer data)
+@@ -1326,6 +1326,17 @@ static void addressbook_to_clicked(GtkButton *button, gpointer data)
  	if (new_compose)
  		compose_block_modified(addrbook.target_compose);
  
@@ -30,5 +30,5 @@ index eaaa56a..e2768b4 100644
  		AddressObject *obj = node->data;
  		Compose *compose = addrbook.target_compose;
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 

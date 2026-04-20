@@ -1,0 +1,57 @@
+From 915393c6dd290ab91d560f0428572e2fddcb220d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Sat, 27 Jan 2024 14:26:33 +0100
+Subject: [PATCH 12/33] fix format for glib types
+
+---
+ libsylph/filter.c | 4 ++--
+ libsylph/folder.c | 2 +-
+ libsylph/pop.c    | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/libsylph/filter.c b/libsylph/filter.c
+index c58f8fc..9607ccf 100644
+--- a/libsylph/filter.c
++++ b/libsylph/filter.c
+@@ -566,10 +566,10 @@ static gboolean filter_match_cond(FilterCond *cond, MsgInfo *msginfo,
+ 			debug_print("filter-log: %s: CMD_TEST, str_value: [%s]%s\n", G_STRFUNC, sv, nm);
+ 			break;
+ 		case FLT_COND_SIZE_GREATER:
+-			debug_print("filter-log: %s: SIZE_GREATER: %u %s %d (KB)%s\n", G_STRFUNC, msginfo->size, not_match ? "<=" : ">", cond->int_value, nm);
++			debug_print("filter-log: %s: SIZE_GREATER: %" G_GSIZE_FORMAT " %s %d (KB)%s\n", G_STRFUNC, msginfo->size, not_match ? "<=" : ">", cond->int_value, nm);
+ 			break;
+ 		case FLT_COND_AGE_GREATER:
+-			debug_print("filter-log: %s: AGE_GREATER: %lld (sec) %s %d (day)%s\n", G_STRFUNC, timediff, not_match ? "<=" : ">", cond->int_value, nm);
++			debug_print("filter-log: %s: AGE_GREATER: %" G_GINT64_FORMAT " (sec) %s %d (day)%s\n", G_STRFUNC, timediff, not_match ? "<=" : ">", cond->int_value, nm);
+ 			break;
+ 		case FLT_COND_UNREAD:
+ 			debug_print("filter-log: %s: UNREAD%s\n", G_STRFUNC, nm);
+diff --git a/libsylph/folder.c b/libsylph/folder.c
+index 6fffe2d..c1487e1 100644
+--- a/libsylph/folder.c
++++ b/libsylph/folder.c
+@@ -1945,7 +1945,7 @@ static void folder_write_list_recursive(GNode *node, gpointer data)
+ 		}
+ 
+ 		fprintf(fp,
+-			" mtime=\"%lld\" new=\"%d\" unread=\"%d\" total=\"%d\"",
++			" mtime=\"%" G_GINT64_FORMAT "\" new=\"%d\" unread=\"%d\" total=\"%d\"",
+ 			(gint64)item->mtime, item->new, item->unread, item->total);
+ 
+ 		if (item->account)
+diff --git a/libsylph/pop.c b/libsylph/pop.c
+index 868b531..70694a7 100644
+--- a/libsylph/pop.c
++++ b/libsylph/pop.c
+@@ -250,7 +250,7 @@ gint pop3_getrange_stat_send(Pop3Session *session)
+ 
+ gint pop3_getrange_stat_recv(Pop3Session *session, const gchar *msg)
+ {
+-	if (sscanf(msg, "%d %lld", &session->count, &session->total_bytes) != 2) {
++	if (sscanf(msg, "%d %" G_GINT64_FORMAT "", &session->count, &session->total_bytes) != 2) {
+ 		log_warning(_("POP3 protocol error\n"));
+ 		session->error_val = PS_PROTOCOL;
+ 		return PS_PROTOCOL;
+-- 
+2.53.0
+

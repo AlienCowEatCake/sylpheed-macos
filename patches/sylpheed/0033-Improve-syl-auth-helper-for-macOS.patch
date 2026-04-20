@@ -1,7 +1,7 @@
-From 36a7118a646e3025065a2cf800906af0372c41b4 Mon Sep 17 00:00:00 2001
+From 0545a3cdb3ebce86ea5ffc5e995da6fea16c3483 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Wed, 21 Sep 2022 01:12:10 +0700
-Subject: [PATCH 18/19] Improve syl-auth-helper for macOS
+Subject: [PATCH 33/33] Improve syl-auth-helper for macOS
 
 ---
  macosx/bundle/sylpheed.bundle | 1 +
@@ -21,10 +21,10 @@ index 0bcba75..52ecadf 100644
    <!-- Copy in GTK+ modules.  Note the ${gtkdir} macro, which expands
         to the correct library subdirectory for the specified gtk
 diff --git a/src/syl-auth-helper.c b/src/syl-auth-helper.c
-index 9e38d8a..8355378 100644
+index dbbfdd8..d5e4c21 100644
 --- a/src/syl-auth-helper.c
 +++ b/src/syl-auth-helper.c
-@@ -433,7 +433,12 @@ int main(int argc, char *argv[])
+@@ -919,7 +919,12 @@ int main(int argc, char *argv[])
  	file = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "oauth2.ini", NULL);
  	if (!g_key_file_load_from_file(key_file, file, G_KEY_FILE_NONE, NULL)) {
  		g_free(file);
@@ -39,5 +39,5 @@ index 9e38d8a..8355378 100644
  			g_free(file);
  			g_warning("oauth2.ini not found.");
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 

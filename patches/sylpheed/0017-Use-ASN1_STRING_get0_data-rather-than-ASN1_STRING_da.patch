@@ -1,0 +1,54 @@
+From 83d41633544ee1795c7501efccfbb312142bd551 Mon Sep 17 00:00:00 2001
+From: Theo Buehler <tb@openbsd.org>
+Date: Wed, 28 Jan 2026 15:57:19 +0100
+Subject: [PATCH 17/33] Use ASN1_STRING_get0_data() rather than
+ ASN1_STRING_data()
+
+`ASN1_STRING_data()` has been deprecated in favor of its const correct
+replacement `ASN1_STRING_get0_data()` since OpenSSL 1.1. A recent change
+[removed][1] `ASN1_STRING_data()` from OpenSSL.
+
+`ASN1_STRING_get0_data()` has been available in all the major forks of
+OpenSSL for a long time, so this only introduces a compatibility problem
+if sylpheed still supports OpenSSL <= 1.0.2, in which case I can add a
+compat define.
+
+[1]: https://github.com/openssl/openssl/pull/29149
+---
+ libsylph/ssl_hostname_validation.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/libsylph/ssl_hostname_validation.c b/libsylph/ssl_hostname_validation.c
+index cb2cea9..df17e52 100644
+--- a/libsylph/ssl_hostname_validation.c
++++ b/libsylph/ssl_hostname_validation.c
+@@ -167,7 +167,7 @@ static SSLHostnameValidationResult matches_common_name(const char *hostname, con
+ 	int common_name_loc = -1;
+ 	X509_NAME_ENTRY *common_name_entry = NULL;
+ 	ASN1_STRING *common_name_asn1 = NULL;
+-	char *common_name_str = NULL;
++	const char *common_name_str = NULL;
+ 
+ 	// Find the position of the CN field in the Subject field of the certificate
+ 	common_name_loc = X509_NAME_get_index_by_NID(X509_get_subject_name((X509 *) server_cert), NID_commonName, -1);
+@@ -186,7 +186,7 @@ static SSLHostnameValidationResult matches_common_name(const char *hostname, con
+ 	if (common_name_asn1 == NULL) {
+ 		return SSL_HOSTNAME_ERROR;
+ 	}			
+-	common_name_str = (char *) ASN1_STRING_data(common_name_asn1);
++	common_name_str = (const char *) ASN1_STRING_get0_data(common_name_asn1);
+ 
+ 	debug_print("matches_common_name: %s\n", common_name_str);
+ 
+@@ -227,7 +227,7 @@ static SSLHostnameValidationResult matches_subject_alternative_name(const char *
+ 
+ 		if (current_name->type == GEN_DNS) {
+ 			// Current name is a DNS name, let's check it
+-			char *dns_name = (char *) ASN1_STRING_data(current_name->d.dNSName);
++			const char *dns_name = (const char *) ASN1_STRING_get0_data(current_name->d.dNSName);
+ 
+ 			debug_print("matches_subject_alternative_name: %s\n", dns_name);
+ 
+-- 
+2.53.0
+

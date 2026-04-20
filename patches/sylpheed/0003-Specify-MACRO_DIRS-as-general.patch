@@ -1,0 +1,26 @@
+From b53240b9e8955039db837ed30b1cae356c152859 Mon Sep 17 00:00:00 2001
+From: Hideki Yamane <henrich@debian.org>
+Date: Sun, 28 Jan 2018 18:20:49 +0900
+Subject: [PATCH 03/33] Specify MACRO_DIRS as general
+
+It breaks configure that is generated with autoreconf
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 80cbb4a..3e73bfa 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -71,7 +71,7 @@ AM_PROG_LEX
+ AC_PROG_YACC
+ AM_PROG_LIBTOOL
+ 
+-SYLPHEED_ACLOCAL_INCLUDE(ac)
++AC_CONFIG_MACRO_DIRS([ac])
+ 
+ native_win32=no
+ os_osx=no
+-- 
+2.53.0
+

@@ -1,7 +1,7 @@
-From 1c84493eaaddf22ee5f0f1e74007378804728b95 Mon Sep 17 00:00:00 2001
+From aec9b4cdc9ed66d293e370c92fbad0165582467f Mon Sep 17 00:00:00 2001
 From: Laurent Bigonville <bigon@debian.org>
 Date: Mon, 13 Jun 2022 18:35:28 +0700
-Subject: [PATCH 06/19] Switch to enchant-2
+Subject: [PATCH 06/33] Switch to enchant-2
 
 ---
  configure     | 4 ++--
@@ -26,7 +26,7 @@ index 1fcfa9e..33948e1 100755
  				LIBS="$LIBS `$PKG_CONFIG --libs dbus-glib-1`"
  			fi
 diff --git a/configure.ac b/configure.ac
-index 80cbb4a..2a0c2c9 100644
+index becd830..0f4590f 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -319,10 +319,10 @@ if test "$ac_cv_enable_gtkspell" = yes; then
@@ -43,7 +43,7 @@ index 80cbb4a..2a0c2c9 100644
  				LIBS="$LIBS `$PKG_CONFIG --libs dbus-glib-1`"
  			fi
 diff --git a/src/compose.c b/src/compose.c
-index d2b2976..e96bf71 100644
+index 0e5a032..42838fd 100644
 --- a/src/compose.c
 +++ b/src/compose.c
 @@ -71,7 +71,7 @@
@@ -56,5 +56,5 @@ index d2b2976..e96bf71 100644
  #  include <aspell.h>
  #endif
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 

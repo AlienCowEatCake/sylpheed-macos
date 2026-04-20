@@ -1,0 +1,46 @@
+From 2745a712e0a2272def1514b44aa452be807fb98d Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Mon, 20 Apr 2026 22:20:01 +0700
+Subject: [PATCH 18/33] Prevent stdout from browser appearing on stdout.
+
+Original Author: Laurence Darby <laurence.darby+git@ldarby.me.uk>
+Upstream PR: https://github.com/sylpheed-mail/sylpheed/pull/59
+---
+ src/syl-auth-helper.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/src/syl-auth-helper.c b/src/syl-auth-helper.c
+index 9e38d8a..56d64b2 100644
+--- a/src/syl-auth-helper.c
++++ b/src/syl-auth-helper.c
+@@ -428,6 +428,7 @@ int main(int argc, char *argv[])
+ 	gint i;
+ 	const gchar *address = NULL;
+ 	APIInfo *api;
++	int original_stdout_fd;
+ 
+ 	key_file = g_key_file_new();
+ 	file = g_strconcat(get_rc_dir(), G_DIR_SEPARATOR_S, "oauth2.ini", NULL);
+@@ -483,7 +484,19 @@ int main(int argc, char *argv[])
+ 	g_string_append(auth_uri, "&access_type=offline");
+ 
+ 	debug_print("url: %s\n", auth_uri->str);
++	/* chromium prints "Opening in existing browser session." on
++	 * stdout, which must be prevented from appearing on this
++	 * program's stdout, because later the token will be printed
++	 * on stdout. */
++	original_stdout_fd = dup(fileno(stdout));
++#ifdef G_OS_WIN32
++	freopen("NUL", "w", stdout);
++#else
++	freopen("/dev/null", "w", stdout);
++#endif
+ 	open_uri(auth_uri->str, NULL);
++	dup2(original_stdout_fd, fileno(stdout));
++	close(original_stdout_fd);
+ 	g_string_free(auth_uri, TRUE);
+ 
+ 	code = http_redirect_accept(api->local_port, state);
+-- 
+2.53.0
+

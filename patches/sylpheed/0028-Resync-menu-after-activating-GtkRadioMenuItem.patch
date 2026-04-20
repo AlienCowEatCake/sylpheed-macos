@@ -1,7 +1,7 @@
-From b262ecdfa1366a0409fe91acdb11db0662754f7c Mon Sep 17 00:00:00 2001
+From 08f53844da37a2b95dc6b634d9d18311fdd4a3bc Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Wed, 15 Jun 2022 02:49:42 +0700
-Subject: [PATCH 13/19] Resync menu after activating GtkRadioMenuItem
+Subject: [PATCH 28/33] Resync menu after activating GtkRadioMenuItem
 
 See also:
   * https://code.launchpad.net/~suv-lp/inkscape/osxmenu
@@ -14,10 +14,10 @@ See also:
  3 files changed, 40 insertions(+), 3 deletions(-)
 
 diff --git a/src/compose.c b/src/compose.c
-index e96bf71..a927b00 100644
+index 6d01825..cf7bbaa 100644
 --- a/src/compose.c
 +++ b/src/compose.c
-@@ -6387,6 +6387,9 @@ static void compose_change_spell_lang_menu(Compose *compose, const gchar *lang)
+@@ -6389,6 +6389,9 @@ static void compose_change_spell_lang_menu(Compose *compose, const gchar *lang)
  		if (dict && !g_ascii_strcasecmp(dict, lang)) {
  			gtk_check_menu_item_set_active
  				(GTK_CHECK_MENU_ITEM(cur_item->data), TRUE);
@@ -27,7 +27,7 @@ index e96bf71..a927b00 100644
  			return;
  		}
  	}
-@@ -7920,8 +7923,12 @@ static void compose_set_encoding_cb(gpointer data, guint action,
+@@ -7922,8 +7925,12 @@ static void compose_set_encoding_cb(gpointer data, guint action,
  {
  	Compose *compose = (Compose *)data;
  
@@ -41,7 +41,7 @@ index e96bf71..a927b00 100644
  }
  
  static void compose_address_cb(gpointer data, guint action, GtkWidget *widget)
-@@ -8421,6 +8428,10 @@ static void compose_set_spell_lang_cb(GtkWidget *widget,
+@@ -8423,6 +8430,10 @@ static void compose_set_spell_lang_cb(GtkWidget *widget,
  	if (speller != NULL)
  		gtkspell_set_language(speller, dict, NULL);
  
@@ -143,5 +143,5 @@ index 6d75275..ba87bde 100644
  }
  
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 

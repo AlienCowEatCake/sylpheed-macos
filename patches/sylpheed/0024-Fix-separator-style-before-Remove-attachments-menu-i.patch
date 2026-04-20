@@ -1,7 +1,7 @@
-From fc9c57edbc26faf8dab0691ff12967b688db5458 Mon Sep 17 00:00:00 2001
+From 97a715090645123ea53857a85348db160b948515 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 7 Jun 2022 06:47:29 +0700
-Subject: [PATCH 08/19] Fix separator style before 'Remove attachments' menu
+Subject: [PATCH 24/33] Fix separator style before 'Remove attachments' menu
  item
 
 ---
@@ -22,5 +22,5 @@ index 52fbc5d..3cda762 100644
  	}
  	gtk_widget_show(menuitem);
 -- 
-2.37.1 (Apple Git-137.1)
+2.53.0
 
