@@ -132,7 +132,7 @@ EOF
     mkdir -p "${HOME}/gtk/inst/lib/pkgconfig" "${HOME}/gtk/inst/include/enchant-2"
     cp -a "${SOURCE_DIR}/enchant/enchant.h" "${HOME}/gtk/inst/include/enchant-2/"
     clang "${SOURCE_DIR}/enchant/enchant.m" ${CPPFLAGS_TARGET} ${OBJCFLAGS_TARGET} -Wall -Wextra \
-        -dynamiclib -fPIC -current_version 11.14.0 -compatibility_version 11.0.0 \
+        -dynamiclib -fPIC -current_version 11.15.0 -compatibility_version 11.0.0 \
         -mmacos-version-min=${MACOSX_DEPLOYMENT_TARGET} -arch ${ARCH} -framework AppKit -framework Foundation \
         -o "${HOME}/gtk/inst/lib/libenchant-2.dylib" -install_name "${HOME}/gtk/inst/lib/libenchant-2.dylib"
     cat << EOF > "${HOME}/gtk/inst/lib/pkgconfig/enchant-2.pc"
@@ -143,7 +143,7 @@ includedir=\${prefix}/include
 
 Name: libenchant
 Description: A spell checking library
-Version: 2.8.14
+Version: 2.8.15
 Libs: -L\${libdir} -lenchant-2
 Cflags: -I\${includedir}/enchant-2
 EOF
