@@ -1,4 +1,4 @@
-From b991ede61c68e417ca263254305ec2afcd969459 Mon Sep 17 00:00:00 2001
+From 60d726493640ca06e2aa8e6194fcabf96f49925e Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 19 Apr 2026 04:35:18 +0700
 Subject: [PATCH 16/33] Fix segfault with gdk-pixbuf 2.44.5+
@@ -16,26 +16,25 @@ See also:
 * https://github.com/msys2/MINGW-packages/issues/28843
 * https://github.com/msys2/MINGW-packages/commit/3d6a44f4c1a64735c2462e24d8b8c647374dcf50
 ---
- src/stock_pixmap.c | 1779 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 1779 insertions(+)
+ src/gtkutils.c     | 1971 ++++++++++++++++++++++++++++++++++++++++++++
+ src/gtkutils.h     |   16 +-
+ src/headerview.c   |    8 +-
+ src/stock_pixmap.c |    2 +-
+ 4 files changed, 1994 insertions(+), 3 deletions(-)
 
-diff --git a/src/stock_pixmap.c b/src/stock_pixmap.c
-index 5cb8c5e..8459c72 100644
---- a/src/stock_pixmap.c
-+++ b/src/stock_pixmap.c
-@@ -18,6 +18,7 @@
-  */
- 
- #include <glib.h>
-+#include <glib/gi18n.h>
- #include <gtk/gtkwidget.h>
- #include <gtk/gtkpixmap.h>
- #include <gtk/gtkimage.h>
-@@ -291,6 +292,1784 @@ gint stock_pixmap_gdk(GtkWidget *window, StockPixmap icon,
- 	return 0;
+diff --git a/src/gtkutils.c b/src/gtkutils.c
+index b1a488a..8672016 100644
+--- a/src/gtkutils.c
++++ b/src/gtkutils.c
+@@ -1117,3 +1117,1974 @@ void gtkut_events_flush(void)
+ {
+ 	GTK_EVENTS_FLUSH();
  }
- 
++
 +/* ========== BEGIN CODE FROM GDK-PIXBUF 2.44.4 ========== */
++
++#define gdk_pixbuf_new_from_xpm_data \
++	GTKUT_gdk_pixbuf_new_from_xpm_data
 +
 +/* https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/2.44.4/gdk-pixbuf/xpm-color-table.h */
 +
@@ -1803,19 +1802,270 @@ index 5cb8c5e..8459c72 100644
 +
 +/* https://gitlab.gnome.org/GNOME/gdk-pixbuf/-/blob/2.44.4/gdk-pixbuf/gdk-pixbuf-io.c */
 +
-+static GdkPixbuf *XXX_gdk_pixbuf_new_from_xpm_data (const char **data)
++static GdkPixbuf *gdk_pixbuf_new_from_xpm_data (const char **data)
 +{
 +	g_return_val_if_fail (data != NULL, NULL);
 +	return gdk_pixbuf__xpm_image_load_xpm_data (data);
 +}
 +
-+#define gdk_pixbuf_new_from_xpm_data XXX_gdk_pixbuf_new_from_xpm_data
-+
 +/* ========== END CODE FROM GDK-PIXBUF 2.44.4 ========== */
 +
- gint stock_pixbuf_gdk(GtkWidget *window, StockPixmap icon, GdkPixbuf **pixbuf)
- {
- 	StockPixmapData *pix_d;
++/* ========== BEGIN CODE FROM GTK 2.24.33 ========== */
++
++#define gdk_pixmap_colormap_create_from_xpm_d \
++	GTKUT_gdk_pixmap_colormap_create_from_xpm_d
++
++#define gdk_pixmap_create_from_xpm_d \
++	GTKUT_gdk_pixmap_create_from_xpm_d
++
++/* https://gitlab.gnome.org/GNOME/gtk/-/blob/2.24.33/gdk/gdkdraw.c */
++
++static GdkGC *
++_gdk_drawable_get_scratch_gc (GdkDrawable *drawable,
++			      gboolean     graphics_exposures)
++{
++  GdkScreen *screen;
++  gint depth;
++
++  g_return_val_if_fail (GDK_IS_DRAWABLE (drawable), NULL);
++
++  screen = gdk_drawable_get_screen (drawable);
++
++  g_return_val_if_fail (!screen->closed, NULL);
++
++  depth = gdk_drawable_get_depth (drawable) - 1;
++
++  if (graphics_exposures)
++    {
++      if (!screen->exposure_gcs[depth])
++	{
++	  GdkGCValues values;
++	  GdkGCValuesMask mask;
++
++	  values.graphics_exposures = TRUE;
++	  mask = GDK_GC_EXPOSURES;  
++
++	  screen->exposure_gcs[depth] =
++	    gdk_gc_new_with_values (drawable, &values, mask);
++	}
++
++      return screen->exposure_gcs[depth];
++    }
++  else
++    {
++      if (!screen->normal_gcs[depth])
++	{
++	  screen->normal_gcs[depth] =
++	    gdk_gc_new (drawable);
++	}
++
++      return screen->normal_gcs[depth];
++    }
++}
++
++/* https://gitlab.gnome.org/GNOME/gtk/-/blob/2.24.33/gdk/gdkpixmap.c */
++
++static GdkBitmap *
++make_solid_mask (GdkScreen *screen, gint width, gint height)
++{
++  GdkBitmap *bitmap;
++  GdkGC *gc;
++  GdkGCValues gc_values;
++  
++  bitmap = gdk_pixmap_new (gdk_screen_get_root_window (screen),
++			   width, height, 1);
++
++  gc_values.foreground.pixel = 1;
++  gc = gdk_gc_new_with_values (bitmap, &gc_values, GDK_GC_FOREGROUND);
++  
++  gdk_draw_rectangle (bitmap, gc, TRUE, 0, 0, width, height);
++  
++  g_object_unref (gc);
++  
++  return bitmap;
++}
++
++#define PACKED_COLOR(c) ((((c)->red   & 0xff00)  << 8) |   \
++			  ((c)->green & 0xff00)        |   \
++			  ((c)->blue             >> 8))
++
++static GdkPixmap *
++gdk_pixmap_colormap_new_from_pixbuf (GdkColormap    *colormap,
++				     GdkBitmap     **mask,
++				     const GdkColor *transparent_color,
++				     GdkPixbuf      *pixbuf)
++{
++  GdkPixmap *pixmap;
++  GdkPixbuf *render_pixbuf;
++  GdkGC *tmp_gc;
++  GdkScreen *screen = gdk_colormap_get_screen (colormap);
++  
++  pixmap = gdk_pixmap_new (gdk_screen_get_root_window (screen),
++			   gdk_pixbuf_get_width (pixbuf),
++			   gdk_pixbuf_get_height (pixbuf),
++			   gdk_colormap_get_visual (colormap)->depth);
++  gdk_drawable_set_colormap (pixmap, colormap);
++  
++  if (transparent_color)
++    {
++      guint32 packed_color = PACKED_COLOR (transparent_color);
++      render_pixbuf = gdk_pixbuf_composite_color_simple (pixbuf,
++							 gdk_pixbuf_get_width (pixbuf),
++							 gdk_pixbuf_get_height (pixbuf),
++							 GDK_INTERP_NEAREST,
++							 255, 16, packed_color, packed_color);
++    }
++  else
++    render_pixbuf = pixbuf;
++
++  tmp_gc = _gdk_drawable_get_scratch_gc (pixmap, FALSE);
++  gdk_draw_pixbuf (pixmap, tmp_gc, render_pixbuf, 0, 0, 0, 0,
++		   gdk_pixbuf_get_width (render_pixbuf),
++		   gdk_pixbuf_get_height (render_pixbuf),
++		   GDK_RGB_DITHER_NORMAL, 0, 0);
++
++  if (render_pixbuf != pixbuf)
++    g_object_unref (render_pixbuf);
++
++  if (mask)
++    gdk_pixbuf_render_pixmap_and_mask_for_colormap (pixbuf, colormap, NULL, mask, 128);
++
++  if (mask && !*mask)
++    *mask = make_solid_mask (screen,
++			     gdk_pixbuf_get_width (pixbuf),
++			     gdk_pixbuf_get_height (pixbuf));
++
++  return pixmap;
++}
++
++static GdkPixmap*
++gdk_pixmap_colormap_create_from_xpm_d (GdkDrawable     *drawable,
++				       GdkColormap     *colormap,
++				       GdkBitmap      **mask,
++				       const GdkColor  *transparent_color,
++				       gchar          **data)
++{
++  GdkPixbuf *pixbuf;
++  GdkPixmap *pixmap;
++
++  g_return_val_if_fail (drawable != NULL || colormap != NULL, NULL);
++  g_return_val_if_fail (drawable == NULL || GDK_IS_DRAWABLE (drawable), NULL);
++  g_return_val_if_fail (colormap == NULL || GDK_IS_COLORMAP (colormap), NULL);
++
++  if (colormap == NULL)
++    colormap = gdk_drawable_get_colormap (drawable);
++  
++  pixbuf = gdk_pixbuf_new_from_xpm_data ((const char **)data);
++  if (!pixbuf)
++    return NULL;
++
++  pixmap = gdk_pixmap_colormap_new_from_pixbuf (colormap, mask, transparent_color, pixbuf);
++
++  g_object_unref (pixbuf);
++
++  return pixmap;
++}
++
++static GdkPixmap*
++gdk_pixmap_create_from_xpm_d (GdkDrawable    *drawable,
++			      GdkBitmap     **mask,
++			      const GdkColor *transparent_color,
++			      gchar         **data)
++{
++  return gdk_pixmap_colormap_create_from_xpm_d (drawable, NULL, mask,
++						transparent_color, data);
++}
++
++/* ========== END CODE FROM GTK 2.24.33 ========== */
++
++GdkPixmap *gtkut_pixmap_colormap_create_from_xpm_d(GdkDrawable *drawable,
++						   GdkColormap *colormap,
++						   GdkBitmap **mask,
++						   const GdkColor *transparent_color,
++						   gchar **data)
++{
++	return gdk_pixmap_colormap_create_from_xpm_d(drawable, colormap, mask,
++						     transparent_color, data);
++}
++
++GdkPixmap *gtkut_pixmap_create_from_xpm_d(GdkDrawable *drawable,
++					  GdkBitmap **mask,
++					  const GdkColor *transparent_color,
++					  gchar **data)
++{
++	return gdk_pixmap_create_from_xpm_d(drawable, mask,
++					    transparent_color, data);
++}
++
++GdkPixbuf *gtkut_pixbuf_new_from_xpm_data(const char **data)
++{
++	return gdk_pixbuf_new_from_xpm_data(data);
++}
+diff --git a/src/gtkutils.h b/src/gtkutils.h
+index 1872e67..3b92d6d 100644
+--- a/src/gtkutils.h
++++ b/src/gtkutils.h
+@@ -64,7 +64,7 @@ struct _ComboButton
+ { \
+ 	if (!pixmap) { \
+ 		GtkStyle *style = gtk_widget_get_style(widget); \
+-		pixmap = gdk_pixmap_create_from_xpm_d \
++		pixmap = gtkut_pixmap_create_from_xpm_d \
+ 			(widget->window, &mask, \
+ 			 &style->bg[GTK_STATE_NORMAL], xpm_d); \
+ 	} \
+@@ -235,4 +235,18 @@ void gtkut_widget_init			(void);
+ 
+ void gtkut_events_flush			(void);
+ 
++GdkPixmap *gtkut_pixmap_colormap_create_from_xpm_d
++					(GdkDrawable	*drawable,
++					 GdkColormap	*colormap,
++					 GdkBitmap	**mask,
++					 const GdkColor	*transparent_color,
++					 gchar		**data);
++GdkPixmap *gtkut_pixmap_create_from_xpm_d
++					(GdkDrawable	*drawable,
++					 GdkBitmap	**mask,
++					 const GdkColor	*transparent_color,
++					 gchar		**data);
++GdkPixbuf *gtkut_pixbuf_new_from_xpm_data
++					(const char	**data);
++
+ #endif /* __GTKUTILS_H__ */
+diff --git a/src/headerview.c b/src/headerview.c
+index 984e8bc..c6e34a5 100644
+--- a/src/headerview.c
++++ b/src/headerview.c
+@@ -295,8 +295,14 @@ static void headerview_show_xface(HeaderView *headerview, MsgInfo *msginfo)
+ 
+ 	create_xpm_from_xface(xpm_xface, xface);
+ 
+-	pixmap = gdk_pixmap_create_from_xpm_d
++	pixmap = gtkut_pixmap_create_from_xpm_d
+ 		(hbox->window, &mask, &hbox->style->white, xpm_xface);
++	if (!pixmap) {
++		g_warning("can't create pixmap from xpm\n");
++		if (headerview->image)
++			gtk_widget_hide(headerview->image);
++		return;
++	}
+ 
+ 	if (!headerview->image) {
+ 		GtkWidget *image;
+diff --git a/src/stock_pixmap.c b/src/stock_pixmap.c
+index 5cb8c5e..111a141 100644
+--- a/src/stock_pixmap.c
++++ b/src/stock_pixmap.c
+@@ -313,7 +313,7 @@ gint stock_pixbuf_gdk(GtkWidget *window, StockPixmap icon, GdkPixbuf **pixbuf)
+ 			(gtk_icon_theme_get_default(),
+ 			 pix_d->icon_name, pix_d->size, 0, NULL);
+ 	if (!pix_d->pixbuf && pix_d->data)
+-		pix_d->pixbuf = gdk_pixbuf_new_from_xpm_data
++		pix_d->pixbuf = gtkut_pixbuf_new_from_xpm_data
+ 			((const gchar **)pix_d->data);
+ 	if (!pix_d->pixbuf) {
+ 		g_warning("can't read image %d\n", icon);
 -- 
 2.53.0
 

@@ -1,4 +1,4 @@
-From 738feb07977d4f6f252249d842ea1a3916cf4301 Mon Sep 17 00:00:00 2001
+From e1cfe94a29cd7a33632d56154d3268eb71894805 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 04:47:15 +0700
 Subject: [PATCH 29/33] Fix conflicting and broken hotkeys
@@ -211,14 +211,13 @@ index cf7bbaa..25f40ad 100644
  
  static void compose_grab_focus_cb(GtkWidget *widget, Compose *compose)
 diff --git a/src/gtkutils.c b/src/gtkutils.c
-index b1a488a..33db071 100644
+index 8672016..0c8d55e 100644
 --- a/src/gtkutils.c
 +++ b/src/gtkutils.c
-@@ -1117,3 +1117,142 @@ void gtkut_events_flush(void)
- {
+@@ -1118,6 +1118,145 @@ void gtkut_events_flush(void)
  	GTK_EVENTS_FLUSH();
  }
-+
+ 
 +GtkWindow *gtkut_get_active_window(void)
 +{
 +	GList *window_list, *cur;
@@ -357,11 +356,15 @@ index b1a488a..33db071 100644
 +	}
 +	return FALSE;
 +}
++
+ /* ========== BEGIN CODE FROM GDK-PIXBUF 2.44.4 ========== */
+ 
+ #define gdk_pixbuf_new_from_xpm_data \
 diff --git a/src/gtkutils.h b/src/gtkutils.h
-index 1872e67..0434c2e 100644
+index 3b92d6d..583dc48 100644
 --- a/src/gtkutils.h
 +++ b/src/gtkutils.h
-@@ -235,4 +235,14 @@ void gtkut_widget_init			(void);
+@@ -235,6 +235,16 @@ void gtkut_widget_init			(void);
  
  void gtkut_events_flush			(void);
  
@@ -375,7 +378,9 @@ index 1872e67..0434c2e 100644
 +gboolean gtkut_default_paste		(void);
 +gboolean gtkut_default_allsel		(void);
 +
- #endif /* __GTKUTILS_H__ */
+ GdkPixmap *gtkut_pixmap_colormap_create_from_xpm_d
+ 					(GdkDrawable	*drawable,
+ 					 GdkColormap	*colormap,
 diff --git a/src/mainwindow.c b/src/mainwindow.c
 index 1dc54d1..1ed206c 100644
 --- a/src/mainwindow.c
