@@ -1,7 +1,7 @@
-From 976a6c946661ce367499918ab073eb11cafc348b Mon Sep 17 00:00:00 2001
+From 3f70f9149f7de9213ee9e7263e6e95610519c7a5 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Thu, 15 Dec 2022 01:19:45 +0700
-Subject: [PATCH 14/33] Improve HTML Symbol Entities support
+Subject: [PATCH 14/34] Improve HTML Symbol Entities support
 
 Entities list was generated from
 https://www.w3schools.com/charsets/ref_utf_punctuation.asp

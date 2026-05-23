@@ -1,7 +1,7 @@
-From c1fb7d88e75781086a8ac476882f04032b776099 Mon Sep 17 00:00:00 2001
+From 5a99c9686687a7753f37c16ca4b561d1f4bac4d8 Mon Sep 17 00:00:00 2001
 From: Ricardo Mones <mones@debian.org>
 Date: Mon, 20 Apr 2026 03:11:36 +0700
-Subject: [PATCH 08/33] fix FTBFS with GCC 14 compiler
+Subject: [PATCH 08/34] fix FTBFS with GCC 14 compiler
 
 ---
  libsylph/utils.c | 4 ++--

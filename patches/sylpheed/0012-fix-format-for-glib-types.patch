@@ -1,7 +1,7 @@
-From 915393c6dd290ab91d560f0428572e2fddcb220d Mon Sep 17 00:00:00 2001
+From 8ab1a11a2dd2799fd40e949e60d6a95d4ebe17f2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
 Date: Sat, 27 Jan 2024 14:26:33 +0100
-Subject: [PATCH 12/33] fix format for glib types
+Subject: [PATCH 12/34] fix format for glib types
 
 ---
  libsylph/filter.c | 4 ++--

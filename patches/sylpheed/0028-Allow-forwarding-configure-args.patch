@@ -1,7 +1,7 @@
-From daea1f686cd4076dcbdef0524385d035d889a183 Mon Sep 17 00:00:00 2001
+From ddf7d5652558ee77bf804350f13dc8ef6b098816 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Tue, 14 Jun 2022 18:15:22 +0700
-Subject: [PATCH 27/33] Allow forwarding configure args
+Subject: [PATCH 28/34] Allow forwarding configure args
 
 ---
  makeosx.sh | 1 +

@@ -1,7 +1,7 @@
-From 2a3fffbaf1562ee6fd94a36e2fec7add1bb502df Mon Sep 17 00:00:00 2001
+From fd84bc110d0bcd771c8a735372daac4dbdb17d0f Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 17 Aug 2025 04:56:29 +0700
-Subject: [PATCH 21/33] Add OAuth2 refresh tokens support
+Subject: [PATCH 21/34] Add OAuth2 refresh tokens support
 
 https://github.com/AlienCowEatCake/sylpheed-windows/issues/10
 ---

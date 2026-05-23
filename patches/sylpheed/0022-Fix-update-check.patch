@@ -1,0 +1,44 @@
+From bb9781bd7579aeb1f0b6758e6a8185a4ccd0fa95 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Sun, 24 May 2026 00:19:21 +0700
+Subject: [PATCH 22/34] Fix update check
+
+---
+ libsylph/defs.h    | 4 ++--
+ src/update_check.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/libsylph/defs.h b/libsylph/defs.h
+index 18f0c97..98d7fac 100644
+--- a/libsylph/defs.h
++++ b/libsylph/defs.h
+@@ -69,9 +69,9 @@
+ #define FAQ_HTML_INDEX		"sylpheed-faq.html"
+ #define HOMEPAGE_URI		"https://sylpheed.sraoss.jp/"
+ #define DOWNLOAD_URI		"https://sylpheed.sraoss.jp/download.php"
+-#define VERSION_URI		"http://sylpheed.sraoss.jp/version.txt"
++#define VERSION_URI		"https://sylpheed.sraoss.jp/version.txt"
+ #define PLUGIN_HOMEPAGE_URI	"https://sylpheed.sraoss.jp/en/plugin.html"
+-#define PLUGIN_VERSION_URI	"http://sylpheed.sraoss.jp/plugin_version.txt"
++#define PLUGIN_VERSION_URI	"https://sylpheed.sraoss.jp/plugin_version.txt"
+ #define FOLDER_LIST		"folderlist.xml"
+ #define CACHE_FILE		".sylpheed_cache"
+ #define MARK_FILE		".sylpheed_mark"
+diff --git a/src/update_check.c b/src/update_check.c
+index 4fb8bbd..24dcb81 100644
+--- a/src/update_check.c
++++ b/src/update_check.c
+@@ -457,8 +457,8 @@ static void update_check_cb(GPid pid, gint status, gpointer data)
+ 
+ static void spawn_curl(gchar *url, GChildWatchFunc func, gpointer data)
+ {
+-	gchar *cmdline[8] = {"curl", "--silent", "--max-time", "10"};
+-	gint argc = 4;
++	gchar *cmdline[9] = {"curl", "--silent", "--max-time", "10", "--location"};
++	gint argc = 5;
+ 	GPid pid;
+ 	GError *error = NULL;
+ 
+-- 
+2.53.0
+

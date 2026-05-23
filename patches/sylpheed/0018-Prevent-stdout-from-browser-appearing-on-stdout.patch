@@ -1,7 +1,7 @@
-From 2745a712e0a2272def1514b44aa452be807fb98d Mon Sep 17 00:00:00 2001
+From c837b429f83b40f41728ccb1389ca31911f7c11d Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 20 Apr 2026 22:20:01 +0700
-Subject: [PATCH 18/33] Prevent stdout from browser appearing on stdout.
+Subject: [PATCH 18/34] Prevent stdout from browser appearing on stdout.
 
 Original Author: Laurence Darby <laurence.darby+git@ldarby.me.uk>
 Upstream PR: https://github.com/sylpheed-mail/sylpheed/pull/59

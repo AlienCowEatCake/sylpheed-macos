@@ -1,7 +1,7 @@
-From b5470bda54f125a5489829e70e210851fddd6d0b Mon Sep 17 00:00:00 2001
+From f99063cbefd938a4c362691b11b9e2e813e46a68 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Mon, 20 Apr 2026 23:41:02 +0700
-Subject: [PATCH 20/33] OAuth2 PKCE Support
+Subject: [PATCH 20/34] OAuth2 PKCE Support
 
 Original Author: Laurence Darby <laurence.darby+git@ldarby.me.uk>
 Upstream PR: https://github.com/sylpheed-mail/sylpheed/pull/60

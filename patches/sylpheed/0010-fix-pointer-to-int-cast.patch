@@ -1,7 +1,7 @@
-From 9bfbcdd02c939961e3aef422e094f1b79ad2644c Mon Sep 17 00:00:00 2001
+From 937536b597ac627a58c644315072290af1c4a187 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
 Date: Sat, 27 Jan 2024 13:31:38 +0100
-Subject: [PATCH 10/33] fix pointer to int cast
+Subject: [PATCH 10/34] fix pointer to int cast
 
 ---
  libsylph/account.c | 2 +-

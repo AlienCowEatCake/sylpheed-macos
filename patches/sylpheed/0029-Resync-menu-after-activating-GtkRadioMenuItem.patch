@@ -1,7 +1,7 @@
-From 08f53844da37a2b95dc6b634d9d18311fdd4a3bc Mon Sep 17 00:00:00 2001
+From f7140ec5c758677ca35f2b9f23f192f35735218c Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Wed, 15 Jun 2022 02:49:42 +0700
-Subject: [PATCH 28/33] Resync menu after activating GtkRadioMenuItem
+Subject: [PATCH 29/34] Resync menu after activating GtkRadioMenuItem
 
 See also:
   * https://code.launchpad.net/~suv-lp/inkscape/osxmenu

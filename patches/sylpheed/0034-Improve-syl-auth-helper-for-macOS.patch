@@ -1,7 +1,7 @@
-From 0545a3cdb3ebce86ea5ffc5e995da6fea16c3483 Mon Sep 17 00:00:00 2001
+From 16fba178a79c33681f69e13b21e38cdfaa0af8de Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Wed, 21 Sep 2022 01:12:10 +0700
-Subject: [PATCH 33/33] Improve syl-auth-helper for macOS
+Subject: [PATCH 34/34] Improve syl-auth-helper for macOS
 
 ---
  macosx/bundle/sylpheed.bundle | 1 +

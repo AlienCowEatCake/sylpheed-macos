@@ -1,7 +1,7 @@
 From 60d726493640ca06e2aa8e6194fcabf96f49925e Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 19 Apr 2026 04:35:18 +0700
-Subject: [PATCH 16/33] Fix segfault with gdk-pixbuf 2.44.5+
+Subject: [PATCH 16/34] Fix segfault with gdk-pixbuf 2.44.5+
 
 (sylpheed.exe:30976): GLib-GObject-CRITICAL **: 21:24:04.855: cannot register existing type 'GdkPixbuf'
 (sylpheed.exe:30976): GLib-GObject-CRITICAL **: 21:24:04.855: g_type_add_interface_static: assertion 'G_TYPE_IS_INSTANTIATABLE (instance_type)' failed

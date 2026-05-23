@@ -1,7 +1,7 @@
-From 4b2889a98c486de9c84e49990fdcd476c8637561 Mon Sep 17 00:00:00 2001
+From 8d3740e265209d3081a602ded88d55bcbeed0248 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:49 +0700
-Subject: [PATCH 32/33] Use native macOS tray icon
+Subject: [PATCH 33/34] Use native macOS tray icon
 
 ---
  src/trayicon.c | 356 ++++++++++++++++++++++++++++++++++++++++++++++++-

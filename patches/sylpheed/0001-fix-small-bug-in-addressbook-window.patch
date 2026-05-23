@@ -1,7 +1,7 @@
-From c830857142125b4338feb6fb864cb9c2e96b5c83 Mon Sep 17 00:00:00 2001
+From b986b45143565084eb2dd54b5a6c7598a4cc4776 Mon Sep 17 00:00:00 2001
 From: Gustavo Noronha Silva <kov@debian.org>
 Date: Sun, 28 Jan 2018 18:20:19 +0900
-Subject: [PATCH 01/33] fix small bug in addressbook window
+Subject: [PATCH 01/34] fix small bug in addressbook window
 
 ---
  src/addressbook.c | 11 +++++++++++

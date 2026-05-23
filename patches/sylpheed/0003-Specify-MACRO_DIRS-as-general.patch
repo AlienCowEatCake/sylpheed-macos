@@ -1,7 +1,7 @@
-From b53240b9e8955039db837ed30b1cae356c152859 Mon Sep 17 00:00:00 2001
+From a5ce98a3e93c629492ad470a1857d0a058e68145 Mon Sep 17 00:00:00 2001
 From: Hideki Yamane <henrich@debian.org>
 Date: Sun, 28 Jan 2018 18:20:49 +0900
-Subject: [PATCH 03/33] Specify MACRO_DIRS as general
+Subject: [PATCH 03/34] Specify MACRO_DIRS as general
 
 It breaks configure that is generated with autoreconf
 ---

@@ -1,7 +1,7 @@
-From aec9b4cdc9ed66d293e370c92fbad0165582467f Mon Sep 17 00:00:00 2001
+From 70b3bd0ffe780e2f7afe485347b1a9ae9de5cdb5 Mon Sep 17 00:00:00 2001
 From: Laurent Bigonville <bigon@debian.org>
 Date: Mon, 13 Jun 2022 18:35:28 +0700
-Subject: [PATCH 06/33] Switch to enchant-2
+Subject: [PATCH 06/34] Switch to enchant-2
 
 ---
  configure     | 4 ++--

@@ -1,7 +1,7 @@
-From e1cfe94a29cd7a33632d56154d3268eb71894805 Mon Sep 17 00:00:00 2001
+From 1d09a5732ba84e2deb04c389aac9e40924908423 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 04:47:15 +0700
-Subject: [PATCH 29/33] Fix conflicting and broken hotkeys
+Subject: [PATCH 30/34] Fix conflicting and broken hotkeys
 
 ---
  src/addressbook.c |  56 +++++++++++++++++++

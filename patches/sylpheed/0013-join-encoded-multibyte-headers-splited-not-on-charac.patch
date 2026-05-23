@@ -1,7 +1,7 @@
-From 4e4eaca8b638d997983fe3d57c53e4ec5de29edc Mon Sep 17 00:00:00 2001
+From 67ea41369cf0414e771ef0bf060cf262bf5befa6 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 18 Jun 2022 01:38:20 +0700
-Subject: [PATCH 13/33] join encoded multibyte headers splited not on character
+Subject: [PATCH 13/34] join encoded multibyte headers splited not on character
  boundary
 
 ================================================================================

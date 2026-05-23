@@ -1,7 +1,7 @@
-From 72000652af68c3de6c421d2ea7838c9be7181c7b Mon Sep 17 00:00:00 2001
+From bffb4008bed4867bce429a4e472e14d6dc0d52dd Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sun, 12 Jun 2022 03:38:53 +0700
-Subject: [PATCH 26/33] Add more options available in macOS for Web browser and
+Subject: [PATCH 27/34] Add more options available in macOS for Web browser and
  Editor
 
 ---

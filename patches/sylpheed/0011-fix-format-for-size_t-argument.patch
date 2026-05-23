@@ -1,7 +1,7 @@
-From 529b7c1c1bddeed749916f9eb240148b55bdc2d7 Mon Sep 17 00:00:00 2001
+From 49ebf6ca6e84897355416c8f222359a2ffb1eb60 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
 Date: Sat, 27 Jan 2024 13:32:13 +0100
-Subject: [PATCH 11/33] fix format for size_t argument
+Subject: [PATCH 11/34] fix format for size_t argument
 
 ---
  libsylph/codeconv.c | 2 +-

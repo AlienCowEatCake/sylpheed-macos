@@ -1,7 +1,7 @@
-From 27ae21fc34c388390cd690458fcb7d51e0b6cf73 Mon Sep 17 00:00:00 2001
+From af0a4f4ba774fa6232bca5deb7fa407dad54cf6f Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
 Date: Sat, 16 Jul 2022 03:07:10 +0700
-Subject: [PATCH 31/33] Improve UX for macOS builds
+Subject: [PATCH 32/34] Improve UX for macOS builds
 
 ---
  libsylph/defs.h                   |  6 +++++-
@@ -14,7 +14,7 @@ Subject: [PATCH 31/33] Improve UX for macOS builds
  7 files changed, 60 insertions(+), 3 deletions(-)
 
 diff --git a/libsylph/defs.h b/libsylph/defs.h
-index 18f0c97..589c1df 100644
+index 98d7fac..549959b 100644
 --- a/libsylph/defs.h
 +++ b/libsylph/defs.h
 @@ -129,6 +129,10 @@
