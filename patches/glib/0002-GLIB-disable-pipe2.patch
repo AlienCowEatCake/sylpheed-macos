@@ -1,0 +1,26 @@
+From f5ccc6753d7c4abbafcf481066280a89e0bf6e95 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 07:08:17 +0700
+Subject: [PATCH 2/2] GLIB: disable pipe2
+
+---
+ meson.build | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/meson.build b/meson.build
+index c8ee6a3..1b255c8 100644
+--- a/meson.build
++++ b/meson.build
+@@ -748,7 +748,8 @@ functions = [
+   'memmem',
+   'mmap',
+   'newlocale',
+-  'pipe2',
++  # error: 'pipe2' is only available on macOS 27.0 or newer [-Werror,-Wunguarded-availability-new]
++  # 'pipe2',
+   'poll',
+   'prlimit',
+   'readlink',
+-- 
+2.55.0
+

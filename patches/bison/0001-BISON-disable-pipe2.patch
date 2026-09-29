@@ -1,0 +1,220 @@
+From d79bc8383297fe70c7bd061a68ab66bfb72fffc9 Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 06:02:55 +0700
+Subject: [PATCH] BISON: disable pipe2
+
+bison-3.8.2/lib/pipe2.c:58:22: error: 'pipe2' is only available on macOS 27.0 or newer [-Werror,-Wunguarded-availability-new]
+
+find . -name 'configure' -exec gsed -i 's|\(ac_func_c_list " pipe2\) |\1_LOCAL |' \{\} \;
+find . \( -name '*.h' -or -name '*.c' \) -exec gsed -i 's|\([( ]pipe2\)|\1_LOCAL|g ; s|^\(pipe2\)|\1_LOCAL|g ; s|\(rpl_pipe2\)|\1_LOCAL|g' \{\} \;
+---
+ configure          |  2 +-
+ lib/cloexec.c      |  2 +-
+ lib/cloexec.h      |  2 +-
+ lib/config.in.h    |  4 ++--
+ lib/pipe2-safer.c  |  8 ++++----
+ lib/pipe2.c        |  6 +++---
+ lib/spawn-pipe.c   |  4 ++--
+ lib/unistd--.h     |  4 ++--
+ lib/unistd-safer.h |  2 +-
+ lib/unistd.in.h    | 18 +++++++++---------
+ 10 files changed, 26 insertions(+), 26 deletions(-)
+
+diff --git a/configure b/configure
+index c8c4cfe..78d6fb6 100755
+--- a/configure
++++ b/configure
+@@ -4677,7 +4677,7 @@ as_fn_append ac_func_c_list " obstack_printf HAVE_OBSTACK_PRINTF"
+ as_fn_append ac_func_c_list " strerror_r HAVE_STRERROR_R"
+ as_fn_append ac_func_c_list " __xpg_strerror_r HAVE___XPG_STRERROR_R"
+ as_fn_append ac_func_c_list " pipe HAVE_PIPE"
+-as_fn_append ac_func_c_list " pipe2 HAVE_PIPE2"
++as_fn_append ac_func_c_list " pipe2_LOCAL HAVE_PIPE2"
+ as_fn_append ac_func_c_list " posix_spawn_file_actions_addchdir_np HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR_NP"
+ as_fn_append ac_func_c_list " posix_spawn_file_actions_addchdir HAVE_POSIX_SPAWN_FILE_ACTIONS_ADDCHDIR"
+ gl_printf_safe=yes
+diff --git a/lib/cloexec.c b/lib/cloexec.c
+index 7defa93..641292e 100644
+--- a/lib/cloexec.c
++++ b/lib/cloexec.c
+@@ -32,7 +32,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int
+diff --git a/lib/cloexec.h b/lib/cloexec.h
+index 97a3659..f10a1f3 100644
+--- a/lib/cloexec.h
++++ b/lib/cloexec.h
+@@ -24,7 +24,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int set_cloexec_flag (int desc, bool value);
+diff --git a/lib/config.in.h b/lib/config.in.h
+index c93fae4..fa1b504 100644
+--- a/lib/config.in.h
++++ b/lib/config.in.h
+@@ -145,7 +145,7 @@
+ #undef GNULIB_OPENAT
+ 
+ /* Define to a C preprocessor expression that evaluates to 1 or 0, depending
+-   whether the gnulib module pipe2-safer shall be considered present. */
++   whether the gnulib module pipe2_LOCAL-safer shall be considered present. */
+ #undef GNULIB_PIPE2_SAFER
+ 
+ /* Define to 1 if printf and friends should be labeled with attribute
+@@ -367,7 +367,7 @@
+ /* Define to 1 when the gnulib module pipe should be tested. */
+ #undef GNULIB_TEST_PIPE
+ 
+-/* Define to 1 when the gnulib module pipe2 should be tested. */
++/* Define to 1 when the gnulib module pipe2_LOCAL should be tested. */
+ #undef GNULIB_TEST_PIPE2
+ 
+ /* Define to 1 when the gnulib module posix_spawn should be tested. */
+diff --git a/lib/pipe2-safer.c b/lib/pipe2-safer.c
+index c17f4d5..e09a95b 100644
+--- a/lib/pipe2-safer.c
++++ b/lib/pipe2-safer.c
+@@ -1,4 +1,4 @@
+-/* Invoke pipe2, but avoid some glitches.
++/* Invoke pipe2_LOCAL, but avoid some glitches.
+    Copyright (C) 2005-2006, 2009-2021 Free Software Foundation, Inc.
+ 
+    This program is free software: you can redistribute it and/or modify
+@@ -24,14 +24,14 @@
+ #include <unistd.h>
+ #include <errno.h>
+ 
+-/* Like pipe2, but ensure that neither of the file descriptors is
++/* Like pipe2_LOCAL, but ensure that neither of the file descriptors is
+    STDIN_FILENO, STDOUT_FILENO, or STDERR_FILENO.  */
+ 
+ int
+-pipe2_safer (int fd[2], int flags)
++pipe2_LOCAL_safer (int fd[2], int flags)
+ {
+   /* This is a generalization of the pipe_safer implementation.  */
+-  if (pipe2 (fd, flags) == 0)
++  if (pipe2_LOCAL (fd, flags) == 0)
+     {
+       int i;
+       for (i = 0; i < 2; i++)
+diff --git a/lib/pipe2.c b/lib/pipe2.c
+index 9ba8c3b..de79e76 100644
+--- a/lib/pipe2.c
++++ b/lib/pipe2.c
+@@ -37,7 +37,7 @@
+ #endif
+ 
+ int
+-pipe2 (int fd[2], int flags)
++pipe2_LOCAL (int fd[2], int flags)
+ {
+   /* Mingw _pipe() corrupts fd on failure; also, if we succeed at
+      creating the pipe but later fail at changing fcntl, we want
+@@ -47,7 +47,7 @@ pipe2 (int fd[2], int flags)
+   tmp[1] = fd[1];
+ 
+ #if HAVE_PIPE2
+-# undef pipe2
++# undef pipe2_LOCAL
+   /* Try the system call first, if it exists.  (We may be running with a glibc
+      that has the function but with an older kernel that lacks it.)  */
+   {
+@@ -55,7 +55,7 @@ pipe2 (int fd[2], int flags)
+     static int have_pipe2_really; /* 0 = unknown, 1 = yes, -1 = no */
+     if (have_pipe2_really >= 0)
+       {
+-        int result = pipe2 (fd, flags);
++        int result = pipe2_LOCAL (fd, flags);
+         if (!(result < 0 && errno == ENOSYS))
+           {
+             have_pipe2_really = 1;
+diff --git a/lib/spawn-pipe.c b/lib/spawn-pipe.c
+index cedd48a..10ec2cc 100644
+--- a/lib/spawn-pipe.c
++++ b/lib/spawn-pipe.c
+@@ -213,10 +213,10 @@ create_pipe (const char *progname,
+     xalloc_die ();
+ 
+   if (pipe_stdout)
+-    if (pipe2_safer (ifd, O_BINARY | O_CLOEXEC) < 0)
++    if (pipe2_LOCAL_safer (ifd, O_BINARY | O_CLOEXEC) < 0)
+       error (EXIT_FAILURE, errno, _("cannot create pipe"));
+   if (pipe_stdin)
+-    if (pipe2_safer (ofd, O_BINARY | O_CLOEXEC) < 0)
++    if (pipe2_LOCAL_safer (ofd, O_BINARY | O_CLOEXEC) < 0)
+       error (EXIT_FAILURE, errno, _("cannot create pipe"));
+ /* Data flow diagram:
+  *
+diff --git a/lib/unistd--.h b/lib/unistd--.h
+index 5e6ecb0..d612281 100644
+--- a/lib/unistd--.h
++++ b/lib/unistd--.h
+@@ -27,6 +27,6 @@
+ #define pipe pipe_safer
+ 
+ #if GNULIB_PIPE2_SAFER
+-# undef pipe2
+-# define pipe2 pipe2_safer
++# undef pipe2_LOCAL
++# define pipe2_LOCAL pipe2_LOCAL_safer
+ #endif
+diff --git a/lib/unistd-safer.h b/lib/unistd-safer.h
+index 541bafe..f48eacc 100644
+--- a/lib/unistd-safer.h
++++ b/lib/unistd-safer.h
+@@ -27,5 +27,5 @@ int fd_safer_flag (int, int);
+ #endif
+ 
+ #if GNULIB_PIPE2_SAFER
+-int pipe2_safer (int[2], int);
++int pipe2_LOCAL_safer (int[2], int);
+ #endif
+diff --git a/lib/unistd.in.h b/lib/unistd.in.h
+index 73c882f..f654148 100644
+--- a/lib/unistd.in.h
++++ b/lib/unistd.in.h
+@@ -1727,20 +1727,20 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @HAVE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define pipe2 rpl_pipe2
++#   define pipe2_LOCAL rpl_pipe2_LOCAL
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags) _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags) _GL_ARG_NONNULL ((1)));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags) _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags) _GL_ARG_NONNULL ((1)));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ #elif defined GNULIB_POSIXCHECK
+-# undef pipe2
++# undef pipe2_LOCAL
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+-- 
+2.55.0
+

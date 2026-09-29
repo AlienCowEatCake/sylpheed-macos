@@ -42,7 +42,7 @@
 
   <!-- https://tukaani.org/xz/ -->
   <autotools id="xz" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-doc">
-    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.8.3">
+    <branch repo="github-tarball" module="tukaani-project/xz/releases/download/v${version}/xz-${version}.tar.bz2" version="5.8.4">
       <patch file="xz/0001-XZ-disable-futimens.patch" strip="1"/>
     </branch>
   </autotools>
@@ -50,14 +50,19 @@
   <!-- https://ftp.gnu.org/gnu/gettext/ -->
   <!-- am_cv_func_iconv_works=y: https://github.com/Homebrew/homebrew-core/pull/142490 -->
   <autotools id="gettext" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --without-emacs --disable-java --disable-native-java --disable-libasprintf --disable-csharp --with-included-glib --with-included-libcroco --with-included-libunistring --with-included-libxml --with-included-gettext --disable-curses am_cv_func_iconv_works=y">
-    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="0.25">
+    <branch repo="ftp.gnu.org" module="gettext/gettext-${version}.tar.gz" version="1.0">
       <patch file="gettext/0001-GETTEXT-disable-futimens-utimensat.patch" strip="1"/>
+      <patch file="gettext/0002-GETTEXT-disable-pipe2.patch" strip="1"/>
+      <patch file="gettext/0003-GETTEXT-disable-strchrnul.patch" strip="1"/>
     </branch>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/m4/ -->
   <autotools id="m4" autogen-sh="configure" bootstrap="true" autogenargs="--disable-dependency-tracking">
-    <branch repo="ftp.gnu.org" module="m4/m4-${version}.tar.gz" version="1.4.20"/>
+    <branch repo="ftp.gnu.org" module="m4/m4-${version}.tar.bz2" version="1.4.21">
+      <patch file="m4/0001-M4-disable-pipe2.patch" strip="1"/>
+      <patch file="m4/0002-M4-disable-strchrnul.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/autoconf/ -->
@@ -70,12 +75,12 @@
 
   <!-- https://ftp.gnu.org/gnu/libtool/ -->
   <autotools id="libtool" autogen-sh="configure" bootstrap="true" autogenargs="--disable-dependency-tracking --disable-static">
-    <branch repo="ftp.gnu.org" module="libtool/libtool-${version}.tar.gz" version="2.5.4"/>
+    <branch repo="ftp.gnu.org" module="libtool/libtool-${version}.tar.gz" version="2.6.2"/>
   </autotools>
 
   <!-- https://ftp.gnu.org/gnu/automake/ -->
   <autotools id="automake" autogen-sh="configure" bootstrap="true">
-    <branch repo="ftp.gnu.org" module="automake/automake-${version}.tar.gz" version="1.18.1"/>
+    <branch repo="ftp.gnu.org" module="automake/automake-${version}.tar.gz" version="1.19"/>
     <dependencies>
       <dep package="autoconf"/>
     </dependencies>
@@ -83,12 +88,16 @@
 
   <!-- https://ftp.gnu.org/gnu/bison/ -->
   <autotools id="bison" autogen-sh="configure" autogenargs="--disable-dependency-tracking">
-    <branch repo="ftp.gnu.org" module="bison/bison-${version}.tar.gz" version="3.8.2"/>
+    <branch repo="ftp.gnu.org" module="bison/bison-${version}.tar.gz" version="3.8.2">
+      <patch file="bison/0001-BISON-disable-pipe2.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <!-- https://pkg-config.freedesktop.org/releases/ -->
   <autotools id="pkg-config" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --with-internal-glib">
-    <branch repo="pkgconfig.freedesktop.org" module="pkg-config-${version}.tar.gz" version="0.29.2"/>
+    <branch repo="pkgconfig.freedesktop.org" module="pkg-config-${version}.tar.gz" version="0.29.2">
+      <patch file="pkg-config/0001-PKG-CONFIG-disable-pipe2.patch" strip="1"/>
+    </branch>
   </autotools>
 
   <!-- https://launchpad.net/intltool/+download -->
@@ -99,7 +108,7 @@
   <!-- https://github.com/libffi/libffi/releases/ -->
   <!-- disable-multi-os-directory: see https://sourceware.org/ml/libffi-discuss/2014/msg00078.html -->
   <autotools id="libffi" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-multi-os-directory --disable-builddir">
-    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.5.2"/>
+    <branch repo="github-tarball" module="libffi/libffi/releases/download/v${version}/libffi-${version}.tar.gz" version="3.8.0"/>
   </autotools>
 
   <!-- http://www.libpng.org/pub/png/libpng.html -->
@@ -135,8 +144,8 @@
 
   <!-- https://download.osgeo.org/libtiff/ -->
   <autotools id="libtiff" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --disable-tools --disable-tests --disable-docs --disable-sphinx --without-x">
-    <branch version="4.7.1" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
-      <patch file="libtiff/tiff-nohtml.patch" strip="1"/>
+    <branch version="4.7.2" module="libtiff/tiff-${version}.tar.gz" repo="libtiff">
+      <patch file="libtiff/0001-LIBTIFF-disable-html.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="libjpeg"/>
@@ -158,13 +167,14 @@
 
   <!-- https://github.com/PCRE2Project/pcre2/releases/ -->
   <autotools id="libpcre2" autogen-sh="configure" autogenargs="--disable-dependency-tracking --disable-static --enable-unicode --enable-pcre2-16 --enable-pcre2-32 --enable-newline-is-any --enable-jit">
-    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.47"/>
+    <branch repo="github-tarball" module="PCRE2Project/pcre2/releases/download/pcre2-${version}/pcre2-${version}.tar.bz2" version="10.49"/>
   </autotools>
 
   <!-- https://download.gnome.org/sources/glib/ -->
   <meson id="glib" mesonargs="--buildtype=release -Dlibmount=disabled -Dman=false -Dman-pages=disabled -Ddtrace=disabled -Dsystemtap=disabled -Dsysprof=disabled -Ddocumentation=false -Dtests=false -Dinstalled_tests=false -Dintrospection=disabled">
-    <branch module="glib/2.88/glib-${version}.tar.xz" version="2.88.1">
+    <branch module="glib/2.90/glib-${version}.tar.xz" version="2.90.0">
       <patch file="glib/0001-GLIB-disable-utimensat.patch" strip="1"/>
+      <patch file="glib/0002-GLIB-disable-pipe2.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="libffi"/>
@@ -174,7 +184,7 @@
 
   <!-- https://www.cairographics.org/releases/ -->
   <meson id="cairo" mesonargs="--buildtype=release -Dfontconfig=disabled -Dfreetype=disabled">
-    <branch repo="cairo" module="cairo-${version}.tar.xz" version="1.18.4"/>
+    <branch repo="cairo" module="cairo-${version}.tar.xz" version="1.18.6"/>
     <dependencies>
       <dep package="xz"/>
       <dep package="pixman"/>
@@ -184,7 +194,7 @@
 
   <!-- https://github.com/harfbuzz/harfbuzz/releases/ -->
   <meson id="harfbuzz" mesonargs="--buildtype=release -Dcoretext=enabled -Dfreetype=disabled -Ddocs=disabled -Dbenchmark=disabled -Dintrospection=disabled -Dtests=disabled -Ddoc_tests=false">
-    <branch repo="github-tarball" version="14.2.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
+    <branch repo="github-tarball" version="14.5.0" module="harfbuzz/harfbuzz/releases/download/${version}/harfbuzz-${version}.tar.xz"/>
     <dependencies>
       <dep package="cairo"/>
     </dependencies>
@@ -192,12 +202,12 @@
 
   <!-- https://github.com/fribidi/fribidi/releases/ -->
   <meson id="fribidi" mesonargs="--buildtype=release -Ddocs=false -Dtests=false">
-    <branch module="fribidi/fribidi/releases/download/v${version}/fribidi-${version}.tar.xz" repo="github-tarball" version="1.0.16"/>
+    <branch module="fribidi/fribidi/releases/download/v${version}/fribidi-${version}.tar.xz" repo="github-tarball" version="1.0.17"/>
   </meson>
 
   <!-- https://download.gnome.org/sources/pango/ -->
   <meson id="pango" mesonargs="--buildtype=release -Dintrospection=disabled -Dfontconfig=disabled -Dfreetype=disabled -Ddocumentation=false -Dman-pages=false -Dbuild-testsuite=false -Dbuild-examples=false">
-    <branch version="1.57.1" module="pango/1.57/pango-${version}.tar.xz"/>
+    <branch version="1.58.2" module="pango/1.58/pango-${version}.tar.xz"/>
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
@@ -220,7 +230,7 @@
 
   <!-- https://download.gnome.org/sources/gdk-pixbuf/ -->
   <meson id="gdk-pixbuf" mesonargs="--buildtype=release -Drelocatable=true -Dman=false -Ddocumentation=false -Dintrospection=disabled -Dinstalled_tests=false -Dpng=enabled -Dtiff=enabled -Djpeg=enabled -Dgif=enabled -Dothers=enabled -Dlegacy_xpm=enabled -Dtests=false -Dinstalled_tests=false -Dgio_sniffing=false -Dthumbnailer=disabled">
-    <branch module="gdk-pixbuf/2.44/gdk-pixbuf-${version}.tar.xz" version="2.44.6">
+    <branch module="gdk-pixbuf/2.44/gdk-pixbuf-${version}.tar.xz" version="2.44.8">
       <patch file="gdk-pixbuf/gdk-pixbuf-loader-name.patch" strip="1"/>
     </branch>
     <after>
@@ -333,7 +343,7 @@
   <!-- https://www.openssl.org/source/ -->
   <!-- of the many arguments such as prefix and libdir that jhbuild might pass to configure, openssl only understands prefix, and only with =. -->
   <autotools id="openssl" autogen-sh="Configure" autogenargs="shared " autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s --openssldir=%(prefix)s/etc/ssl %(autogenargs)s" makeinstallargs="install_sw" supports-non-srcdir-builds="no">
-    <branch repo="github-tarball" module="openssl/openssl/releases/download/openssl-${version}/openssl-${version}.tar.gz" version="3.6.2"/>
+    <branch repo="github-tarball" module="openssl/openssl/releases/download/openssl-${version}/openssl-${version}.tar.gz" version="3.6.4"/>
   </autotools>
 
   <!-- http://ftp.xemacs.org/pub/xemacs/aux/ -->
@@ -367,7 +377,7 @@
 
   <!-- https://www.sqlite.org/download.html -->
   <autotools id="sqlite" autogenargs="--disable-static --enable-threadsafe" autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s %(autogenargs)s" autogen-sh="configure">
-    <branch repo="sqlite" module="2026/sqlite-autoconf-${version}.tar.gz" version="3530100">
+    <branch repo="sqlite" module="2026/sqlite-autoconf-${version}.tar.gz" version="3530400">
       <!-- https://gitlab.gnome.org/GNOME/gtk-osx/-/commit/62ec4f62c89d1b41a5d827782f113ee180a0f258 -->
       <patch file="sqlite/sqlite3-install-name.patch" strip="1"/>
     </branch>
@@ -389,7 +399,7 @@
 
   <!-- https://www.gnupg.org/ftp/gcrypt/gpgme/ -->
   <autotools id="gpgme" autogenargs="--disable-dependency-tracking --disable-static --enable-languages='' --disable-gpgconf-test --disable-gpg-test --disable-gpgsm-test --disable-g13-test" autogen-sh="configure">
-    <branch repo="gnupg" module="gpgme/gpgme-${version}.tar.bz2" version="2.1.0"/>
+    <branch repo="gnupg" module="gpgme/gpgme-${version}.tar.bz2" version="2.2.0"/>
     <dependencies>
       <dep package="libassuan"/>
       <dep package="libgpg-error"/>

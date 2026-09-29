@@ -1,0 +1,72 @@
+From 37145b199dd24b570932b8e048d77e5fe98f0b1f Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 05:37:28 +0700
+Subject: [PATCH] LIBTIFF: disable html
+
+---
+ Makefile.in | 19 +++++--------------
+ 1 file changed, 5 insertions(+), 14 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index 7bedb4e..03e1136 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -148,9 +148,9 @@ am__v_at_1 =
+ SOURCES =
+ DIST_SOURCES =
+ RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
+-	ctags-recursive dvi-recursive html-recursive info-recursive \
++	ctags-recursive dvi-recursive info-recursive \
+ 	install-data-recursive install-dvi-recursive \
+-	install-exec-recursive install-html-recursive \
++	install-exec-recursive \
+ 	install-info-recursive install-pdf-recursive \
+ 	install-ps-recursive install-recursive installcheck-recursive \
+ 	installdirs-recursive pdf-recursive ps-recursive \
+@@ -404,7 +404,6 @@ host_alias = @host_alias@
+ host_cpu = @host_cpu@
+ host_os = @host_os@
+ host_vendor = @host_vendor@
+-htmldir = @htmldir@
+ includedir = @includedir@
+ infodir = @infodir@
+ install_sh = @install_sh@
+@@ -918,10 +917,6 @@ dvi: dvi-recursive
+ 
+ dvi-am:
+ 
+-html: html-recursive
+-
+-html-am:
+-
+ info: info-recursive
+ 
+ info-am:
+@@ -934,10 +929,6 @@ install-dvi-am:
+ 
+ install-exec-am:
+ 
+-install-html: install-html-recursive
+-
+-install-html-am:
+-
+ install-info: install-info-recursive
+ 
+ install-info-am:
+@@ -983,10 +974,10 @@ uninstall-am: uninstall-dist_docDATA uninstall-pkgconfigDATA
+ 	dist-xz dist-zip dist-zstd distcheck distclean \
+ 	distclean-generic distclean-hdr distclean-libtool \
+ 	distclean-tags distcleancheck distdir distuninstallcheck dvi \
+-	dvi-am html html-am info info-am install install-am \
++	dvi-am info info-am install install-am \
+ 	install-data install-data-am install-dist_docDATA install-dvi \
+-	install-dvi-am install-exec install-exec-am install-html \
+-	install-html-am install-info install-info-am install-man \
++	install-dvi-am install-exec install-exec-am \
++	install-info install-info-am install-man \
+ 	install-pdf install-pdf-am install-pkgconfigDATA install-ps \
+ 	install-ps-am install-strip installcheck installcheck-am \
+ 	installdirs installdirs-am maintainer-clean \
+-- 
+2.55.0
+

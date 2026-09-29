@@ -1,17 +1,17 @@
-From a8e1a149a1debb288276f41cc8074f3eb2c16784 Mon Sep 17 00:00:00 2001
+From 04870048a9ff5a398cb9f333097c9b415036c441 Mon Sep 17 00:00:00 2001
 From: Peter Zhigalov <peter.zhigalov@gmail.com>
-Date: Mon, 26 Sep 2022 09:33:09 +0700
-Subject: [PATCH] GLIB: disable utimensat
+Date: Tue, 29 Sep 2026 05:44:48 +0700
+Subject: [PATCH 1/2] GLIB: disable utimensat
 
 ---
  meson.build | 17 +++++++++--------
  1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/meson.build b/meson.build
-index ddd099858..1022b2713 100644
+index 573922d..c8ee6a3 100644
 --- a/meson.build
 +++ b/meson.build
-@@ -752,7 +752,8 @@ functions = [
+@@ -767,7 +767,8 @@ functions = [
    'unsetenv',
    'uselocale',
    'utimes',
@@ -21,8 +21,8 @@ index ddd099858..1022b2713 100644
    'valloc',
    'vasprintf',
    'vsnprintf',
-@@ -983,13 +984,13 @@ glib_have_cocoa = false
- if host_system == 'darwin'
+@@ -1007,13 +1008,13 @@ glib_have_cocoa = false
+ if host_system == 'darwin' and subsystem == 'macos'
    add_languages('objc', native: false, required: true)
    objcc = meson.get_compiler('objc')
 -  if not objcc.compiles('''#include <AvailabilityMacros.h>
@@ -40,8 +40,8 @@ index ddd099858..1022b2713 100644
 +  #   error('GLib requires macOS 10.13 or later.')
 +  # endif
  
-   add_project_arguments(objcc.get_supported_arguments(warning_objc_args), language: 'objc')
- 
+   # Mac OS X Carbon support
+   glib_have_carbon = objcc.compiles('''#include <Carbon/Carbon.h>
 -- 
-2.49.0
+2.55.0
 

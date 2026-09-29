@@ -1,0 +1,664 @@
+From de58f236430a8402c69fb345fc70711b8af6501a Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 05:19:22 +0700
+Subject: [PATCH 3/3] GETTEXT: disable strchrnul
+
+/gettext-1.0/gettext-tools/gnulib-lib/spawni.c:1068:11: error: 'strchrnul' is only available on macOS 15.4 or newer
+
+find . -name 'configure' -exec gsed -i 's|\(ac_fn_c[^ ]* [^ ]* "strchrnul\)"|\1_LOCAL"|' \{\} \;
+find . \( -name '*.h' -or -name '*.c' \) -exec gsed -i 's|\([( ]strchrnul\)|\1_LOCAL|g ; s|^\(strchrnul\)|\1_LOCAL|g' \{\} \;
+---
+ gettext-runtime/gnulib-lib/string.in.h        | 20 ++++++++--------
+ gettext-runtime/intl/gnulib-lib/string.in.h   | 20 ++++++++--------
+ .../libasprintf/gnulib-lib/string.in.h        | 20 ++++++++--------
+ gettext-tools/configure                       | 24 +++++++++----------
+ gettext-tools/gnulib-lib/spawni.c             |  4 ++--
+ gettext-tools/gnulib-lib/strchrnul.c          |  2 +-
+ gettext-tools/gnulib-lib/string.in.h          | 20 ++++++++--------
+ gettext-tools/gnulib-tests/test-strchrnul.c   | 24 +++++++++----------
+ gettext-tools/libgettextpo/strchrnul.c        |  2 +-
+ gettext-tools/libgettextpo/string.in.h        | 20 ++++++++--------
+ gettext-tools/src/format-kde-kuit.c           |  4 ++--
+ gettext-tools/src/its.c                       |  2 +-
+ gettext-tools/src/msgl-check.c                |  2 +-
+ gettext-tools/src/search-path.c               |  2 +-
+ gettext-tools/src/xg-check.c                  |  2 +-
+ libtextstyle/lib/string.in.h                  | 20 ++++++++--------
+ 16 files changed, 94 insertions(+), 94 deletions(-)
+
+diff --git a/gettext-runtime/gnulib-lib/string.in.h b/gettext-runtime/gnulib-lib/string.in.h
+index 1b39150..19f9cfa 100644
+--- a/gettext-runtime/gnulib-lib/string.in.h
++++ b/gettext-runtime/gnulib-lib/string.in.h
+@@ -677,42 +677,42 @@ _GL_WARN_ON_USE_CXX (strchr,
+ #if @GNULIB_STRCHRNUL@
+ # if @REPLACE_STRCHRNUL@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define strchrnul rpl_strchrnul
++#   define strchrnul_LOCAL rpl_strchrnul
+ #  endif
+-_GL_FUNCDECL_RPL (strchrnul, char *, (const char *__s, int __c_in),
++_GL_FUNCDECL_RPL (strchrnul_LOCAL, char *, (const char *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (strchrnul, char *,
++_GL_CXXALIAS_RPL (strchrnul_LOCAL, char *,
+                   (const char *str, int ch));
+ # else
+ #  if ! @HAVE_STRCHRNUL@
+-_GL_FUNCDECL_SYS (strchrnul, char *, (char const *__s, int __c_in),
++_GL_FUNCDECL_SYS (strchrnul_LOCAL, char *, (char const *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+ #  endif
+   /* On some systems, this function is defined as an overloaded function:
+        extern "C++" { const char * std::strchrnul (const char *, int); }
+        extern "C++" { char * std::strchrnul (char *, int); }  */
+-_GL_CXXALIAS_SYS_CAST2 (strchrnul,
++_GL_CXXALIAS_SYS_CAST2 (strchrnul_LOCAL,
+                         char *, (char const *__s, int __c_in),
+                         char const *, (char const *__s, int __c_in));
+ # endif
+ # if ((__GLIBC__ == 2 && __GLIBC_MINOR__ >= 10) && !defined __UCLIBC__) \
+      && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) \
+          || defined __clang__)
+-_GL_CXXALIASWARN1 (strchrnul, char *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char *,
+                    (char *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+-_GL_CXXALIASWARN1 (strchrnul, char const *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char const *,
+                    (char const *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+ # elif __GLIBC__ >= 2
+-_GL_CXXALIASWARN (strchrnul);
++_GL_CXXALIASWARN (strchrnul_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_STRCHRNUL
+-_GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
+-                 "use gnulib module strchrnul for portability");
++_GL_WARN_ON_USE (strchrnul_LOCAL, "strchrnul is unportable - "
++                 "use gnulib module strchrnul_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-runtime/intl/gnulib-lib/string.in.h b/gettext-runtime/intl/gnulib-lib/string.in.h
+index 1b39150..19f9cfa 100644
+--- a/gettext-runtime/intl/gnulib-lib/string.in.h
++++ b/gettext-runtime/intl/gnulib-lib/string.in.h
+@@ -677,42 +677,42 @@ _GL_WARN_ON_USE_CXX (strchr,
+ #if @GNULIB_STRCHRNUL@
+ # if @REPLACE_STRCHRNUL@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define strchrnul rpl_strchrnul
++#   define strchrnul_LOCAL rpl_strchrnul
+ #  endif
+-_GL_FUNCDECL_RPL (strchrnul, char *, (const char *__s, int __c_in),
++_GL_FUNCDECL_RPL (strchrnul_LOCAL, char *, (const char *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (strchrnul, char *,
++_GL_CXXALIAS_RPL (strchrnul_LOCAL, char *,
+                   (const char *str, int ch));
+ # else
+ #  if ! @HAVE_STRCHRNUL@
+-_GL_FUNCDECL_SYS (strchrnul, char *, (char const *__s, int __c_in),
++_GL_FUNCDECL_SYS (strchrnul_LOCAL, char *, (char const *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+ #  endif
+   /* On some systems, this function is defined as an overloaded function:
+        extern "C++" { const char * std::strchrnul (const char *, int); }
+        extern "C++" { char * std::strchrnul (char *, int); }  */
+-_GL_CXXALIAS_SYS_CAST2 (strchrnul,
++_GL_CXXALIAS_SYS_CAST2 (strchrnul_LOCAL,
+                         char *, (char const *__s, int __c_in),
+                         char const *, (char const *__s, int __c_in));
+ # endif
+ # if ((__GLIBC__ == 2 && __GLIBC_MINOR__ >= 10) && !defined __UCLIBC__) \
+      && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) \
+          || defined __clang__)
+-_GL_CXXALIASWARN1 (strchrnul, char *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char *,
+                    (char *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+-_GL_CXXALIASWARN1 (strchrnul, char const *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char const *,
+                    (char const *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+ # elif __GLIBC__ >= 2
+-_GL_CXXALIASWARN (strchrnul);
++_GL_CXXALIASWARN (strchrnul_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_STRCHRNUL
+-_GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
+-                 "use gnulib module strchrnul for portability");
++_GL_WARN_ON_USE (strchrnul_LOCAL, "strchrnul is unportable - "
++                 "use gnulib module strchrnul_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-runtime/libasprintf/gnulib-lib/string.in.h b/gettext-runtime/libasprintf/gnulib-lib/string.in.h
+index 1b39150..19f9cfa 100644
+--- a/gettext-runtime/libasprintf/gnulib-lib/string.in.h
++++ b/gettext-runtime/libasprintf/gnulib-lib/string.in.h
+@@ -677,42 +677,42 @@ _GL_WARN_ON_USE_CXX (strchr,
+ #if @GNULIB_STRCHRNUL@
+ # if @REPLACE_STRCHRNUL@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define strchrnul rpl_strchrnul
++#   define strchrnul_LOCAL rpl_strchrnul
+ #  endif
+-_GL_FUNCDECL_RPL (strchrnul, char *, (const char *__s, int __c_in),
++_GL_FUNCDECL_RPL (strchrnul_LOCAL, char *, (const char *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (strchrnul, char *,
++_GL_CXXALIAS_RPL (strchrnul_LOCAL, char *,
+                   (const char *str, int ch));
+ # else
+ #  if ! @HAVE_STRCHRNUL@
+-_GL_FUNCDECL_SYS (strchrnul, char *, (char const *__s, int __c_in),
++_GL_FUNCDECL_SYS (strchrnul_LOCAL, char *, (char const *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+ #  endif
+   /* On some systems, this function is defined as an overloaded function:
+        extern "C++" { const char * std::strchrnul (const char *, int); }
+        extern "C++" { char * std::strchrnul (char *, int); }  */
+-_GL_CXXALIAS_SYS_CAST2 (strchrnul,
++_GL_CXXALIAS_SYS_CAST2 (strchrnul_LOCAL,
+                         char *, (char const *__s, int __c_in),
+                         char const *, (char const *__s, int __c_in));
+ # endif
+ # if ((__GLIBC__ == 2 && __GLIBC_MINOR__ >= 10) && !defined __UCLIBC__) \
+      && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) \
+          || defined __clang__)
+-_GL_CXXALIASWARN1 (strchrnul, char *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char *,
+                    (char *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+-_GL_CXXALIASWARN1 (strchrnul, char const *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char const *,
+                    (char const *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+ # elif __GLIBC__ >= 2
+-_GL_CXXALIASWARN (strchrnul);
++_GL_CXXALIASWARN (strchrnul_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_STRCHRNUL
+-_GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
+-                 "use gnulib module strchrnul for portability");
++_GL_WARN_ON_USE (strchrnul_LOCAL, "strchrnul is unportable - "
++                 "use gnulib module strchrnul_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-tools/configure b/gettext-tools/configure
+index 3d54f42..b4fff6e 100755
+--- a/gettext-tools/configure
++++ b/gettext-tools/configure
+@@ -88212,14 +88212,14 @@ else case e in #(
+        case "$host_os" in
+ 
+          linux*-android*)
+-           ac_fn_check_decl "$LINENO" "strchrnul" "ac_cv_have_decl_strchrnul" "#include <string.h>
++           ac_fn_check_decl "$LINENO" "strchrnul_LOCAL" "ac_cv_have_decl_strchrnul" "#include <string.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_strchrnul" = xyes
+ then :
+ 
+ fi
+            if test $ac_cv_have_decl_strchrnul = yes; then
+-             ac_fn_c_check_func "$LINENO" "strchrnul" "ac_cv_func_strchrnul"
++             ac_fn_c_check_func "$LINENO" "strchrnul_LOCAL" "ac_cv_func_strchrnul"
+ if test "x$ac_cv_func_strchrnul" = xyes
+ then :
+ 
+@@ -88243,7 +88243,7 @@ fi
+              saved_ac_compile_for_check_decl="$ac_compile_for_check_decl"
+              ac_compile_for_check_decl="$ac_compile_for_check_decl $gl_cv_compiler_check_future_option"
+              unset ac_cv_have_decl_strchrnul
+-             ac_fn_check_decl "$LINENO" "strchrnul" "ac_cv_have_decl_strchrnul" "#include <string.h>
++             ac_fn_check_decl "$LINENO" "strchrnul_LOCAL" "ac_cv_have_decl_strchrnul" "#include <string.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_strchrnul" = xyes
+ then :
+@@ -88261,7 +88261,7 @@ fi
+                ac_cxx_future_darwin_options_saved="$ac_cxx_future_darwin_options"
+                ac_c_future_darwin_options=
+                ac_cxx_future_darwin_options=
+-               ac_fn_check_decl "$LINENO" "strchrnul" "ac_cv_have_decl_strchrnul" "#include <string.h>
++               ac_fn_check_decl "$LINENO" "strchrnul_LOCAL" "ac_cv_have_decl_strchrnul" "#include <string.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_strchrnul" = xyes
+ then :
+@@ -88278,7 +88278,7 @@ fi
+                unset ac_cv_have_decl_strchrnul_saved
+              fi
+            else
+-             ac_fn_c_check_func "$LINENO" "strchrnul" "ac_cv_func_strchrnul"
++             ac_fn_c_check_func "$LINENO" "strchrnul_LOCAL" "ac_cv_func_strchrnul"
+ if test "x$ac_cv_func_strchrnul" = xyes
+ then :
+ 
+@@ -88290,7 +88290,7 @@ fi
+ 
+ 
+          *)
+-           ac_fn_c_check_func "$LINENO" "strchrnul" "ac_cv_func_strchrnul"
++           ac_fn_c_check_func "$LINENO" "strchrnul_LOCAL" "ac_cv_func_strchrnul"
+ if test "x$ac_cv_func_strchrnul" = xyes
+ then :
+ 
+@@ -118927,14 +118927,14 @@ else case e in #(
+        case "$host_os" in
+ 
+          linux*-android*)
+-           ac_fn_check_decl "$LINENO" "strchrnul" "ac_cv_have_decl_strchrnul" "#include <string.h>
++           ac_fn_check_decl "$LINENO" "strchrnul_LOCAL" "ac_cv_have_decl_strchrnul" "#include <string.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_strchrnul" = xyes
+ then :
+ 
+ fi
+            if test $ac_cv_have_decl_strchrnul = yes; then
+-             ac_fn_c_check_func "$LINENO" "strchrnul" "ac_cv_func_strchrnul"
++             ac_fn_c_check_func "$LINENO" "strchrnul_LOCAL" "ac_cv_func_strchrnul"
+ if test "x$ac_cv_func_strchrnul" = xyes
+ then :
+ 
+@@ -118958,7 +118958,7 @@ fi
+              saved_ac_compile_for_check_decl="$ac_compile_for_check_decl"
+              ac_compile_for_check_decl="$ac_compile_for_check_decl $gl_cv_compiler_check_future_option"
+              unset ac_cv_have_decl_strchrnul
+-             ac_fn_check_decl "$LINENO" "strchrnul" "ac_cv_have_decl_strchrnul" "#include <string.h>
++             ac_fn_check_decl "$LINENO" "strchrnul_LOCAL" "ac_cv_have_decl_strchrnul" "#include <string.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_strchrnul" = xyes
+ then :
+@@ -118976,7 +118976,7 @@ fi
+                ac_cxx_future_darwin_options_saved="$ac_cxx_future_darwin_options"
+                ac_c_future_darwin_options=
+                ac_cxx_future_darwin_options=
+-               ac_fn_check_decl "$LINENO" "strchrnul" "ac_cv_have_decl_strchrnul" "#include <string.h>
++               ac_fn_check_decl "$LINENO" "strchrnul_LOCAL" "ac_cv_have_decl_strchrnul" "#include <string.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_strchrnul" = xyes
+ then :
+@@ -118993,7 +118993,7 @@ fi
+                unset ac_cv_have_decl_strchrnul_saved
+              fi
+            else
+-             ac_fn_c_check_func "$LINENO" "strchrnul" "ac_cv_func_strchrnul"
++             ac_fn_c_check_func "$LINENO" "strchrnul_LOCAL" "ac_cv_func_strchrnul"
+ if test "x$ac_cv_func_strchrnul" = xyes
+ then :
+ 
+@@ -119005,7 +119005,7 @@ fi
+ 
+ 
+          *)
+-           ac_fn_c_check_func "$LINENO" "strchrnul" "ac_cv_func_strchrnul"
++           ac_fn_c_check_func "$LINENO" "strchrnul_LOCAL" "ac_cv_func_strchrnul"
+ if test "x$ac_cv_func_strchrnul" = xyes
+ then :
+ 
+diff --git a/gettext-tools/gnulib-lib/spawni.c b/gettext-tools/gnulib-lib/spawni.c
+index 0326d89..acb9581 100644
+--- a/gettext-tools/gnulib-lib/spawni.c
++++ b/gettext-tools/gnulib-lib/spawni.c
+@@ -73,7 +73,7 @@
+ # define sigaction __sigaction
+ # define sigismember __sigismember
+ # define sigprocmask __sigprocmask
+-# define strchrnul __strchrnul
++# define strchrnul_LOCAL __strchrnul
+ # define vfork __vfork
+ #endif
+ 
+@@ -1065,7 +1065,7 @@ __spawni (pid_t *pid, const char *file,
+       char *startp;
+ 
+       path = p;
+-      p = strchrnul (path, ':');
++      p = strchrnul_LOCAL (path, ':');
+ 
+       if (p == path)
+         /* Two adjacent colons, or a colon at the beginning or the end
+diff --git a/gettext-tools/gnulib-lib/strchrnul.c b/gettext-tools/gnulib-lib/strchrnul.c
+index c3bfebc..e031565 100644
+--- a/gettext-tools/gnulib-lib/strchrnul.c
++++ b/gettext-tools/gnulib-lib/strchrnul.c
+@@ -21,7 +21,7 @@
+ 
+ /* Find the first occurrence of C in S or the final NUL byte.  */
+ char *
+-strchrnul (const char *s, int c_in)
++strchrnul_LOCAL (const char *s, int c_in)
+ {
+   /* On 32-bit hardware, choosing longword to be a 32-bit unsigned
+      long instead of a 64-bit uintmax_t tends to give better
+diff --git a/gettext-tools/gnulib-lib/string.in.h b/gettext-tools/gnulib-lib/string.in.h
+index 1b39150..19f9cfa 100644
+--- a/gettext-tools/gnulib-lib/string.in.h
++++ b/gettext-tools/gnulib-lib/string.in.h
+@@ -677,42 +677,42 @@ _GL_WARN_ON_USE_CXX (strchr,
+ #if @GNULIB_STRCHRNUL@
+ # if @REPLACE_STRCHRNUL@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define strchrnul rpl_strchrnul
++#   define strchrnul_LOCAL rpl_strchrnul
+ #  endif
+-_GL_FUNCDECL_RPL (strchrnul, char *, (const char *__s, int __c_in),
++_GL_FUNCDECL_RPL (strchrnul_LOCAL, char *, (const char *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (strchrnul, char *,
++_GL_CXXALIAS_RPL (strchrnul_LOCAL, char *,
+                   (const char *str, int ch));
+ # else
+ #  if ! @HAVE_STRCHRNUL@
+-_GL_FUNCDECL_SYS (strchrnul, char *, (char const *__s, int __c_in),
++_GL_FUNCDECL_SYS (strchrnul_LOCAL, char *, (char const *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+ #  endif
+   /* On some systems, this function is defined as an overloaded function:
+        extern "C++" { const char * std::strchrnul (const char *, int); }
+        extern "C++" { char * std::strchrnul (char *, int); }  */
+-_GL_CXXALIAS_SYS_CAST2 (strchrnul,
++_GL_CXXALIAS_SYS_CAST2 (strchrnul_LOCAL,
+                         char *, (char const *__s, int __c_in),
+                         char const *, (char const *__s, int __c_in));
+ # endif
+ # if ((__GLIBC__ == 2 && __GLIBC_MINOR__ >= 10) && !defined __UCLIBC__) \
+      && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) \
+          || defined __clang__)
+-_GL_CXXALIASWARN1 (strchrnul, char *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char *,
+                    (char *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+-_GL_CXXALIASWARN1 (strchrnul, char const *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char const *,
+                    (char const *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+ # elif __GLIBC__ >= 2
+-_GL_CXXALIASWARN (strchrnul);
++_GL_CXXALIASWARN (strchrnul_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_STRCHRNUL
+-_GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
+-                 "use gnulib module strchrnul for portability");
++_GL_WARN_ON_USE (strchrnul_LOCAL, "strchrnul is unportable - "
++                 "use gnulib module strchrnul_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-tools/gnulib-tests/test-strchrnul.c b/gettext-tools/gnulib-tests/test-strchrnul.c
+index 249d98b..4eaf174 100644
+--- a/gettext-tools/gnulib-tests/test-strchrnul.c
++++ b/gettext-tools/gnulib-tests/test-strchrnul.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ 
+ #include "signature.h"
+-SIGNATURE_CHECK (strchrnul, char *, (char const *, int));
++SIGNATURE_CHECK (strchrnul_LOCAL, char *, (char const *, int));
+ 
+ #include <stdlib.h>
+ 
+@@ -42,16 +42,16 @@ main (void)
+   input[n] = '\0';
+ 
+   /* Basic behavior tests.  */
+-  ASSERT (strchrnul (input, 'a') == input);
+-  ASSERT (strchrnul (input, 'b') == input + 1);
+-  ASSERT (strchrnul (input, 'c') == input + 2);
+-  ASSERT (strchrnul (input, 'd') == input + 1026);
++  ASSERT (strchrnul_LOCAL (input, 'a') == input);
++  ASSERT (strchrnul_LOCAL (input, 'b') == input + 1);
++  ASSERT (strchrnul_LOCAL (input, 'c') == input + 2);
++  ASSERT (strchrnul_LOCAL (input, 'd') == input + 1026);
+ 
+-  ASSERT (strchrnul (input + 1, 'a') == input + n - 1);
+-  ASSERT (strchrnul (input + 1, 'e') == input + n - 2);
++  ASSERT (strchrnul_LOCAL (input + 1, 'a') == input + n - 1);
++  ASSERT (strchrnul_LOCAL (input + 1, 'e') == input + n - 2);
+ 
+-  ASSERT (strchrnul (input, 'f') == input + n);
+-  ASSERT (strchrnul (input, '\0') == input + n);
++  ASSERT (strchrnul_LOCAL (input, 'f') == input + n);
++  ASSERT (strchrnul_LOCAL (input, '\0') == input + n);
+ 
+   /* Check that a very long haystack is handled quickly if the byte is
+      found near the beginning.  */
+@@ -59,7 +59,7 @@ main (void)
+     size_t repeat = 10000;
+     for (; repeat > 0; repeat--)
+       {
+-        ASSERT (strchrnul (input, 'c') == input + 2);
++        ASSERT (strchrnul_LOCAL (input, 'c') == input + 2);
+       }
+   }
+ 
+@@ -70,9 +70,9 @@ main (void)
+         input[i + j] = (j + 1) & 0xff;
+       for (int j = 1; j < 256; j++)
+         {
+-          ASSERT (strchrnul (input + i, j) == input + i + j - 1);
++          ASSERT (strchrnul_LOCAL (input + i, j) == input + i + j - 1);
+           input[i + j - 1] = (j == 1 ? 2 : 1);
+-          ASSERT (strchrnul (input + i, j) == input + i + 255);
++          ASSERT (strchrnul_LOCAL (input + i, j) == input + i + 255);
+           input[i + j - 1] = j;
+         }
+     }
+diff --git a/gettext-tools/libgettextpo/strchrnul.c b/gettext-tools/libgettextpo/strchrnul.c
+index c3bfebc..e031565 100644
+--- a/gettext-tools/libgettextpo/strchrnul.c
++++ b/gettext-tools/libgettextpo/strchrnul.c
+@@ -21,7 +21,7 @@
+ 
+ /* Find the first occurrence of C in S or the final NUL byte.  */
+ char *
+-strchrnul (const char *s, int c_in)
++strchrnul_LOCAL (const char *s, int c_in)
+ {
+   /* On 32-bit hardware, choosing longword to be a 32-bit unsigned
+      long instead of a 64-bit uintmax_t tends to give better
+diff --git a/gettext-tools/libgettextpo/string.in.h b/gettext-tools/libgettextpo/string.in.h
+index 1b39150..19f9cfa 100644
+--- a/gettext-tools/libgettextpo/string.in.h
++++ b/gettext-tools/libgettextpo/string.in.h
+@@ -677,42 +677,42 @@ _GL_WARN_ON_USE_CXX (strchr,
+ #if @GNULIB_STRCHRNUL@
+ # if @REPLACE_STRCHRNUL@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define strchrnul rpl_strchrnul
++#   define strchrnul_LOCAL rpl_strchrnul
+ #  endif
+-_GL_FUNCDECL_RPL (strchrnul, char *, (const char *__s, int __c_in),
++_GL_FUNCDECL_RPL (strchrnul_LOCAL, char *, (const char *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (strchrnul, char *,
++_GL_CXXALIAS_RPL (strchrnul_LOCAL, char *,
+                   (const char *str, int ch));
+ # else
+ #  if ! @HAVE_STRCHRNUL@
+-_GL_FUNCDECL_SYS (strchrnul, char *, (char const *__s, int __c_in),
++_GL_FUNCDECL_SYS (strchrnul_LOCAL, char *, (char const *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+ #  endif
+   /* On some systems, this function is defined as an overloaded function:
+        extern "C++" { const char * std::strchrnul (const char *, int); }
+        extern "C++" { char * std::strchrnul (char *, int); }  */
+-_GL_CXXALIAS_SYS_CAST2 (strchrnul,
++_GL_CXXALIAS_SYS_CAST2 (strchrnul_LOCAL,
+                         char *, (char const *__s, int __c_in),
+                         char const *, (char const *__s, int __c_in));
+ # endif
+ # if ((__GLIBC__ == 2 && __GLIBC_MINOR__ >= 10) && !defined __UCLIBC__) \
+      && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) \
+          || defined __clang__)
+-_GL_CXXALIASWARN1 (strchrnul, char *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char *,
+                    (char *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+-_GL_CXXALIASWARN1 (strchrnul, char const *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char const *,
+                    (char const *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+ # elif __GLIBC__ >= 2
+-_GL_CXXALIASWARN (strchrnul);
++_GL_CXXALIASWARN (strchrnul_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_STRCHRNUL
+-_GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
+-                 "use gnulib module strchrnul for portability");
++_GL_WARN_ON_USE (strchrnul_LOCAL, "strchrnul is unportable - "
++                 "use gnulib module strchrnul_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-tools/src/format-kde-kuit.c b/gettext-tools/src/format-kde-kuit.c
+index bdb99e9..92861cc 100644
+--- a/gettext-tools/src/format-kde-kuit.c
++++ b/gettext-tools/src/format-kde-kuit.c
+@@ -206,7 +206,7 @@ format_parse (const char *format, bool translated, char *fdi,
+   size_t amp_count;
+   for (amp_count = 0; str < str_limit; amp_count++)
+     {
+-      const char *amp = strchrnul (str, '&');
++      const char *amp = strchrnul_LOCAL (str, '&');
+       if (*amp != '&')
+         break;
+       str = amp + 1;
+@@ -225,7 +225,7 @@ format_parse (const char *format, bool translated, char *fdi,
+     str = format;
+     while (str < str_limit)
+       {
+-        const char *amp = strchrnul (str, '&');
++        const char *amp = strchrnul_LOCAL (str, '&');
+ 
+         bp = stpncpy (bp, str, amp - str);
+         if (*amp != '&')
+diff --git a/gettext-tools/src/its.c b/gettext-tools/src/its.c
+index 4eb9c64..8761de0 100644
+--- a/gettext-tools/src/its.c
++++ b/gettext-tools/src/its.c
+@@ -441,7 +441,7 @@ normalize_whitespace (const char *text, enum its_whitespace_type_ty whitespace)
+             /* Find the next paragraph boundary.  */
+             for (const char *p = start_of_paragraph;;)
+               {
+-                const char *nl = strchrnul (p, '\n');
++                const char *nl = strchrnul_LOCAL (p, '\n');
+                 if (*nl == '\0')
+                   {
+                     end_of_paragraph = nl;
+diff --git a/gettext-tools/src/msgl-check.c b/gettext-tools/src/msgl-check.c
+index 72bbda5..058edd8 100644
+--- a/gettext-tools/src/msgl-check.c
++++ b/gettext-tools/src/msgl-check.c
+@@ -772,7 +772,7 @@ check_header_entry (const message_ty *mp, const char *msgstr_string,
+                 }
+               break;
+             }
+-          line = strchrnul (line, '\n');
++          line = strchrnul_LOCAL (line, '\n');
+           if (*line == '\n')
+             line++;
+         }
+diff --git a/gettext-tools/src/search-path.c b/gettext-tools/src/search-path.c
+index 671fca5..a3e258a 100644
+--- a/gettext-tools/src/search-path.c
++++ b/gettext-tools/src/search-path.c
+@@ -47,7 +47,7 @@ foreach_elements (const char *dirs, foreach_function_ty function, void *data)
+   /* Iterate through DIRS.  */
+   while (*start != '\0')
+     {
+-      char *end = strchrnul (start, ':');
++      char *end = strchrnul_LOCAL (start, ':');
+ 
+       /* Skip empty element.  */
+       if (start != end)
+diff --git a/gettext-tools/src/xg-check.c b/gettext-tools/src/xg-check.c
+index 1564de6..a2ae9ee 100644
+--- a/gettext-tools/src/xg-check.c
++++ b/gettext-tools/src/xg-check.c
+@@ -323,7 +323,7 @@ syntax_check_bullet_unicode_string (const message_ty *mp, const char *msgid)
+             last_bullet = NULL;
+           }
+ 
+-        const char *end = strchrnul (str, '\n');
++        const char *end = strchrnul_LOCAL (str, '\n');
+         str = end + 1;
+       }
+   }
+diff --git a/libtextstyle/lib/string.in.h b/libtextstyle/lib/string.in.h
+index 1b39150..19f9cfa 100644
+--- a/libtextstyle/lib/string.in.h
++++ b/libtextstyle/lib/string.in.h
+@@ -677,42 +677,42 @@ _GL_WARN_ON_USE_CXX (strchr,
+ #if @GNULIB_STRCHRNUL@
+ # if @REPLACE_STRCHRNUL@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   define strchrnul rpl_strchrnul
++#   define strchrnul_LOCAL rpl_strchrnul
+ #  endif
+-_GL_FUNCDECL_RPL (strchrnul, char *, (const char *__s, int __c_in),
++_GL_FUNCDECL_RPL (strchrnul_LOCAL, char *, (const char *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+-_GL_CXXALIAS_RPL (strchrnul, char *,
++_GL_CXXALIAS_RPL (strchrnul_LOCAL, char *,
+                   (const char *str, int ch));
+ # else
+ #  if ! @HAVE_STRCHRNUL@
+-_GL_FUNCDECL_SYS (strchrnul, char *, (char const *__s, int __c_in),
++_GL_FUNCDECL_SYS (strchrnul_LOCAL, char *, (char const *__s, int __c_in),
+                                      _GL_ATTRIBUTE_PURE
+                                      _GL_ARG_NONNULL ((1)));
+ #  endif
+   /* On some systems, this function is defined as an overloaded function:
+        extern "C++" { const char * std::strchrnul (const char *, int); }
+        extern "C++" { char * std::strchrnul (char *, int); }  */
+-_GL_CXXALIAS_SYS_CAST2 (strchrnul,
++_GL_CXXALIAS_SYS_CAST2 (strchrnul_LOCAL,
+                         char *, (char const *__s, int __c_in),
+                         char const *, (char const *__s, int __c_in));
+ # endif
+ # if ((__GLIBC__ == 2 && __GLIBC_MINOR__ >= 10) && !defined __UCLIBC__) \
+      && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4) \
+          || defined __clang__)
+-_GL_CXXALIASWARN1 (strchrnul, char *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char *,
+                    (char *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+-_GL_CXXALIASWARN1 (strchrnul, char const *,
++_GL_CXXALIASWARN1 (strchrnul_LOCAL, char const *,
+                    (char const *__s, int __c_in)
+                    _GL_ATTRIBUTE_NOTHROW);
+ # elif __GLIBC__ >= 2
+-_GL_CXXALIASWARN (strchrnul);
++_GL_CXXALIASWARN (strchrnul_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_STRCHRNUL
+-_GL_WARN_ON_USE (strchrnul, "strchrnul is unportable - "
+-                 "use gnulib module strchrnul for portability");
++_GL_WARN_ON_USE (strchrnul_LOCAL, "strchrnul is unportable - "
++                 "use gnulib module strchrnul_LOCAL for portability");
+ # endif
+ #endif
+ 
+-- 
+2.55.0
+

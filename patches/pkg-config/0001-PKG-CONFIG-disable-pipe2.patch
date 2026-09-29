@@ -1,0 +1,67 @@
+From 02d4f1c3c294c7c8229f1ab23e94c09317163f0f Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 06:43:37 +0700
+Subject: [PATCH] PKG-CONFIG: disable pipe2
+
+pkg-config-0.29.2/glib/glib/glib-unix.c:102:13: error: 'pipe2' is only available on macOS 27.0 or newer
+
+find . -name 'configure' -exec gsed -i 's|\( pipe2\) |\1_LOCAL |g' \{\} \;
+find . \( -name '*.h' -or -name '*.c' \) -exec gsed -i 's|\([( ]pipe2\)|\1_LOCAL|g ; s|^\(pipe2\)|\1_LOCAL|g' \{\} \;
+---
+ glib/configure        |  2 +-
+ glib/glib/glib-unix.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/glib/configure b/glib/configure
+index 2f0a05f..5baabcb 100755
+--- a/glib/configure
++++ b/glib/configure
+@@ -20568,7 +20568,7 @@ _ACEOF
+ 
+ fi
+ 
+-for ac_func in mmap posix_memalign memalign valloc fsync pipe2 issetugid
++for ac_func in mmap posix_memalign memalign valloc fsync pipe2_LOCAL issetugid
+ do :
+   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ ac_fn_c_check_func "$LINENO" "$ac_func" "$as_ac_var"
+diff --git a/glib/glib/glib-unix.c b/glib/glib/glib-unix.c
+index 8f1fe1c..74e6eec 100644
+--- a/glib/glib/glib-unix.c
++++ b/glib/glib/glib-unix.c
+@@ -23,7 +23,7 @@
+ 
+ #include "config.h"
+ 
+-/* To make bionic export pipe2() */
++/* To make bionic export pipe2_LOCAL() */
+ #ifndef _GNU_SOURCE
+ #define _GNU_SOURCE 1
+ #endif
+@@ -69,7 +69,7 @@ g_unix_set_error_from_errno (GError **error,
+  * @error: a #GError
+  *
+  * Similar to the UNIX pipe() call, but on modern systems like Linux
+- * uses the pipe2() system call, which atomically creates a pipe with
++ * uses the pipe2_LOCAL() system call, which atomically creates a pipe with
+  * the configured flags.  The only supported flag currently is
+  * <literal>FD_CLOEXEC</literal>.  If for example you want to configure
+  * <literal>O_NONBLOCK</literal>, that must still be done separately with
+@@ -95,11 +95,11 @@ g_unix_open_pipe (int     *fds,
+ 
+ #ifdef HAVE_PIPE2
+   {
+-    int pipe2_flags = 0;
++    int pipe2_LOCAL_flags = 0;
+     if (flags & FD_CLOEXEC)
+-      pipe2_flags |= O_CLOEXEC;
++      pipe2_LOCAL_flags |= O_CLOEXEC;
+     /* Atomic */
+-    ecode = pipe2 (fds, pipe2_flags);
++    ecode = pipe2_LOCAL (fds, pipe2_LOCAL_flags);
+     if (ecode == -1 && errno != ENOSYS)
+       return g_unix_set_error_from_errno (error, errno);
+     else if (ecode == 0)
+-- 
+2.55.0
+

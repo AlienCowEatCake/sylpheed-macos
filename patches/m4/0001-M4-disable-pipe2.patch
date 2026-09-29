@@ -1,0 +1,249 @@
+From 33466a79757335b02a107511c6a5cf5722599c8a Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 04:21:21 +0700
+Subject: [PATCH 1/2] M4: disable pipe2
+
+m4-1.4.20/lib/pipe2.c:57:22: error: 'pipe2' is only available on macOS 27.0 or newer [-Werror,-Wunguarded-availability-new]
+
+gsed -i 's|\(ac_fn_c[^ ]* [^ ]* "pipe2\)"|\1_LOCAL"|' configure
+find . \( -name '*.h' -or -name '*.c' \) -exec gsed -i 's|\([( ]pipe2\)|\1_LOCAL|g ; s|^\(pipe2\)|\1_LOCAL|g' \{\} \;
+---
+ configure          |  6 +++---
+ lib/cloexec.c      |  2 +-
+ lib/cloexec.h      |  2 +-
+ lib/pipe2-safer.c  |  8 ++++----
+ lib/pipe2.c        |  6 +++---
+ lib/spawn-pipe.c   |  4 ++--
+ lib/unistd--.h     |  4 ++--
+ lib/unistd-safer.h |  2 +-
+ lib/unistd.in.h    | 18 +++++++++---------
+ tests/test-pipe2.c |  6 +++---
+ 10 files changed, 29 insertions(+), 29 deletions(-)
+
+diff --git a/configure b/configure
+index 3f4df68..3fb9847 100755
+--- a/configure
++++ b/configure
+@@ -54638,14 +54638,14 @@ else case e in #(
+        case "$host_os" in
+ 
+          linux*-android*)
+-           ac_fn_check_decl "$LINENO" "pipe2" "ac_cv_have_decl_pipe2" "#include <unistd.h>
++           ac_fn_check_decl "$LINENO" "pipe2_LOCAL" "ac_cv_have_decl_pipe2" "#include <unistd.h>
+ " "$ac_c_undeclared_builtin_options$ac_c_future_darwin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_pipe2" = xyes
+ then :
+ 
+ fi
+            if test $ac_cv_have_decl_pipe2 = yes; then
+-             ac_fn_c_check_func "$LINENO" "pipe2" "ac_cv_func_pipe2"
++             ac_fn_c_check_func "$LINENO" "pipe2_LOCAL" "ac_cv_func_pipe2"
+ if test "x$ac_cv_func_pipe2" = xyes
+ then :
+ 
+@@ -54663,7 +54663,7 @@ fi
+ 
+ 
+          *)
+-           ac_fn_c_check_func "$LINENO" "pipe2" "ac_cv_func_pipe2"
++           ac_fn_c_check_func "$LINENO" "pipe2_LOCAL" "ac_cv_func_pipe2"
+ if test "x$ac_cv_func_pipe2" = xyes
+ then :
+ 
+diff --git a/lib/cloexec.c b/lib/cloexec.c
+index 3d4f916..3424d2b 100644
+--- a/lib/cloexec.c
++++ b/lib/cloexec.c
+@@ -32,7 +32,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int
+diff --git a/lib/cloexec.h b/lib/cloexec.h
+index 3716bd7..2ba6067 100644
+--- a/lib/cloexec.h
++++ b/lib/cloexec.h
+@@ -27,7 +27,7 @@ extern "C" {
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int set_cloexec_flag (int desc, bool value);
+diff --git a/lib/pipe2-safer.c b/lib/pipe2-safer.c
+index 9685fb0..5920298 100644
+--- a/lib/pipe2-safer.c
++++ b/lib/pipe2-safer.c
+@@ -1,4 +1,4 @@
+-/* Invoke pipe2, but avoid some glitches.
++/* Invoke pipe2_LOCAL, but avoid some glitches.
+    Copyright (C) 2005-2006, 2009-2026 Free Software Foundation, Inc.
+ 
+    This program is free software: you can redistribute it and/or modify
+@@ -24,14 +24,14 @@
+ #include <unistd.h>
+ #include <errno.h>
+ 
+-/* Like pipe2, but ensure that neither of the file descriptors is
++/* Like pipe2_LOCAL, but ensure that neither of the file descriptors is
+    STDIN_FILENO, STDOUT_FILENO, or STDERR_FILENO.  */
+ 
+ int
+-pipe2_safer (int fd[2], int flags)
++pipe2_LOCAL_safer (int fd[2], int flags)
+ {
+   /* This is a generalization of the pipe_safer implementation.  */
+-  if (pipe2 (fd, flags) == 0)
++  if (pipe2_LOCAL (fd, flags) == 0)
+     {
+       for (int i = 0; i < 2; i++)
+         {
+diff --git a/lib/pipe2.c b/lib/pipe2.c
+index 492d53b..15c7942 100644
+--- a/lib/pipe2.c
++++ b/lib/pipe2.c
+@@ -36,7 +36,7 @@
+ #endif
+ 
+ int
+-pipe2 (int fd[2], int flags)
++pipe2_LOCAL (int fd[2], int flags)
+ {
+   /* Mingw _pipe() corrupts fd on failure; also, if we succeed at
+      creating the pipe but later fail at changing fcntl, we want
+@@ -46,7 +46,7 @@ pipe2 (int fd[2], int flags)
+   tmp[1] = fd[1];
+ 
+ #if HAVE_PIPE2
+-# undef pipe2
++# undef pipe2_LOCAL
+   /* Try the system call first, if it exists.  (We may be running with a glibc
+      that has the function but with an older kernel that lacks it.)  */
+   {
+@@ -54,7 +54,7 @@ pipe2 (int fd[2], int flags)
+     static int have_pipe2_really; /* 0 = unknown, 1 = yes, -1 = no */
+     if (have_pipe2_really >= 0)
+       {
+-        int result = pipe2 (fd, flags);
++        int result = pipe2_LOCAL (fd, flags);
+         if (!(result < 0 && errno == ENOSYS))
+           {
+             have_pipe2_really = 1;
+diff --git a/lib/spawn-pipe.c b/lib/spawn-pipe.c
+index b76f5c9..a82a3c4 100644
+--- a/lib/spawn-pipe.c
++++ b/lib/spawn-pipe.c
+@@ -214,10 +214,10 @@ create_pipe (const char *progname,
+        parent or the child process would block, as long as that other child
+        process is running.  */
+   if (pipe_stdout)
+-    if (pipe2_safer (ifd, O_BINARY | O_CLOEXEC) < 0)
++    if (pipe2_LOCAL_safer (ifd, O_BINARY | O_CLOEXEC) < 0)
+       error (EXIT_FAILURE, errno, _("cannot create pipe"));
+   if (pipe_stdin)
+-    if (pipe2_safer (ofd, O_BINARY | O_CLOEXEC) < 0)
++    if (pipe2_LOCAL_safer (ofd, O_BINARY | O_CLOEXEC) < 0)
+       error (EXIT_FAILURE, errno, _("cannot create pipe"));
+ /* Data flow diagram:
+  *
+diff --git a/lib/unistd--.h b/lib/unistd--.h
+index e3bcba8..8264a31 100644
+--- a/lib/unistd--.h
++++ b/lib/unistd--.h
+@@ -27,6 +27,6 @@
+ #define pipe pipe_safer
+ 
+ #if GNULIB_PIPE2_SAFER
+-# undef pipe2
+-# define pipe2 pipe2_safer
++# undef pipe2_LOCAL
++# define pipe2_LOCAL pipe2_LOCAL_safer
+ #endif
+diff --git a/lib/unistd-safer.h b/lib/unistd-safer.h
+index 25711ca..5062bf6 100644
+--- a/lib/unistd-safer.h
++++ b/lib/unistd-safer.h
+@@ -32,7 +32,7 @@ int fd_safer_flag (int, int);
+ #endif
+ 
+ #if GNULIB_PIPE2_SAFER
+-int pipe2_safer (int[2], int);
++int pipe2_LOCAL_safer (int[2], int);
+ #endif
+ 
+ 
+diff --git a/lib/unistd.in.h b/lib/unistd.in.h
+index f7e4450..5bf6513 100644
+--- a/lib/unistd.in.h
++++ b/lib/unistd.in.h
+@@ -1827,24 +1827,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/tests/test-pipe2.c b/tests/test-pipe2.c
+index 9a28326..eb75103 100644
+--- a/tests/test-pipe2.c
++++ b/tests/test-pipe2.c
+@@ -1,4 +1,4 @@
+-/* Test of pipe2.
++/* Test of pipe2_LOCAL.
+    Copyright (C) 2009-2026 Free Software Foundation, Inc.
+ 
+    This program is free software; you can redistribute it and/or modify
+@@ -19,7 +19,7 @@
+ #include <unistd.h>
+ 
+ #include "signature.h"
+-SIGNATURE_CHECK (pipe2, int, (int[2], int));
++SIGNATURE_CHECK (pipe2_LOCAL, int, (int[2], int));
+ 
+ #include <fcntl.h>
+ 
+@@ -108,7 +108,7 @@ main ()
+ 
+         fd[0] = -1;
+         fd[1] = -1;
+-        ASSERT (pipe2 (fd, o_flags) >= 0);
++        ASSERT (pipe2_LOCAL (fd, o_flags) >= 0);
+         ASSERT (fd[0] >= 0);
+         ASSERT (fd[1] >= 0);
+         ASSERT (fd[0] != fd[1]);
+-- 
+2.55.0
+

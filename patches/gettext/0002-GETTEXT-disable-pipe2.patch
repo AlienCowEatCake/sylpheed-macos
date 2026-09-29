@@ -1,0 +1,567 @@
+From 6ae5203dd1c59ad6222631b4415e9e1f42c62a2b Mon Sep 17 00:00:00 2001
+From: Peter Zhigalov <peter.zhigalov@gmail.com>
+Date: Tue, 29 Sep 2026 05:13:11 +0700
+Subject: [PATCH 2/3] GETTEXT: disable pipe2
+
+gettext-0.25/gettext-tools/gnulib-lib/pipe2.c:57:22: error: 'pipe2' is only available on macOS 27.0 or newer
+
+find . -name 'configure' -exec gsed -i 's|\(ac_fn_c[^ ]* [^ ]* "pipe2\)"|\1_LOCAL"|' \{\} \;
+find . \( -name '*.h' -or -name '*.c' \) -exec gsed -i 's|\([( ]pipe2\)|\1_LOCAL|g ; s|^\(pipe2\)|\1_LOCAL|g' \{\} \;
+---
+ gettext-runtime/gnulib-lib/cloexec.c           |  2 +-
+ gettext-runtime/gnulib-lib/cloexec.h           |  2 +-
+ gettext-runtime/gnulib-lib/unistd.in.h         | 18 +++++++++---------
+ gettext-runtime/intl/gnulib-lib/unistd.in.h    | 18 +++++++++---------
+ .../libasprintf/gnulib-lib/unistd.in.h         | 18 +++++++++---------
+ gettext-tools/configure                        |  6 +++---
+ gettext-tools/gnulib-lib/cloexec.c             |  2 +-
+ gettext-tools/gnulib-lib/cloexec.h             |  2 +-
+ gettext-tools/gnulib-lib/pipe2-safer.c         |  8 ++++----
+ gettext-tools/gnulib-lib/pipe2.c               |  6 +++---
+ gettext-tools/gnulib-lib/spawn-pipe.c          |  4 ++--
+ gettext-tools/gnulib-lib/unistd--.h            |  4 ++--
+ gettext-tools/gnulib-lib/unistd-safer.h        |  2 +-
+ gettext-tools/gnulib-lib/unistd.in.h           | 18 +++++++++---------
+ gettext-tools/gnulib-tests/test-pipe2.c        |  6 +++---
+ gettext-tools/libgettextpo/cloexec.c           |  2 +-
+ gettext-tools/libgettextpo/cloexec.h           |  2 +-
+ gettext-tools/libgettextpo/unistd.in.h         | 18 +++++++++---------
+ gettext-tools/libgrep/gnulib-lib/unistd.in.h   | 18 +++++++++---------
+ libtextstyle/lib/cloexec.c                     |  2 +-
+ libtextstyle/lib/cloexec.h                     |  2 +-
+ libtextstyle/lib/unistd.in.h                   | 18 +++++++++---------
+ 22 files changed, 89 insertions(+), 89 deletions(-)
+
+diff --git a/gettext-runtime/gnulib-lib/cloexec.c b/gettext-runtime/gnulib-lib/cloexec.c
+index 3d4f916..3424d2b 100644
+--- a/gettext-runtime/gnulib-lib/cloexec.c
++++ b/gettext-runtime/gnulib-lib/cloexec.c
+@@ -32,7 +32,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int
+diff --git a/gettext-runtime/gnulib-lib/cloexec.h b/gettext-runtime/gnulib-lib/cloexec.h
+index 3716bd7..2ba6067 100644
+--- a/gettext-runtime/gnulib-lib/cloexec.h
++++ b/gettext-runtime/gnulib-lib/cloexec.h
+@@ -27,7 +27,7 @@ extern "C" {
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int set_cloexec_flag (int desc, bool value);
+diff --git a/gettext-runtime/gnulib-lib/unistd.in.h b/gettext-runtime/gnulib-lib/unistd.in.h
+index a168cd6..841d271 100644
+--- a/gettext-runtime/gnulib-lib/unistd.in.h
++++ b/gettext-runtime/gnulib-lib/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-runtime/intl/gnulib-lib/unistd.in.h b/gettext-runtime/intl/gnulib-lib/unistd.in.h
+index a168cd6..841d271 100644
+--- a/gettext-runtime/intl/gnulib-lib/unistd.in.h
++++ b/gettext-runtime/intl/gnulib-lib/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-runtime/libasprintf/gnulib-lib/unistd.in.h b/gettext-runtime/libasprintf/gnulib-lib/unistd.in.h
+index a168cd6..841d271 100644
+--- a/gettext-runtime/libasprintf/gnulib-lib/unistd.in.h
++++ b/gettext-runtime/libasprintf/gnulib-lib/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-tools/configure b/gettext-tools/configure
+index de76ed9..3d54f42 100755
+--- a/gettext-tools/configure
++++ b/gettext-tools/configure
+@@ -81343,14 +81343,14 @@ else case e in #(
+        case "$host_os" in
+ 
+          linux*-android*)
+-           ac_fn_check_decl "$LINENO" "pipe2" "ac_cv_have_decl_pipe2" "#include <unistd.h>
++           ac_fn_check_decl "$LINENO" "pipe2_LOCAL" "ac_cv_have_decl_pipe2" "#include <unistd.h>
+ " "$ac_c_undeclared_builtin_options" "CFLAGS"
+ if test "x$ac_cv_have_decl_pipe2" = xyes
+ then :
+ 
+ fi
+            if test $ac_cv_have_decl_pipe2 = yes; then
+-             ac_fn_c_check_func "$LINENO" "pipe2" "ac_cv_func_pipe2"
++             ac_fn_c_check_func "$LINENO" "pipe2_LOCAL" "ac_cv_func_pipe2"
+ if test "x$ac_cv_func_pipe2" = xyes
+ then :
+ 
+@@ -81368,7 +81368,7 @@ fi
+ 
+ 
+          *)
+-           ac_fn_c_check_func "$LINENO" "pipe2" "ac_cv_func_pipe2"
++           ac_fn_c_check_func "$LINENO" "pipe2_LOCAL" "ac_cv_func_pipe2"
+ if test "x$ac_cv_func_pipe2" = xyes
+ then :
+ 
+diff --git a/gettext-tools/gnulib-lib/cloexec.c b/gettext-tools/gnulib-lib/cloexec.c
+index 3d4f916..3424d2b 100644
+--- a/gettext-tools/gnulib-lib/cloexec.c
++++ b/gettext-tools/gnulib-lib/cloexec.c
+@@ -32,7 +32,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int
+diff --git a/gettext-tools/gnulib-lib/cloexec.h b/gettext-tools/gnulib-lib/cloexec.h
+index 3716bd7..2ba6067 100644
+--- a/gettext-tools/gnulib-lib/cloexec.h
++++ b/gettext-tools/gnulib-lib/cloexec.h
+@@ -27,7 +27,7 @@ extern "C" {
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int set_cloexec_flag (int desc, bool value);
+diff --git a/gettext-tools/gnulib-lib/pipe2-safer.c b/gettext-tools/gnulib-lib/pipe2-safer.c
+index 9685fb0..5920298 100644
+--- a/gettext-tools/gnulib-lib/pipe2-safer.c
++++ b/gettext-tools/gnulib-lib/pipe2-safer.c
+@@ -1,4 +1,4 @@
+-/* Invoke pipe2, but avoid some glitches.
++/* Invoke pipe2_LOCAL, but avoid some glitches.
+    Copyright (C) 2005-2006, 2009-2026 Free Software Foundation, Inc.
+ 
+    This program is free software: you can redistribute it and/or modify
+@@ -24,14 +24,14 @@
+ #include <unistd.h>
+ #include <errno.h>
+ 
+-/* Like pipe2, but ensure that neither of the file descriptors is
++/* Like pipe2_LOCAL, but ensure that neither of the file descriptors is
+    STDIN_FILENO, STDOUT_FILENO, or STDERR_FILENO.  */
+ 
+ int
+-pipe2_safer (int fd[2], int flags)
++pipe2_LOCAL_safer (int fd[2], int flags)
+ {
+   /* This is a generalization of the pipe_safer implementation.  */
+-  if (pipe2 (fd, flags) == 0)
++  if (pipe2_LOCAL (fd, flags) == 0)
+     {
+       for (int i = 0; i < 2; i++)
+         {
+diff --git a/gettext-tools/gnulib-lib/pipe2.c b/gettext-tools/gnulib-lib/pipe2.c
+index 492d53b..15c7942 100644
+--- a/gettext-tools/gnulib-lib/pipe2.c
++++ b/gettext-tools/gnulib-lib/pipe2.c
+@@ -36,7 +36,7 @@
+ #endif
+ 
+ int
+-pipe2 (int fd[2], int flags)
++pipe2_LOCAL (int fd[2], int flags)
+ {
+   /* Mingw _pipe() corrupts fd on failure; also, if we succeed at
+      creating the pipe but later fail at changing fcntl, we want
+@@ -46,7 +46,7 @@ pipe2 (int fd[2], int flags)
+   tmp[1] = fd[1];
+ 
+ #if HAVE_PIPE2
+-# undef pipe2
++# undef pipe2_LOCAL
+   /* Try the system call first, if it exists.  (We may be running with a glibc
+      that has the function but with an older kernel that lacks it.)  */
+   {
+@@ -54,7 +54,7 @@ pipe2 (int fd[2], int flags)
+     static int have_pipe2_really; /* 0 = unknown, 1 = yes, -1 = no */
+     if (have_pipe2_really >= 0)
+       {
+-        int result = pipe2 (fd, flags);
++        int result = pipe2_LOCAL (fd, flags);
+         if (!(result < 0 && errno == ENOSYS))
+           {
+             have_pipe2_really = 1;
+diff --git a/gettext-tools/gnulib-lib/spawn-pipe.c b/gettext-tools/gnulib-lib/spawn-pipe.c
+index b76f5c9..a82a3c4 100644
+--- a/gettext-tools/gnulib-lib/spawn-pipe.c
++++ b/gettext-tools/gnulib-lib/spawn-pipe.c
+@@ -214,10 +214,10 @@ create_pipe (const char *progname,
+        parent or the child process would block, as long as that other child
+        process is running.  */
+   if (pipe_stdout)
+-    if (pipe2_safer (ifd, O_BINARY | O_CLOEXEC) < 0)
++    if (pipe2_LOCAL_safer (ifd, O_BINARY | O_CLOEXEC) < 0)
+       error (EXIT_FAILURE, errno, _("cannot create pipe"));
+   if (pipe_stdin)
+-    if (pipe2_safer (ofd, O_BINARY | O_CLOEXEC) < 0)
++    if (pipe2_LOCAL_safer (ofd, O_BINARY | O_CLOEXEC) < 0)
+       error (EXIT_FAILURE, errno, _("cannot create pipe"));
+ /* Data flow diagram:
+  *
+diff --git a/gettext-tools/gnulib-lib/unistd--.h b/gettext-tools/gnulib-lib/unistd--.h
+index e3bcba8..8264a31 100644
+--- a/gettext-tools/gnulib-lib/unistd--.h
++++ b/gettext-tools/gnulib-lib/unistd--.h
+@@ -27,6 +27,6 @@
+ #define pipe pipe_safer
+ 
+ #if GNULIB_PIPE2_SAFER
+-# undef pipe2
+-# define pipe2 pipe2_safer
++# undef pipe2_LOCAL
++# define pipe2_LOCAL pipe2_LOCAL_safer
+ #endif
+diff --git a/gettext-tools/gnulib-lib/unistd-safer.h b/gettext-tools/gnulib-lib/unistd-safer.h
+index 25711ca..5062bf6 100644
+--- a/gettext-tools/gnulib-lib/unistd-safer.h
++++ b/gettext-tools/gnulib-lib/unistd-safer.h
+@@ -32,7 +32,7 @@ int fd_safer_flag (int, int);
+ #endif
+ 
+ #if GNULIB_PIPE2_SAFER
+-int pipe2_safer (int[2], int);
++int pipe2_LOCAL_safer (int[2], int);
+ #endif
+ 
+ 
+diff --git a/gettext-tools/gnulib-lib/unistd.in.h b/gettext-tools/gnulib-lib/unistd.in.h
+index a168cd6..841d271 100644
+--- a/gettext-tools/gnulib-lib/unistd.in.h
++++ b/gettext-tools/gnulib-lib/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-tools/gnulib-tests/test-pipe2.c b/gettext-tools/gnulib-tests/test-pipe2.c
+index 9a28326..eb75103 100644
+--- a/gettext-tools/gnulib-tests/test-pipe2.c
++++ b/gettext-tools/gnulib-tests/test-pipe2.c
+@@ -1,4 +1,4 @@
+-/* Test of pipe2.
++/* Test of pipe2_LOCAL.
+    Copyright (C) 2009-2026 Free Software Foundation, Inc.
+ 
+    This program is free software; you can redistribute it and/or modify
+@@ -19,7 +19,7 @@
+ #include <unistd.h>
+ 
+ #include "signature.h"
+-SIGNATURE_CHECK (pipe2, int, (int[2], int));
++SIGNATURE_CHECK (pipe2_LOCAL, int, (int[2], int));
+ 
+ #include <fcntl.h>
+ 
+@@ -108,7 +108,7 @@ main ()
+ 
+         fd[0] = -1;
+         fd[1] = -1;
+-        ASSERT (pipe2 (fd, o_flags) >= 0);
++        ASSERT (pipe2_LOCAL (fd, o_flags) >= 0);
+         ASSERT (fd[0] >= 0);
+         ASSERT (fd[1] >= 0);
+         ASSERT (fd[0] != fd[1]);
+diff --git a/gettext-tools/libgettextpo/cloexec.c b/gettext-tools/libgettextpo/cloexec.c
+index 3d4f916..3424d2b 100644
+--- a/gettext-tools/libgettextpo/cloexec.c
++++ b/gettext-tools/libgettextpo/cloexec.c
+@@ -32,7 +32,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int
+diff --git a/gettext-tools/libgettextpo/cloexec.h b/gettext-tools/libgettextpo/cloexec.h
+index 3716bd7..2ba6067 100644
+--- a/gettext-tools/libgettextpo/cloexec.h
++++ b/gettext-tools/libgettextpo/cloexec.h
+@@ -27,7 +27,7 @@ extern "C" {
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int set_cloexec_flag (int desc, bool value);
+diff --git a/gettext-tools/libgettextpo/unistd.in.h b/gettext-tools/libgettextpo/unistd.in.h
+index a168cd6..841d271 100644
+--- a/gettext-tools/libgettextpo/unistd.in.h
++++ b/gettext-tools/libgettextpo/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/gettext-tools/libgrep/gnulib-lib/unistd.in.h b/gettext-tools/libgrep/gnulib-lib/unistd.in.h
+index a168cd6..841d271 100644
+--- a/gettext-tools/libgrep/gnulib-lib/unistd.in.h
++++ b/gettext-tools/libgrep/gnulib-lib/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+diff --git a/libtextstyle/lib/cloexec.c b/libtextstyle/lib/cloexec.c
+index 3d4f916..3424d2b 100644
+--- a/libtextstyle/lib/cloexec.c
++++ b/libtextstyle/lib/cloexec.c
+@@ -32,7 +32,7 @@
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int
+diff --git a/libtextstyle/lib/cloexec.h b/libtextstyle/lib/cloexec.h
+index 3716bd7..2ba6067 100644
+--- a/libtextstyle/lib/cloexec.h
++++ b/libtextstyle/lib/cloexec.h
+@@ -27,7 +27,7 @@ extern "C" {
+    Note that on MingW, this function does NOT protect DESC from being
+    inherited into spawned children.  Instead, either use dup_cloexec
+    followed by closing the original DESC, or use interfaces such as
+-   open or pipe2 that accept flags like O_CLOEXEC to create DESC
++   open or pipe2_LOCAL that accept flags like O_CLOEXEC to create DESC
+    non-inheritable in the first place.  */
+ 
+ int set_cloexec_flag (int desc, bool value);
+diff --git a/libtextstyle/lib/unistd.in.h b/libtextstyle/lib/unistd.in.h
+index a168cd6..841d271 100644
+--- a/libtextstyle/lib/unistd.in.h
++++ b/libtextstyle/lib/unistd.in.h
+@@ -1831,24 +1831,24 @@ _GL_WARN_ON_USE (pipe, "pipe is unportable - "
+    <https://www.kernel.org/doc/man-pages/online/pages/man2/pipe2.2.html>.  */
+ # if @REPLACE_PIPE2@
+ #  if !(defined __cplusplus && defined GNULIB_NAMESPACE)
+-#   undef pipe2
+-#   define pipe2 rpl_pipe2
++#   undef pipe2_LOCAL
++#   define pipe2_LOCAL rpl_pipe2
+ #  endif
+-_GL_FUNCDECL_RPL (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_RPL (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_RPL (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_RPL (pipe2_LOCAL, int, (int fd[2], int flags));
+ # else
+-_GL_FUNCDECL_SYS (pipe2, int, (int fd[2], int flags),
++_GL_FUNCDECL_SYS (pipe2_LOCAL, int, (int fd[2], int flags),
+                               _GL_ARG_NONNULL ((1)) _GL_ATTRIBUTE_NODISCARD);
+-_GL_CXXALIAS_SYS (pipe2, int, (int fd[2], int flags));
++_GL_CXXALIAS_SYS (pipe2_LOCAL, int, (int fd[2], int flags));
+ # endif
+ # if __GLIBC__ >= 2
+-_GL_CXXALIASWARN (pipe2);
++_GL_CXXALIASWARN (pipe2_LOCAL);
+ # endif
+ #elif defined GNULIB_POSIXCHECK
+ # if HAVE_RAW_DECL_PIPE2
+-_GL_WARN_ON_USE (pipe2, "pipe2 is unportable - "
+-                 "use gnulib module pipe2 for portability");
++_GL_WARN_ON_USE (pipe2_LOCAL, "pipe2 is unportable - "
++                 "use gnulib module pipe2_LOCAL for portability");
+ # endif
+ #endif
+ 
+-- 
+2.55.0
+
